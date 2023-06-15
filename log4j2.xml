@@ -2,4 +2,7 @@
 <Configuration status="WARN">
     <!-- Filter out Hypixel scoreboard and sound errors -->
     <RegexFilter regex="Error executing task.*|Unable to play unknown soundEvent.*" onMatch="DENY" onMismatch="NEUTRAL"/>
+    <Loggers>
+        <Logger name="FML" level="DEBUG"/>
+    </Loggers>
 </Configuration>
