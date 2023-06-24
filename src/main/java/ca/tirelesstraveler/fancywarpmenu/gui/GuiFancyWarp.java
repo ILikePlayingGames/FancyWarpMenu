@@ -1,9 +1,31 @@
-package ca.tirelesstraveler.skyblockwarpmenu.gui;
+/*
+ * Copyright (c) 2023. TirelessTraveler
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+ * OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
-import ca.tirelesstraveler.skyblockwarpmenu.SkyBlockWarpMenu;
-import ca.tirelesstraveler.skyblockwarpmenu.data.Island;
-import ca.tirelesstraveler.skyblockwarpmenu.data.Settings;
-import ca.tirelesstraveler.skyblockwarpmenu.data.Warp;
+package ca.tirelesstraveler.fancywarpmenu.gui;
+
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.Island;
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -28,7 +50,7 @@ public class GuiFancyWarp extends GuiScreen {
         showDebugOverlay = true;
         Warp.initDefaults(res);
 
-        for (Island island: SkyBlockWarpMenu.getInstance().getIslands()) {
+        for (Island island: FancyWarpMenu.getInstance().getIslands()) {
             GuiIslandButton islandButton = new GuiIslandButton(this, buttonList.size(), res, island);
             buttonList.add(islandButton);
 
@@ -56,8 +78,8 @@ public class GuiFancyWarp extends GuiScreen {
             // Draw screen resolution
             drawCenteredString(mc.fontRendererObj, String.format("%d x %d", res.getScaledWidth(), res.getScaledHeight()), width / 2, height - 20, 14737632);
             // Draw version number
-            String modName = SkyBlockWarpMenu.getInstance().getModContainer().getName();
-            String modVersion = SkyBlockWarpMenu.getInstance().getModContainer().getVersion();
+            String modName = FancyWarpMenu.getInstance().getModContainer().getName();
+            String modVersion = FancyWarpMenu.getInstance().getModContainer().getVersion();
             drawCenteredString(mc.fontRendererObj, modName + " " + modVersion, width / 2, height - 10, 14737632);
 
             for (GuiButton button:
@@ -107,7 +129,7 @@ public class GuiFancyWarp extends GuiScreen {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
-        SkyBlockWarpMenu mod = SkyBlockWarpMenu.getInstance();
+        FancyWarpMenu mod = FancyWarpMenu.getInstance();
 
         if (Settings.isDebugModeEnabled()) {
             if (keyCode == Keyboard.KEY_R) {

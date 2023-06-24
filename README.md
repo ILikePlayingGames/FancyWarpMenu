@@ -1,30 +1,32 @@
-# Architectury Loom based template for 1.8.9 forge mods
+# Fancy Warp Menu
 
-**For other templates, do check out the [other branches of this repository](https://github.com/romangraef/Forge1.8.9Template/branches/all)**
+A prettier warp menu for Hypixel SkyBlock
 
-To get started, clone this repository and replace all references to `examplemod` or `com.example` with your own names.
+-----
 
-If you don't want mixins (which allow for modifying vanilla code), then you can remove the references to mixins from
-the `build.gradle.kts`, delete the `mixins.examplemod.json` and the `com.example.mixin` package.
+This is a recreation of the fancy warp menu from SkyblockAddons, rewritten for better performance.
 
-This project uses [DevAuth](https://github.com/DJtheRedstoner/DevAuth) per default, so you can log in using your real
-minecraft account. If you don't need that, you can remove it from the buildscript.
+# Screenshots
 
-To run the mod you will need two JDKs, one Java 17 jdk and one Java 1.8 jdk. You can download those
-from [here](https://adoptium.net/temurin/releases) (or use your own downloads).
+![Fancy Warp Menu at large GUI scale](docs/Fancy%20Warp%20Menu%20Large.png)
+Large GUI scale
 
-When you import your project into IntelliJ, you need to set the gradle jvm to the Java 17 JDK in the gradle tab, and the
-Project SDK to the Java 1.8 JDK. Then click on the sync button in IntelliJ, and it should create a run task
-called `Minecraft Client`. If it doesn't then try relaunching your IntelliJ. **Warning for Mac users**: You might have to remove the `-XStartOnFirstThread` vm argument from your run configuration. In the future, that should be handled by the plugin, but for now you'll probably have to do that manually. 
 
-To export your project, run the `gradle build` task, and give other people the
-file `build/libs/<modid>-<version>.jar`. Ignore the jars in the `build/badjars` folder. Those are intermediary jars that
-are used by the build system but *do not work* in a normal forge installation.
+![Fancy Warp Menu at normal GUI scale](docs/Fancy%20Warp%20Menu%20Large.png)
+Normal GUI scale
 
-### For those who have not an attention span
 
-[![Youtube Tutorial](https://i.ytimg.com/vi/nWzHlomdCgc/maxresdefault.jpg)](https://www.youtube.com/watch?v=nWzHlomdCgc)
+![Fancy Warp Menu Settings](docs/Settings.png)
+Settings (access via pause > mod options > fancy warp menu > config)
 
-## Licensing
+# Credits
 
-This template is licensed under the Unlicense (license copy present in this repository), or alternatively under [Creative Commons 1.0 Universal (CC0 1.0)](https://creativecommons.org/publicdomain/zero/1.0/), and all contributions and PR to this template are expected to follow this. This means your mod, based on this template can be licensed whatever way you want, and does not need to reference back to this template in any way.
+Mod template: [Nea's Forge 1.8.9 Template](https://github.com/romangraef/Forge1.8.9Template)
+<br>
+Portal texture: [SkyblockAddons](https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/resources/assets/skyblockaddons/portal.png)
+<br>
+Island Renders: Rendered by Schlaumeyer using [Chunky](https://github.com/chunky-dev/chunky)
+
+# Licenses
+
+View the list [here](https://github.com/ILikePlayingGames/FancyWarpMenu/wiki/Licenses).

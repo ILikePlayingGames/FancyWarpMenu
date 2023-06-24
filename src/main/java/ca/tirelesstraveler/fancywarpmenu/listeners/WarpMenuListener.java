@@ -1,8 +1,30 @@
-package ca.tirelesstraveler.skyblockwarpmenu.listeners;
+/*
+ * Copyright (c) 2023. TirelessTraveler
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+ * OR OTHER DEALINGS IN THE SOFTWARE.
+ */
 
-import ca.tirelesstraveler.skyblockwarpmenu.SkyBlockWarpMenu;
-import ca.tirelesstraveler.skyblockwarpmenu.data.Settings;
-import ca.tirelesstraveler.skyblockwarpmenu.gui.GuiFancyWarp;
+package ca.tirelesstraveler.fancywarpmenu.listeners;
+
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import net.minecraft.client.Minecraft;
@@ -16,6 +38,7 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -44,12 +67,24 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     }
 
     /**
+     * Open the fancy warp menu when the player presses the open warp menu hotkey while the mod is enabled
+     */
+    @SubscribeEvent
+    public void onKeyboardInput(InputEvent.KeyInputEvent event) {
+        if (Settings.isWarpMenuEnabled()
+                && FancyWarpMenu.getInstance().isPlayerOnSkyblock()
+                && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiFancyWarp());
+        }
+    }
+
+    /**
      * Redirect to the fancy warp menu when the player attempts to access the warp menu with the /warp command
      */
     @SubscribeEvent
     public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
         if (Settings.isWarpMenuEnabled()
-                && SkyBlockWarpMenu.getInstance().isPlayerOnSkyblock()
+                && FancyWarpMenu.getInstance().isPlayerOnSkyblock()
                 && event.gui instanceof GuiChat
                 && (Keyboard.getEventKey() == Keyboard.KEY_RETURN
                 || Keyboard.getEventKey() == Keyboard.KEY_NUMPADENTER)) {
@@ -73,7 +108,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     @SubscribeEvent
     public void onGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (Settings.isWarpMenuEnabled()
-                && SkyBlockWarpMenu.getInstance().isPlayerOnSkyblock()
+                && FancyWarpMenu.getInstance().isPlayerOnSkyblock()
                 && Mouse.getEventButton() == 0
                 && Mouse.getEventButtonState()
                 && event.gui instanceof GuiChest) {
@@ -90,7 +125,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
 
     @SubscribeEvent
     public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equals(SkyBlockWarpMenu.getInstance().getModId())) {
+        if (event.modID.equals(FancyWarpMenu.getInstance().getModId())) {
             Settings.syncConfig(false);
         }
     }

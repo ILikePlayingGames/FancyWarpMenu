@@ -35,7 +35,7 @@
           "gridY": 4
         },
         {
-          "displayName": "Dark\nAuction",
+          "displayName": "Sirius (DA)",
           "commandName": "da",
           "gridX": 16,
           "gridY": 14
@@ -203,13 +203,13 @@
           "gridY": 12
         },
         {
-          "displayName": "Crystal\nHollows",
+          "displayName": "Hollows",
           "commandName": "ch",
           "gridX": 30,
           "gridY": 27
         },
         {
-          "displayName": "Crystal\nNucleus",
+          "displayName": "Nucleus",
           "commandName": "nucleus",
           "gridX": 17,
           "gridY": 30
@@ -287,7 +287,7 @@
           "gridY": 17
         },
         {
-          "displayName": "Trapper's\nDen",
+          "displayName": "Trapper",
           "commandName": "trapper",
           "gridX": 12,
           "gridY": 10
@@ -311,7 +311,7 @@
           "gridY": 27
         },
         {
-          "displayName": "Howling\nCave",
+          "displayName": "Cave",
           "commandName": "howl",
           "gridX": 19,
           "gridY": 19

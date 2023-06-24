@@ -18,4 +18,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "SkyblockWarpMenu"
+rootProject.name = "FancyWarpMenu"

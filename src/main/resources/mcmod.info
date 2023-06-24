@@ -1,16 +1,16 @@
 [
   {
-	"modid": "skyblockwarpmenu",
-	"name": "SkyBlock Warp Menu",
-	"description": "A recreation of the fancy warp menu from SkyblockAddons",
+	"modid": "fancywarpmenu",
+	"name": "Fancy Warp Menu",
+	"description": "A recreation of the fancy warp menu from SkyblockAddons\nLicenses: ",
 	"mcversion": "1.8.9",
 	"url": "https://github.com/ILikePlayingGames/SkyblockWarpMenu",
 	"updateUrl": "",
 	"authorList": [
 	  "TirelessTraveler"
 	],
-	"credits": "Nea89: Forge mod template\n  SBA contributors: fancy warp menu\n  Schlaumeyer: island renders using Chunky",
-	"logoFile": "assets/skyblockwarpmenu/textures/gui/Logo.png",
+	"credits": "\n  Nea89: Forge mod template\n  SBA contributors: fancy warp menu\n  Schlaumeyer: island renders using Chunky",
+	"logoFile": "assets/fancywarpmenu/textures/gui/Logo.png",
 	"screenshots": [],
 	"dependencies": []
   }
