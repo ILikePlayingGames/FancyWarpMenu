@@ -1,0 +1,56 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.java'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**.java'
+  workflow_dispatch:
+    inputs:
+      upload_artifact:
+        description: 'Upload artifact to this run? [yes | no]'
+        required: false
+        default: 'no'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      ORG_GRADLE_PROJECT_buildNumber: ${{ github.run_number }}
+      ORG_GRADLE_PROJECT_runAttempt: ${{ github.run_attempt }}
+      ORG_GRADLE_PROJECT_runningOnCi: ${{ true }}
+      UPLOAD_ARTIFACT_ENABLED: ${{ true }}
+    timeout-minutes: 15
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'gradle'
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build --no-daemon
+    - name: Read Project Version
+      id: read_project_version
+      if: ${{ env.UPLOAD_ARTIFACT_ENABLED || contains(github.event.inputs.upload_artifact, 'yes') }}
+      uses: christian-draeger/read-properties@1.0.1
+      with:
+        path: gradle.properties
+        property: version
+    - name: Upload Artifact
+      if: ${{ env.UPLOAD_ARTIFACT_ENABLED || contains(github.event.inputs.upload_artifact, 'yes') }}
+      env:
+        project_version: ${{ steps.read_project_version.outputs.value }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: FancyWarpMenu-${{ env.project_version }}+${{ env.ORG_GRADLE_PROJECT_buildNumber }}
+        path: build/libs/*
