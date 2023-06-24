@@ -35,6 +35,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ReportedException;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -52,10 +53,17 @@ import java.lang.reflect.Field;
  */
 @ChannelHandler.Sharable
 public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
+    private static final Minecraft mc;
+    private static final FancyWarpMenu modInstance;
     private static final Field chatInputField;
     private static final MethodHandle inputFieldGetterHandle;
 
+    private static GuiFancyWarp warpScreen;
+
     static {
+        mc = Minecraft.getMinecraft();
+        modInstance = FancyWarpMenu.getInstance();
+        
         try {
             String inputFieldName = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") ? "inputField" : "field_146415_a";
             chatInputField = GuiChat.class.getDeclaredField(inputFieldName);
@@ -66,15 +74,30 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
         }
     }
 
+    @SubscribeEvent
+    public void onChatMessageReceived(ClientChatReceivedEvent event) {
+        // type 0 is a standard chat message
+        if (mc.currentScreen == warpScreen && event.type == 0) {
+            String unformattedText = event.message.getUnformattedText();
+
+            if (modInstance.getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
+                mc.displayGuiScreen(null);
+            } else if (modInstance.getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
+                warpScreen.onWarpFail(modInstance.getWarpMessages().getWarpFailMessages().get(unformattedText));
+            }
+        }
+    }
+
     /**
      * Open the fancy warp menu when the player presses the open warp menu hotkey while the mod is enabled
      */
     @SubscribeEvent
     public void onKeyboardInput(InputEvent.KeyInputEvent event) {
         if (Settings.isWarpMenuEnabled()
-                && FancyWarpMenu.getInstance().isPlayerOnSkyblock()
+                && modInstance.isPlayerOnSkyblock()
                 && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiFancyWarp());
+            warpScreen = new GuiFancyWarp();
+            mc.displayGuiScreen(warpScreen);
         }
     }
 
@@ -84,7 +107,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     @SubscribeEvent
     public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
         if (Settings.isWarpMenuEnabled()
-                && FancyWarpMenu.getInstance().isPlayerOnSkyblock()
+                && modInstance.isPlayerOnSkyblock()
                 && event.gui instanceof GuiChat
                 && (Keyboard.getEventKey() == Keyboard.KEY_RETURN
                 || Keyboard.getEventKey() == Keyboard.KEY_NUMPADENTER)) {
@@ -93,7 +116,8 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 String chatMessage = textField.getText().trim();
 
                 if (chatMessage.trim().equals("/warp")) {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiFancyWarp());
+                    warpScreen = new GuiFancyWarp();
+                    mc.displayGuiScreen(warpScreen);
                     event.setCanceled(true);
                 }
             } catch (Throwable e) {
@@ -108,7 +132,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     @SubscribeEvent
     public void onGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (Settings.isWarpMenuEnabled()
-                && FancyWarpMenu.getInstance().isPlayerOnSkyblock()
+                && modInstance.isPlayerOnSkyblock()
                 && Mouse.getEventButton() == 0
                 && Mouse.getEventButtonState()
                 && event.gui instanceof GuiChest) {
@@ -117,7 +141,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 if (guiChest.inventorySlots instanceof ContainerChest
                         && ((ContainerChest)guiChest.inventorySlots).getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
                         && guiChest.getSlotUnderMouse().getSlotIndex() == 47) {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiFancyWarp());
+                    mc.displayGuiScreen(new GuiFancyWarp());
                     event.setCanceled(true);
                 }
         }
@@ -125,7 +149,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
 
     @SubscribeEvent
     public void onConfigChange(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equals(FancyWarpMenu.getInstance().getModId())) {
+        if (event.modID.equals(modInstance.getModId())) {
             Settings.syncConfig(false);
         }
     }

@@ -23,24 +23,23 @@
 package ca.tirelesstraveler.fancywarpmenu.data;
 
 import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("unused")
-public class WarpConfiguration {
-    private List<Island> islandList;
-    private WarpIcon warpIcon;
-    private WarpMessages warpMessages;
+public class WarpMessages {
+    private List<String> warpSuccessMessages;
+    /** key: chat message, value: translation key of message to show in warp menu */
+    private Map<String, String> warpFailMessages;
 
-    private WarpConfiguration(){}
+    private WarpMessages() {
 
-    public List<Island> getIslandList() {
-        return islandList;
     }
 
-    public WarpIcon getWarpIcon() {
-        return warpIcon;
+    public List<String> getWarpSuccessMessages() {
+        return warpSuccessMessages;
     }
 
-    public WarpMessages getWarpMessages() {
-        return warpMessages;
+    public Map<String, String> getWarpFailMessages() {
+        return warpFailMessages;
     }
 }

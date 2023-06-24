@@ -343,6 +343,15 @@
       ]
     }
   ],
+  "warpMessages": {
+    "warpSuccessMessages": [
+      "Warping..."
+    ],
+    "warpFailMessages": {
+      "Unknown destination! Check the Fast Travel menu to view options!": "fancywarpmenu.errors.unknownDestination",
+      "You haven't unlocked this fast travel destination!": "fancywarpmenu.errors.notUnlocked"
+    }
+  },
   "warpIcon": {
     "texturePath": "textures/gui/Portal.png",
     "widthPercentage": 0.02,

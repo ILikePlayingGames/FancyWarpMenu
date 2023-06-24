@@ -5,3 +5,6 @@ fancywarpmenu.config.showIslandLabels=Show Island Names
 fancywarpmenu.key.openMenu=Open Warp Menu
 
 fancywarpmenu.key.categories.fancyWarpMenu=Fancy Warp Menu
+
+fancywarpmenu.errors.notUnlocked=Not Unlocked
+fancywarpmenu.errors.unknownDestination=Unknown Destination

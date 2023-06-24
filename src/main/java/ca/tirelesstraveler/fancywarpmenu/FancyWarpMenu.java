@@ -25,6 +25,7 @@ package ca.tirelesstraveler.fancywarpmenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
+import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.listeners.SkyBlockJoinListener;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
@@ -131,6 +132,10 @@ public class FancyWarpMenu {
 
     public static KeyBinding getKeyBindingOpenWarpMenu() {
         return keyBindingOpenWarpMenu;
+    }
+
+    public WarpMessages getWarpMessages() {
+        return  warpConfig.getWarpMessages();
     }
 
     public boolean isPlayerOnSkyblock() {

@@ -29,18 +29,23 @@ import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.model.animation.Animation;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GuiFancyWarp extends GuiScreen {
     private ScaledResolution res;
     private float gridUnitWidth;
     private float gridUnitHeight;
     private boolean showDebugOverlay;
+    private float warpFailTooltipExpiryTime;
+    private String warpFailMessage;
 
     @Override
     public void initGui() {
@@ -67,6 +72,11 @@ public class GuiFancyWarp extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
+
+        // Draw warp fail tooltip
+        if (Animation.getWorldTime(mc.theWorld) <= warpFailTooltipExpiryTime && warpFailMessage != null) {
+            drawHoveringText(Collections.singletonList(warpFailMessage), mouseX, mouseY);
+        }
 
         if (Settings.isDebugModeEnabled() && showDebugOverlay) {
             ArrayList<String> debugStrings = new ArrayList<>();
@@ -117,6 +127,16 @@ public class GuiFancyWarp extends GuiScreen {
                 drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY);
             }
         }
+    }
+
+    /**
+     * Called when a warp attempt fails
+     *
+     * @param failMessageKey the translation key of the failure message to display on the Gui
+     */
+    public void onWarpFail(String failMessageKey) {
+        warpFailTooltipExpiryTime = Animation.getWorldTime(mc.theWorld) + 1.5F;
+        warpFailMessage = EnumChatFormatting.RED + I18n.format(failMessageKey);
     }
 
     @Override
