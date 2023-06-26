@@ -47,19 +47,16 @@ jobs:
         properties: version
     - name: Upload Artifact
       if: ${{ env.UPLOAD_ARTIFACT_ENABLED || contains(github.event.inputs.upload_artifact, 'yes') }}
-      env:
-        project_version: ${{ steps.read_project_version.outputs.version }}
       uses: actions/upload-artifact@v2
       with:
-        name: FancyWarpMenu-${{ env.project_version }}+${{ env.ORG_GRADLE_PROJECT_buildNumber }}
+        name: Fancy Warp Menu
         path: build/libs/*
     - name: Post Build Information to Discord
       if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'build-to-discord'}}
       uses: tsickert/discord-webhook@v5.3.0
-      env:
-        project_version: ${{ steps.read_project_version.outputs.version }}
       with:
         webhook-url: secrets.BUILD_WEBHOOK_URL
-        filename: build/libs/FancyWarpMenu-${{ env.project_version }}.jar
+        embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
+        embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         
         
