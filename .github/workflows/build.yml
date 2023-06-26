@@ -55,7 +55,7 @@ jobs:
         name: FancyWarpMenu-${{ env.project_version }}+${{ env.ORG_GRADLE_PROJECT_buildNumber }}
         path: build/libs/*
     - name: Post Build Information to Discord
-      if: ${{ github.event_name == 'push' && github.ref_name == 'main'}}
+      if: ${{ github.event_name == 'push' && github.ref_name == 'build-to-discord'}}
       uses: tsickert/discord-webhook@v5.3.0
       env:
         project_version: ${{ steps.read_project_version.outputs.value }}
