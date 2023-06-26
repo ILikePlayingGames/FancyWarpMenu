@@ -4,8 +4,9 @@ on:
   push:
     branches:
       - main
-    paths:
-      - '**.java'
+      - build-to-discord
+#    paths:
+#      - '**.java'
   pull_request:
     branches:
       - main
@@ -52,11 +53,11 @@ jobs:
         name: Fancy Warp Menu
         path: build/libs/*
     - name: Post Build Information to Discord
-      if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && github.ref_name == 'build-to-discord'}}
+      if: ${{ github.event_name == 'push' && github.ref_name == 'build-to-discord'}}
       uses: tsickert/discord-webhook@v5.3.0
       with:
         webhook-url: secrets.BUILD_WEBHOOK_URL
         embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
         embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
-        
-        
+        embed-description: ${{ github.event.head_commit.message }}
+        filename: build/libs/FancyWarpMenu-${{ github.steps.read_project_version.outputs.version }}.jar
