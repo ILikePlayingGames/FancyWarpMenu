@@ -60,4 +60,4 @@ jobs:
         embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
         embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
         embed-description: ${{ github.event.head_commit.message }}
-        filename: build/libs/FancyWarpMenu-${{ github.steps.read_project_version.outputs.version }}.jar
+        filename: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.jar
