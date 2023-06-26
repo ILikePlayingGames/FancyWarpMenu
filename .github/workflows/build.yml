@@ -57,6 +57,6 @@ jobs:
       with:
         webhook-url: secrets.BUILD_WEBHOOK_URL
         embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
-        embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
         
         
