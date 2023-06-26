@@ -68,7 +68,7 @@ public class GuiWarpButton extends GuiButtonExt {
             GlStateManager.disableBlend();
             GlStateManager.resetColor();
 
-            drawDisplayString(1, xPosition + width / 2 + 1, yPosition + height);
+            drawDisplayString(xPosition + width / 2 + 1, yPosition + height);
         }
     }
 

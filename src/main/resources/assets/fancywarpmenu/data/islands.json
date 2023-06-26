@@ -32,7 +32,7 @@
           "displayName": "Dungeons",
           "commandName": "dungeons",
           "gridX": 20,
-          "gridY": 4
+          "gridY": 2
         },
         {
           "displayName": "Sirius (DA)",
@@ -68,13 +68,13 @@
           "displayName": "Skull",
           "commandName": "skull",
           "gridX": 22,
-          "gridY": 6
+          "gridY": 4
         },
         {
           "displayName": "Tomb",
           "commandName": "tomb",
           "gridX": 28,
-          "gridY": 6
+          "gridY": 8
         },
         {
           "displayName": "Wasteland",
@@ -85,14 +85,14 @@
         {
           "displayName": "Dragontail",
           "commandName": "dragontail",
-          "gridX": 14,
+          "gridX": 11,
           "gridY": 2
         },
         {
           "displayName": "Scarleton",
           "commandName": "scarleton",
-          "gridX": 34,
-          "gridY": 12
+          "gridX": 28,
+          "gridY": 15
         }
       ]
     },
@@ -227,10 +227,10 @@
       "textureYPosition": 0,
       "warpList": [
         {
-          "displayName": "Spawn",
+          "displayName": "",
           "commandName": "home",
-          "gridX": 7,
-          "gridY": 7
+          "gridX": 3,
+          "gridY": 3
         }
       ]
     },
@@ -245,7 +245,7 @@
       "textureYPosition": 65,
       "warpList": [
         {
-          "displayName": "Spawn",
+          "displayName": "",
           "commandName": "garden",
           "gridX": 10,
           "gridY": 8
@@ -256,7 +256,7 @@
       "name": "The Barn",
       "texturePath": "textures/gui/islands/The Barn.png",
       "gridX": 4,
-      "gridY": 6,
+      "gridY": 7,
       "widthPercentage": 0.15,
       "heightPercentage": 0.96516007532957,
       "textureXPosition": 0,
@@ -336,7 +336,7 @@
       "warpList": [
         {
           "displayName": "Spawn",
-          "commandName": "savethejerrys",
+          "commandName": "/savethejerrys",
           "gridX": 22,
           "gridY": 14
         }
@@ -349,7 +349,8 @@
     ],
     "warpFailMessages": {
       "Unknown destination! Check the Fast Travel menu to view options!": "fancywarpmenu.errors.unknownDestination",
-      "You haven't unlocked this fast travel destination!": "fancywarpmenu.errors.notUnlocked"
+      "You haven't unlocked this fast travel destination!": "fancywarpmenu.errors.notUnlocked",
+      "Couldn't warp you! Try again later. (NO_DESTINATION_FOUND)": "fancywarpmenu.errors.islandClosed"
     }
   },
   "warpIcon": {

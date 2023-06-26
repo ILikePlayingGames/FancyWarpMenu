@@ -28,6 +28,7 @@ import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.EnumChatFormatting;
 
 public class GuiIslandButton extends GuiButtonExt {
     private final Island island;
@@ -43,7 +44,7 @@ public class GuiIslandButton extends GuiButtonExt {
         width = island.getWidth();
         height = island.getHeight();
         GRID_UNIT_WIDTH = width / Warp.GRID_UNIT_WIDTH_FACTOR;
-        displayString = island.getName();
+        displayString = EnumChatFormatting.GREEN + island.getName();
     }
 
     @Override
@@ -62,7 +63,7 @@ public class GuiIslandButton extends GuiButtonExt {
             GlStateManager.resetColor();
 
             if (Settings.shouldShowIslandLabels()) {
-                drawDisplayString(1, xPosition + width / 2 + 1, yPosition + 1);
+                drawDisplayString( xPosition + width / 2 + 1, yPosition + height + 1);
             }
         }
     }

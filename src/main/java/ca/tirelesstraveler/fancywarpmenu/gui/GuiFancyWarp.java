@@ -26,6 +26,7 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -44,7 +45,7 @@ public class GuiFancyWarp extends GuiScreen {
     private float gridUnitWidth;
     private float gridUnitHeight;
     private boolean showDebugOverlay;
-    private float warpFailTooltipExpiryTime;
+    private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
 
     @Override
@@ -74,7 +75,7 @@ public class GuiFancyWarp extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         // Draw warp fail tooltip
-        if (Animation.getWorldTime(mc.theWorld) <= warpFailTooltipExpiryTime && warpFailMessage != null) {
+        if (Minecraft.getSystemTime() <= warpFailTooltipExpiryTime && warpFailMessage != null) {
             drawHoveringText(Collections.singletonList(warpFailMessage), mouseX, mouseY);
         }
 
@@ -135,7 +136,7 @@ public class GuiFancyWarp extends GuiScreen {
      * @param failMessageKey the translation key of the failure message to display on the Gui
      */
     public void onWarpFail(String failMessageKey) {
-        warpFailTooltipExpiryTime = Animation.getWorldTime(mc.theWorld) + 1.5F;
+        warpFailTooltipExpiryTime = Minecraft.getSystemTime() + 2000L;
         warpFailMessage = EnumChatFormatting.RED + I18n.format(failMessageKey);
     }
 

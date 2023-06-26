@@ -66,14 +66,24 @@ public abstract class GuiButtonExt extends GuiButton {
     /**
      * Draw the button's display string (label).
      */
-    public void drawDisplayString(float scale, int x, int y) {
+    public void drawDisplayString(int x, int y) {
+        // White
+        drawDisplayString(x, y, 14737632);
+    }
+
+    /**
+     * Draw the button's display string (label).
+     *
+     * @param x x-coordinate to center the string on
+     * @param y y-coordinate to center the string on
+     * @param rgb a colour in the integer rgb format produced by {@link Color#getRGB()}
+     */
+    public void drawDisplayString(int x, int y, int rgb) {
         String[] lines = displayString.split("\n", 3);
-        int scaledX = (int) (x / scale);
-        int scaledY = (int) (y / scale);
 
         for (int i = 0; i < lines.length; i++) {
             drawCenteredString(Minecraft.getMinecraft().fontRendererObj, lines[i],
-                    scaledX, scaledY + (int) ((10 * i) / scale), 14737632);
+                    x, y + (10 * i), rgb);
         }
     }
 }
