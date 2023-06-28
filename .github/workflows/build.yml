@@ -31,6 +31,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        fetch-depth: 20
     - uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
@@ -53,9 +55,12 @@ jobs:
       with:
         name: Fancy Warp Menu
         path: build/libs/*
+    - name: Get Pushed Commit Messages
+      if: ${{ github.event_name == 'push' && github.ref_name == 'main' && github.event.before != github.event.after }}
+      run: echo "commit_log=$(git log -n 20 --format=format:"%aD%n%B" ${{ github.event.before }}..${{ github.event.after }})" >> "$GITHUB_ENV"
     - name: Get Head Commit Message
-      id: get_head_commit_message
-      run: echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=format:"%B")" >> "$GITHUB_OUTPUT"
+      if: ${{ env.commit_log == '' }}
+      run: echo "commit_log=$(git show -s --format=format:"%B")" >> "$GITHUB_ENV"
     - name: Post Build Information to Discord
       if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' && contains(github.event.inputs.upload_artifact, 'yes') }}
       uses: tsickert/discord-webhook@v5.3.0
@@ -63,5 +68,5 @@ jobs:
         webhook-url: ${{ secrets.BUILD_WEBHOOK_URL }}
         embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
         embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
-        embed-description: ${{ steps.get_head_commit_message.outputs.HEAD_COMMIT_MESSAGE }}
+        embed-description: ${{ env.commit_log }}
         filename: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar
