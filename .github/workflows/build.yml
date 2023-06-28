@@ -63,7 +63,7 @@ jobs:
         echo "$(git log -n 20 --format=format:"%aD%n%B" ${{ github.event.before }}..${{ github.event.after }})" >> "$GITHUB_ENV"
         echo "$EOF" >> "$GITHUB_ENV"
     - name: Get Head Commit Message
-      if: ${{ env.commit_log == '' }}
+      if: ${{ env.COMMIT_LOG == '' }}
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "COMMIT_LOG<<$EOF" >> "$GITHUB_ENV"
