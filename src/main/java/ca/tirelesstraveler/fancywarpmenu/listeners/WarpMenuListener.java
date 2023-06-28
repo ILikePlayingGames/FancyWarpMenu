@@ -113,9 +113,9 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 || Keyboard.getEventKey() == Keyboard.KEY_NUMPADENTER)) {
             try {
                 GuiTextField textField = (GuiTextField) inputFieldGetterHandle.invokeExact((GuiChat) event.gui);
-                String chatMessage = textField.getText().trim();
+                String chatMessage = textField.getText().trim().toLowerCase();
 
-                if (chatMessage.trim().equals("/warp")) {
+                if (chatMessage.equals("/warp")) {
                     warpScreen = new GuiFancyWarp();
                     mc.displayGuiScreen(warpScreen);
                     event.setCanceled(true);
