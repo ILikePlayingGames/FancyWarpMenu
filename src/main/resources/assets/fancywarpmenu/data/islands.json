@@ -31,8 +31,14 @@
         {
           "displayName": "Dungeons",
           "commandName": "dungeons",
-          "gridX": 20,
-          "gridY": 2
+          "gridX": 31,
+          "gridY": 11
+        },
+        {
+          "displayName": "Wizard",
+          "commandName": "wizard",
+          "gridX": 21,
+          "gridY": 3
         },
         {
           "displayName": "Sirius (DA)",
