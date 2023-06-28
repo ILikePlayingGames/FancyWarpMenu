@@ -63,6 +63,14 @@ tasks.withType(Jar::class) {
 }
 
 tasks.processResources {
+    if (project.hasProperty("runningOnCi")) {
+        if (project.hasProperty("buildNumber")) {
+            project.version = "${project.version}.${project.properties["buildNumber"]}"
+        } else {
+            throw RuntimeException("Property project.buildNumber missing on CI build")
+        }
+    }
+
     filesMatching("version.properties") {
         expand(mapOf("version" to project.version))
     }
