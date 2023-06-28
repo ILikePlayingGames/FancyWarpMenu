@@ -72,7 +72,7 @@
         },
         {
           "displayName": "Tomb",
-          "commandName": "tomb",
+          "commandName": "smold",
           "gridX": 28,
           "gridY": 8
         },
