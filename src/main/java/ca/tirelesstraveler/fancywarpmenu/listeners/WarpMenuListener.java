@@ -35,6 +35,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -139,11 +140,18 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 && event.gui instanceof GuiChest) {
                 GuiChest guiChest = (GuiChest) event.gui;
 
-                if (guiChest.inventorySlots instanceof ContainerChest
-                        && ((ContainerChest)guiChest.inventorySlots).getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
-                        && guiChest.getSlotUnderMouse().getSlotIndex() == 47) {
-                    mc.displayGuiScreen(new GuiFancyWarp());
-                    event.setCanceled(true);
+                if (guiChest.inventorySlots instanceof ContainerChest) {
+                    ContainerChest container = (ContainerChest) guiChest.inventorySlots;
+
+                    if (container.getLowerChestInventory() != null
+                            && container.getLowerChestInventory().getDisplayName() != null
+                            && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
+                            && guiChest.getSlotUnderMouse().getSlotIndex() == 47
+                            // Rift SkyBlock Menu has a return to hub button in slot 47
+                            && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
+                        mc.displayGuiScreen(new GuiFancyWarp());
+                        event.setCanceled(true);
+                    }
                 }
         }
     }
