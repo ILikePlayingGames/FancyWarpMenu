@@ -48,7 +48,7 @@ jobs:
         properties: version
     - name: Upload Artifact
       if: ${{ env.UPLOAD_ARTIFACT_ENABLED || contains(github.event.inputs.upload_artifact, 'yes') }}
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: Fancy Warp Menu
         path: build/libs/*
