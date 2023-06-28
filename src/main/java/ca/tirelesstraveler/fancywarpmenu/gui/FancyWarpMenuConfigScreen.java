@@ -32,6 +32,4 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
     {
         super(parent, Settings.getConfigElements(), "fancywarpmenu", "main", false, false, I18n.format("fancywarpmenu.config.title"));
     }
-
-
 }

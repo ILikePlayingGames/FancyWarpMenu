@@ -40,7 +40,9 @@ public class Settings {
     private static boolean debugModeEnabled;
 
     public static List<IConfigElement> getConfigElements() {
-        return new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
+        List<IConfigElement> configElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
+        configElements.addAll(new ConfigElement(config.getCategory(CATEGORY_DEBUG)).getChildElements());
+        return  configElements;
     }
 
     public static void setConfig(Configuration config) {
@@ -65,9 +67,13 @@ public class Settings {
         showIslandLabels = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_DEBUG, "debugModeEnabled", false);
-        prop.setShowInGui(false);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
         prop.setRequiresWorldRestart(false);
-        debugModeEnabled = prop.getBoolean(false) || Boolean.getBoolean("fancywarpmenu.debugRendering");
+        debugModeEnabled = prop.getBoolean(false);
+
+        if (!debugModeEnabled && Boolean.getBoolean("fancywarpmenu.debugRendering")) {
+            prop.set(true);
+        }
 
         if (config.hasChanged()) {
             config.save();

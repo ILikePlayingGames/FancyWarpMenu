@@ -1,6 +1,7 @@
 fancywarpmenu.config.title=Fancy Warp Menu Settings
 fancywarpmenu.config.warpMenuEnabled=Enable Fancy Warp Menu
 fancywarpmenu.config.showIslandLabels=Show Island Names
+fancywarpmenu.config.developerModeEnabled=Enable Developer Mode
 
 fancywarpmenu.key.openMenu=Open Warp Menu
 
