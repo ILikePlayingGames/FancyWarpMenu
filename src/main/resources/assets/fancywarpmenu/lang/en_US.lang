@@ -9,4 +9,5 @@ fancywarpmenu.key.categories.fancyWarpMenu=Fancy Warp Menu
 
 fancywarpmenu.errors.notUnlocked=Not Unlocked
 fancywarpmenu.errors.unknownDestination=Unknown Destination
-fancywarpmenu.errors.islandClosed=Island Closed
+fancywarpmenu.errors.noDestination=No Destination Found
+fancywarpmenu.errors.notVisited=Visit Location to Unlock Warp

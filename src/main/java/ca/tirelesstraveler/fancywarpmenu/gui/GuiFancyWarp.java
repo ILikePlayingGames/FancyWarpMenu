@@ -32,7 +32,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.client.model.animation.Animation;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -41,10 +40,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class GuiFancyWarp extends GuiScreen {
+    /** Delay in ms before the player can warp again if the last warp attempt failed */
+    private static final long WARP_FAIL_COOL_DOWN = 500L;
+    /** The amount of time in ms that the error message remains on-screen after a failed warp attempt */
+    private static final long WARP_FAIL_TOOLTIP_DISPLAY_TIME = 2000L;
+
     private ScaledResolution res;
     private float gridUnitWidth;
     private float gridUnitHeight;
     private boolean showDebugOverlay;
+    private long warpFailCoolDownExpiryTime;
     private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
 
@@ -136,13 +141,16 @@ public class GuiFancyWarp extends GuiScreen {
      * @param failMessageKey the translation key of the failure message to display on the Gui
      */
     public void onWarpFail(String failMessageKey) {
-        warpFailTooltipExpiryTime = Minecraft.getSystemTime() + 2000L;
+        long currentTime = Minecraft.getSystemTime();
+        warpFailCoolDownExpiryTime = currentTime + WARP_FAIL_COOL_DOWN;
+        warpFailTooltipExpiryTime = currentTime + WARP_FAIL_TOOLTIP_DISPLAY_TIME;
         warpFailMessage = EnumChatFormatting.RED + I18n.format(failMessageKey);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) {
-        if (button instanceof GuiWarpButton) {
+        // Block repeat clicks if the last warp failed
+        if (button instanceof GuiWarpButton && Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
             sendChatMessage(((GuiWarpButton)button).getWarpCommand());
         }
     }
