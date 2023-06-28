@@ -6,11 +6,13 @@ on:
       - main
     paths:
       - '**.java'
+      - 'src/main/resources/**'
   pull_request:
     branches:
       - main
     paths:
       - '**.java'
+      - 'src/main/resources/**'
   workflow_dispatch:
     inputs:
       upload_artifact:
