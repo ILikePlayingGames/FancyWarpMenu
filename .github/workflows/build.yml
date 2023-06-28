@@ -67,7 +67,7 @@ jobs:
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "COMMIT_LOG<<$EOF" >> "$GITHUB_ENV"
-        echo "commit_log=$(git show -s --format=format:"%B")" >> "$GITHUB_ENV"
+        echo "$(git show -s --format=format:"%B")" >> "$GITHUB_ENV"
         echo "$EOF" >> "$GITHUB_ENV"
     - name: Post Build Information to Discord
       if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' && contains(github.event.inputs.upload_artifact, 'yes') }}
