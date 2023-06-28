@@ -53,7 +53,7 @@ jobs:
         path: build/libs/*
     - name: Get Head Commit Message
       id: get_head_commit_message
-      run: echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=%s)" >> "$GITHUB_OUTPUT"
+      run: echo "HEAD_COMMIT_MESSAGE=$(git show -s --format=format:"%B")" >> "$GITHUB_OUTPUT"
     - name: Post Build Information to Discord
       if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' && contains(github.event.inputs.upload_artifact, 'yes') }}
       uses: tsickert/discord-webhook@v5.3.0
