@@ -56,7 +56,7 @@ jobs:
         name: Fancy Warp Menu
         path: build/libs/*
     - name: Get Pushed Commit Messages
-      if: ${{ github.event_name == 'push' && github.ref_name == 'main' && github.event.before != github.event.after }}
+      if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
       run: |
         EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
         echo "COMMIT_LOG<<$EOF" >> "$GITHUB_ENV"
