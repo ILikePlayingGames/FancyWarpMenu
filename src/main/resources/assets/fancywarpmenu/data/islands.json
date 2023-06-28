@@ -184,7 +184,7 @@
       "name": "Deep Caverns",
       "texturePath": "textures/gui/islands/Deep Caverns.png",
       "gridX": 25,
-      "gridY": 12,
+      "gridY": 11,
       "widthPercentage": 0.2,
       "heightPercentage": 1.15434782608696,
       "textureXPosition": 0,
@@ -194,13 +194,13 @@
           "displayName": "Spawn",
           "commandName": "deep",
           "gridX": 6,
-          "gridY": 25
+          "gridY": 27
         },
         {
           "displayName": "Dwarven\nMines",
           "commandName": "dwarves",
           "gridX": 32,
-          "gridY": 14
+          "gridY": 12
         },
         {
           "displayName": "Forge",
@@ -217,8 +217,8 @@
         {
           "displayName": "Nucleus",
           "commandName": "nucleus",
-          "gridX": 17,
-          "gridY": 30
+          "gridX": 18,
+          "gridY": 21
         }
       ]
     },

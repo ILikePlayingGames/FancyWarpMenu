@@ -115,9 +115,10 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 GuiTextField textField = (GuiTextField) inputFieldGetterHandle.invokeExact((GuiChat) event.gui);
                 String chatMessage = textField.getText().trim();
 
-                if (chatMessage.trim().equals("/warp")) {
+                if (chatMessage.equals("/warp")) {
                     warpScreen = new GuiFancyWarp();
                     mc.displayGuiScreen(warpScreen);
+                    mc.ingameGUI.getChatGUI().addToSentMessages(chatMessage);
                     event.setCanceled(true);
                 }
             } catch (Throwable e) {
