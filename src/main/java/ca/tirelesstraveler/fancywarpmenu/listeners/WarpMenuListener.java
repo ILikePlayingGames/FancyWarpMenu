@@ -124,8 +124,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                     event.setCanceled(true);
                 } else {
                     if (Settings.isRemindToUse()) {
-                        if (chatMessage.startsWith("/warp ") || chatMessage.equals("/is") || chatMessage.equals("/hub")) {
-//                            event.setCanceled(true);
+                        if (isWarpingCommand(chatMessage)) {
                             mc.thePlayer.addChatMessage(new ChatComponentText("§cReminder to use Fancy Warp Menu instead!"));
                         }
                     }
@@ -134,6 +133,21 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
             } catch (Throwable e) {
                 throw new ReportedException(CrashReport.makeCrashReport(e, "Failed to get chat message from GuiChat"));
             }
+        }
+    }
+
+    private static boolean isWarpingCommand(String chatMessage) {
+        if (chatMessage.startsWith("/warp ")) return true;
+
+        switch (chatMessage) {
+            case "/is":
+            case "/hub":
+            case "/warpforge":
+            case "/savethejerrys":
+                return true;
+
+            default:
+                return false;
         }
     }
 
