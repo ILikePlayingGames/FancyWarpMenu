@@ -95,7 +95,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     @SubscribeEvent
     public void onKeyboardInput(InputEvent.KeyInputEvent event) {
         if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyblock()
+                && modInstance.isPlayerOnSkyBlock()
                 && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
             warpScreen = new GuiFancyWarp();
             mc.displayGuiScreen(warpScreen);
@@ -108,7 +108,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     @SubscribeEvent
     public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
         if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyblock()
+                && modInstance.isPlayerOnSkyBlock()
                 && event.gui instanceof GuiChat
                 && (Keyboard.getEventKey() == Keyboard.KEY_RETURN
                 || Keyboard.getEventKey() == Keyboard.KEY_NUMPADENTER)) {
@@ -134,7 +134,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     @SubscribeEvent
     public void onGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) {
         if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyblock()
+                && modInstance.isPlayerOnSkyBlock()
                 && Mouse.getEventButton() == 0
                 && Mouse.getEventButtonState()
                 && event.gui instanceof GuiChest) {

@@ -22,10 +22,14 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data;
 
+import com.google.gson.Gson;
+
 import java.util.List;
 
 @SuppressWarnings("unused")
 public class WarpConfiguration {
+    static Gson gson = new Gson();
+
     private List<Island> islandList;
     private WarpIcon warpIcon;
     private WarpMessages warpMessages;
@@ -42,5 +46,23 @@ public class WarpConfiguration {
 
     public WarpMessages getWarpMessages() {
         return warpMessages;
+    }
+
+    public static void validateWarpConfiguration(WarpConfiguration warpConfiguration) throws IllegalArgumentException, NullPointerException {
+        if (warpConfiguration == null) {
+            throw new NullPointerException("Warp configuration cannot be null");
+        }
+
+        if (warpConfiguration.islandList == null || warpConfiguration.islandList.isEmpty()) {
+            throw new IllegalArgumentException("Island list cannot be empty");
+        }
+
+        for (Island island:
+                warpConfiguration.getIslandList()) {
+            Island.validateIsland(island);
+        }
+
+        WarpIcon.validateWarpIcon(warpConfiguration.getWarpIcon());
+        WarpMessages.validateWarpMessages(warpConfiguration.getWarpMessages());
     }
 }

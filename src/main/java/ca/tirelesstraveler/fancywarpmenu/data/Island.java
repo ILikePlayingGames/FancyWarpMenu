@@ -23,9 +23,11 @@
 package ca.tirelesstraveler.fancywarpmenu.data;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -90,8 +92,60 @@ public class Island {
         textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), texturePath);
     }
 
+    public String toString() {
+        return WarpConfiguration.gson.toJson(this);
+    }
+
     private void calculateAndSetDimensions(ScaledResolution res) {
         width = (int) (res.getScaledWidth() * widthPercentage);
         height = (int) (width * heightPercentage);
+    }
+
+    public static void validateIsland(Island island) throws IllegalArgumentException, NullPointerException {
+        if (island == null) {
+            throw new NullPointerException("Island cannot be null");
+        }
+
+        String name = island.name;
+
+        if (name == null) {
+            throw new IllegalArgumentException(String.format("The following island lacks a name: %s", island));
+        }
+
+        if (island.texturePath == null) {
+            throw new NullPointerException("Island texture path cannot be null");
+        }
+
+        ResourceLocation textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), island.texturePath);
+        try {
+            Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Island %s texture not found at %s", name, textureLocation));
+        }
+
+        if (island.gridX < 0 || island.gridX > GRID_UNIT_WIDTH_FACTOR) {
+            throw new IllegalArgumentException(String.format("Island %s gridX is outside screen", name));
+        }
+
+        if (island.gridY < 0 || island.gridY > GRID_UNIT_HEIGHT_FACTOR) {
+            throw new IllegalArgumentException(String.format("Island %s gridY is outside screen", name));
+        }
+
+        if (island.widthPercentage < 0 || island.widthPercentage > 1) {
+            throw new IllegalArgumentException(String.format("Island %s widthPercentage must be between 0 and 1", name));
+        }
+
+        if (island.heightPercentage < 0) {
+            throw new IllegalArgumentException(String.format("Island %s heightPercentage must be zero or greater", name));
+        }
+
+        if (island.warpList == null || island.warpList.isEmpty()) {
+            throw new IllegalArgumentException(String.format("Island %s has no warps", name));
+        }
+
+        for (Warp warp:
+                island.warpList) {
+            Warp.validateWarp(warp);
+        }
     }
 }

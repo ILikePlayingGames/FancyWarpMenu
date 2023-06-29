@@ -23,18 +23,21 @@
 package ca.tirelesstraveler.fancywarpmenu;
 
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,14 +48,18 @@ public class WarpConfigLoader {
     private static final ResourceLocation WARP_CONFIG_LOCATION = new ResourceLocation("fancywarpmenu",
             "data/islands.json");
     private static final Gson gson = new Gson();
+    private static final Logger logger = LogManager.getLogger();
 
     public static WarpConfiguration loadIslands() {
+        boolean modLoadingComplete = Loader.instance().isInState(LoaderState.AVAILABLE);
+
         try {
             IResource islandResource = Minecraft.getMinecraft().getResourceManager().getResource(WARP_CONFIG_LOCATION);
 
             try (InputStream stream = islandResource.getInputStream();
                  JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(stream)))){
                  WarpConfiguration warpConfig = gson.fromJson(reader, WarpConfiguration.class);
+                 WarpConfiguration.validateWarpConfiguration(warpConfig);
 
                 for (Island island:
                      warpConfig.getIslandList()) {
@@ -62,12 +69,17 @@ public class WarpConfigLoader {
                  warpConfig.getWarpIcon().init();
                  Warp.setWarpIcon(warpConfig.getWarpIcon());
                  return warpConfig;
-            } catch (JsonParseException e) {
-                if (Settings.isDebugModeEnabled()) {
-                    LogManager.getLogger().error(e.getMessage());
+            } catch (RuntimeException e) {
+                if (modLoadingComplete) {
+                    logger.error(String.format("Warp config loading failed: %s", e.getMessage()), e);
+
+                    if (Minecraft.getMinecraft().ingameGUI != null) {
+                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + e.getMessage()));
+                    }
+
                     return null;
                 } else {
-                    throw new ReportedException(new CrashReport("Warp configuration load fail: " + e.getMessage(), e));
+                    throw new ReportedException(new CrashReport(String.format("Warp config loading failed: %s", e.getMessage()), e));
                 }
             }
         } catch (IOException e) {

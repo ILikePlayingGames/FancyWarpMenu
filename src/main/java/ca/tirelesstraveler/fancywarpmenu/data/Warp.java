@@ -77,6 +77,10 @@ public class Warp {
         return gridY;
     }
 
+    public String toString() {
+        return WarpConfiguration.gson.toJson(this);
+    }
+
     /**
      * Initializes width and height for all warp buttons
      */
@@ -95,5 +99,28 @@ public class Warp {
 
     private static void calculateAndSetHeight() {
         height = (int) (width * warpIcon.getHeightPercentage());
+    }
+
+    public static void validateWarp(Warp warp) throws IllegalArgumentException, NullPointerException {
+        if (warp == null) {
+            throw new NullPointerException("Warp cannot be null");
+        }
+
+        String name = warp.displayName;
+        if (name == null) {
+            throw new IllegalArgumentException(String.format("The following warp lacks a name: %s", warp));
+        }
+
+        if (warp.commandName == null || warp.commandName.equals("")) {
+            throw new IllegalArgumentException(String.format("Warp %s is missing a command name", warp.displayName));
+        }
+
+        if (warp.gridX < 0 || warp.gridX > GRID_UNIT_WIDTH_FACTOR) {
+            throw new IllegalArgumentException(String.format("Warp %s gridX is outside screen", name));
+        }
+
+        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR) {
+            throw new IllegalArgumentException(String.format("Warp %s gridY is outside screen", name));
+        }
     }
 }

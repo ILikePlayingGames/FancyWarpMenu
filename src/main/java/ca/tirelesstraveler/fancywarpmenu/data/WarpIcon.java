@@ -23,7 +23,10 @@
 package ca.tirelesstraveler.fancywarpmenu.data;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
 
 /**
  * Class that holds the settings for drawing the warp icon (portal)
@@ -31,7 +34,10 @@ import net.minecraft.util.ResourceLocation;
 @SuppressWarnings("unused")
 public class WarpIcon {
     private String texturePath;
+
+    /** Width to render the warp icon texture at as a percentage of the screen width */
     private float widthPercentage;
+    /** Height to render the warp icon texture at as a percentage of {@code screenWidth * widthPercentage} */
     private float heightPercentage;
     private transient ResourceLocation textureLocation;
 
@@ -51,5 +57,34 @@ public class WarpIcon {
 
     public float getHeightPercentage() {
         return heightPercentage;
+    }
+
+    public String toString() {
+        return WarpConfiguration.gson.toJson(this);
+    }
+
+    public static void validateWarpIcon(WarpIcon warpIcon) throws IllegalArgumentException, NullPointerException {
+        if (warpIcon == null) {
+            throw new NullPointerException("Warp icon cannot be null");
+        }
+
+        if (warpIcon.texturePath == null) {
+            throw new NullPointerException("Warp icon texture path cannot be null");
+        }
+
+        ResourceLocation textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), warpIcon.texturePath);
+        try {
+            Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Warp icon texture not found at %s", textureLocation));
+        }
+
+        if (warpIcon.widthPercentage < 0 || warpIcon.widthPercentage > 1) {
+            throw new IllegalArgumentException("Warp icon widthPercentage must be between 0 and 1");
+        }
+
+        if (warpIcon.heightPercentage < 0) {
+            throw new IllegalArgumentException("Island %s heightPercentage must be zero or greater");
+        }
     }
 }

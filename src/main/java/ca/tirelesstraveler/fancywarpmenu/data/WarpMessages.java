@@ -32,7 +32,6 @@ public class WarpMessages {
     private Map<String, String> warpFailMessages;
 
     private WarpMessages() {
-
     }
 
     public List<String> getWarpSuccessMessages() {
@@ -41,5 +40,21 @@ public class WarpMessages {
 
     public Map<String, String> getWarpFailMessages() {
         return warpFailMessages;
+    }
+
+    public static void validateWarpMessages(WarpMessages warpMessages) throws IllegalArgumentException, NullPointerException {
+        if (warpMessages == null) {
+            throw new NullPointerException("Warp messages cannot be null");
+        }
+
+        List<String> successMessages = warpMessages.getWarpSuccessMessages();
+        if (successMessages == null || successMessages.isEmpty()) {
+            throw new IllegalArgumentException("Warp success message list cannot be empty");
+        }
+
+        Map<String, String> failMessages = warpMessages.getWarpFailMessages();
+        if (failMessages == null || failMessages.isEmpty()) {
+            throw new IllegalArgumentException("Warp fail message list cannot be empty");
+        }
     }
 }

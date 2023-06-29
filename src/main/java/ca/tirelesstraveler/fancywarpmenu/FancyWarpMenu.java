@@ -80,10 +80,6 @@ public class FancyWarpMenu {
         event.getModMetadata().version = modContainer.getVersion();
         bar.step("Loading Warp Configuration");
         warpConfig = WarpConfigLoader.loadIslands();
-
-        if (warpConfig == null) {
-            throw new RuntimeException("Error loading warp configuration");
-        }
         ProgressManager.pop(bar);
     }
 
@@ -138,7 +134,7 @@ public class FancyWarpMenu {
         return  warpConfig.getWarpMessages();
     }
 
-    public boolean isPlayerOnSkyblock() {
+    public boolean isPlayerOnSkyBlock() {
         return skyblockJoinListener.isOnSkyBlock();
     }
 
@@ -146,7 +142,7 @@ public class FancyWarpMenu {
         Minecraft.getMinecraft().refreshResources();
         WarpConfiguration warpConfig = WarpConfigLoader.loadIslands();
 
-        // Will be null if json syntax is wrong
+        // Will be null if json syntax is wrong or config is invalid
         if (warpConfig != null) {
             FancyWarpMenu.warpConfig = warpConfig;
         }
