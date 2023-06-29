@@ -52,14 +52,12 @@ public class GuiIslandButton extends GuiButtonExt {
         if (this.visible) {
             this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY <yPosition + height;
             mc.getTextureManager().bindTexture(island.getTextureLocation());
-            GlStateManager.pushMatrix();
             if (hovered) {
                 GlStateManager.color(1, 1, 1, 1);
             } else {
-                GlStateManager.color(0.85F, 0.85F, 0.85F, 0.5F);
+                GlStateManager.color(0.85F, 0.85F, 0.85F, 1F);
             }
             drawScaledCustomSizeModalRect(xPosition, yPosition, 0, 0, 1, 1, island.getWidth(), island.getHeight(), 1, 1);
-            GlStateManager.popMatrix();
             GlStateManager.resetColor();
 
             if (Settings.shouldShowIslandLabels()) {
