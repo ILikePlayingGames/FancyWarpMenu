@@ -98,7 +98,7 @@ public class Settings {
         return showIslandLabels;
     }
 
-    public static boolean isRemindToUse() {
+    public static boolean shouldRemindToUse() {
         return remindToUse;
     }
 }

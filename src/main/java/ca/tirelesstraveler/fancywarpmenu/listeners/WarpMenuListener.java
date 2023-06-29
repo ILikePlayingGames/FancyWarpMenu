@@ -123,7 +123,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                     mc.ingameGUI.getChatGUI().addToSentMessages(chatMessage);
                     event.setCanceled(true);
                 } else {
-                    if (Settings.isRemindToUse()) {
+                    if (Settings.shouldRemindToUse()) {
                         if (isWarpingCommand(chatMessage)) {
                             mc.thePlayer.addChatMessage(new ChatComponentText("§cReminder to use Fancy Warp Menu instead!"));
                         }
