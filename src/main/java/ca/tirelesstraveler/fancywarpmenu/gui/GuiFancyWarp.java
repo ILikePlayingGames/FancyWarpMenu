@@ -48,7 +48,6 @@ public class GuiFancyWarp extends GuiScreen {
     private ScaledResolution res;
     private float gridUnitWidth;
     private float gridUnitHeight;
-    private boolean showDebugOverlay;
     private long warpFailCoolDownExpiryTime;
     private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
@@ -58,7 +57,6 @@ public class GuiFancyWarp extends GuiScreen {
         res = new ScaledResolution(mc);
         gridUnitWidth = (float) res.getScaledWidth() / Island.GRID_UNIT_WIDTH_FACTOR;
         gridUnitHeight = (float) res.getScaledHeight() / Island.GRID_UNIT_HEIGHT_FACTOR;
-        showDebugOverlay = true;
         Warp.initDefaults(res);
 
         for (Island island: FancyWarpMenu.getInstance().getIslands()) {
@@ -84,7 +82,7 @@ public class GuiFancyWarp extends GuiScreen {
             drawHoveringText(Collections.singletonList(warpFailMessage), mouseX, mouseY);
         }
 
-        if (Settings.isDebugModeEnabled() && showDebugOverlay) {
+        if (Settings.isDebugModeEnabled() && Settings.shouldShowDebugOverlay()) {
             ArrayList<String> debugStrings = new ArrayList<>();
             int drawX;
             int drawY;
@@ -98,11 +96,13 @@ public class GuiFancyWarp extends GuiScreen {
             String modVersion = FancyWarpMenu.getInstance().getModContainer().getVersion();
             drawCenteredString(mc.fontRendererObj, modName + " " + modVersion, width / 2, height - 10, 14737632);
 
-            for (GuiButton button:
-                 buttonList) {
-                //Draw borders
-                if (button instanceof GuiButtonExt) {
-                    ((GuiButtonExt) button).drawBorders(1, 1);
+            if (Settings.shouldDrawBorders()) {
+                for (GuiButton button:
+                        buttonList) {
+                    //Draw borders
+                    if (button instanceof GuiButtonExt) {
+                        ((GuiButtonExt) button).drawBorders(1, 1);
+                    }
                 }
             }
 
@@ -166,7 +166,9 @@ public class GuiFancyWarp extends GuiScreen {
                 buttonList.clear();
                 initGui();
             } else if (keyCode == Keyboard.KEY_TAB) {
-                showDebugOverlay = !showDebugOverlay;
+                Settings.setShowDebugOverlay(!Settings.shouldShowDebugOverlay());
+            } else if (keyCode == Keyboard.KEY_B) {
+                Settings.setDrawBorders(!Settings.shouldDrawBorders());
             }
         }
     }

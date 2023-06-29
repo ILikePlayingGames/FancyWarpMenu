@@ -1,7 +1,18 @@
+fancywarpmenu.config.categories.developerSettings=Developer Settings
+fancywarpmenu.config.categories.developerSettings.tooltip=Settings for features used by pack developers to create custom textures and layouts for the warp menu
+
 fancywarpmenu.config.title=Fancy Warp Menu Settings
 fancywarpmenu.config.warpMenuEnabled=Enable Fancy Warp Menu
+fancywarpmenu.config.warpMenuEnabled.tooltip=Replace the default warp menu with the Fancy Warp Menu
 fancywarpmenu.config.showIslandLabels=Show Island Names
+fancywarpmenu.config.showIslandLabels.tooltip=Show each island's name below its picture
 fancywarpmenu.config.developerModeEnabled=Enable Developer Mode
+fancywarpmenu.config.developerModeEnabled.tooltip=Enable all developer features
+fancywarpmenu.config.showDebugOverlay=Show Debug Overlay
+fancywarpmenu.config.showDebugOverlay.tooltip=Show an overlay with coordinate values and button borders over the warp menu. Press TAB while the warp menu is open to toggle.
+fancywarpmenu.config.drawBorders=Draw Button Borders
+fancywarpmenu.config.drawBorders.tooltip=Show borders around island and warp buttons. Press B while the warp menu is open to toggle.
+
 
 fancywarpmenu.key.openMenu=Open Warp Menu
 
