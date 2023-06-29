@@ -146,6 +146,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                     if (container.getLowerChestInventory() != null
                             && container.getLowerChestInventory().getDisplayName() != null
                             && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
+                            && guiChest.getSlotUnderMouse() != null
                             && guiChest.getSlotUnderMouse().getSlotIndex() == 47
                             // Rift SkyBlock Menu has a return to hub button in slot 47
                             && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
