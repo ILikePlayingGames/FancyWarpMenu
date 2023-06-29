@@ -34,6 +34,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -64,7 +65,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     static {
         mc = Minecraft.getMinecraft();
         modInstance = FancyWarpMenu.getInstance();
-        
+
         try {
             String inputFieldName = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") ? "inputField" : "field_146415_a";
             chatInputField = GuiChat.class.getDeclaredField(inputFieldName);
@@ -121,6 +122,14 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                     mc.displayGuiScreen(warpScreen);
                     mc.ingameGUI.getChatGUI().addToSentMessages(chatMessage);
                     event.setCanceled(true);
+                } else {
+                    if (Settings.isRemindToUse()) {
+                        if (chatMessage.startsWith("/warp ") || chatMessage.equals("/is") || chatMessage.equals("/hub")) {
+//                            event.setCanceled(true);
+                            mc.thePlayer.addChatMessage(new ChatComponentText("§cReminder to use Fancy Warp Menu instead!"));
+                        }
+                    }
+
                 }
             } catch (Throwable e) {
                 throw new ReportedException(CrashReport.makeCrashReport(e, "Failed to get chat message from GuiChat"));
@@ -138,22 +147,22 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 && Mouse.getEventButton() == 0
                 && Mouse.getEventButtonState()
                 && event.gui instanceof GuiChest) {
-                GuiChest guiChest = (GuiChest) event.gui;
+            GuiChest guiChest = (GuiChest) event.gui;
 
-                if (guiChest.inventorySlots instanceof ContainerChest) {
-                    ContainerChest container = (ContainerChest) guiChest.inventorySlots;
+            if (guiChest.inventorySlots instanceof ContainerChest) {
+                ContainerChest container = (ContainerChest) guiChest.inventorySlots;
 
-                    if (container.getLowerChestInventory() != null
-                            && container.getLowerChestInventory().getDisplayName() != null
-                            && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
-                            && guiChest.getSlotUnderMouse() != null
-                            && guiChest.getSlotUnderMouse().getSlotIndex() == 47
-                            // Rift SkyBlock Menu has a return to hub button in slot 47
-                            && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
-                        mc.displayGuiScreen(new GuiFancyWarp());
-                        event.setCanceled(true);
-                    }
+                if (container.getLowerChestInventory() != null
+                        && container.getLowerChestInventory().getDisplayName() != null
+                        && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
+                        && guiChest.getSlotUnderMouse() != null
+                        && guiChest.getSlotUnderMouse().getSlotIndex() == 47
+                        // Rift SkyBlock Menu has a return to hub button in slot 47
+                        && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
+                    mc.displayGuiScreen(new GuiFancyWarp());
+                    event.setCanceled(true);
                 }
+            }
         }
     }
 

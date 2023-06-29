@@ -37,6 +37,7 @@ public class Settings {
     private static Configuration config;
     private static boolean warpMenuEnabled;
     private static boolean showIslandLabels;
+    private static boolean remindToUse;
     private static boolean debugModeEnabled;
 
     public static List<IConfigElement> getConfigElements() {
@@ -66,6 +67,11 @@ public class Settings {
         prop.setRequiresWorldRestart(false);
         showIslandLabels = prop.getBoolean(true);
 
+        prop = config.get(CATEGORY_GENERAL, "remindToUse", false);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.remindToUse"));
+        prop.setRequiresWorldRestart(false);
+        remindToUse = prop.getBoolean(false);
+
         prop = config.get(CATEGORY_DEBUG, "debugModeEnabled", false);
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
         prop.setRequiresWorldRestart(false);
@@ -92,7 +98,7 @@ public class Settings {
         return showIslandLabels;
     }
 
-    private Settings() {
-
+    public static boolean isRemindToUse() {
+        return remindToUse;
     }
 }
