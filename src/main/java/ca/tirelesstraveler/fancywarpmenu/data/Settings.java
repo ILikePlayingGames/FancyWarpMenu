@@ -26,6 +26,7 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
 import java.util.List;
@@ -35,15 +36,23 @@ public class Settings {
     private static final String CATEGORY_DEBUG = "debug";
 
     private static Configuration config;
+    // General settings
     private static boolean warpMenuEnabled;
     private static boolean showIslandLabels;
+    private static boolean hideWarpLabelsUntilIslandHovered;
     private static boolean remindToUse;
+    // Developer settings
     private static boolean debugModeEnabled;
+    private static boolean showDebugOverlay;
+    private static boolean drawBorders;
 
     public static List<IConfigElement> getConfigElements() {
-        List<IConfigElement> configElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
-        configElements.addAll(new ConfigElement(config.getCategory(CATEGORY_DEBUG)).getChildElements());
-        return  configElements;
+        List<IConfigElement> topLevelElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
+        List<IConfigElement> debugElements = new ConfigElement(config.getCategory(CATEGORY_DEBUG)).getChildElements();
+
+        topLevelElements.add(new DummyConfigElement.DummyCategoryElement(CATEGORY_DEBUG, "fancywarpmenu.config.categories.developerSettings", debugElements));
+
+        return topLevelElements;
     }
 
     public static void setConfig(Configuration config) {
@@ -67,6 +76,11 @@ public class Settings {
         prop.setRequiresWorldRestart(false);
         showIslandLabels = prop.getBoolean(true);
 
+        prop = config.get(CATEGORY_GENERAL, "hideWarpLabelsUntilIslandHovered", false);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.hideWarpLabelsUntilIslandHovered"));
+        prop.setRequiresWorldRestart(false);
+        hideWarpLabelsUntilIslandHovered = prop.getBoolean(false);
+
         prop = config.get(CATEGORY_GENERAL, "remindToUse", false);
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.remindToUse"));
         prop.setRequiresWorldRestart(false);
@@ -76,6 +90,16 @@ public class Settings {
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
         prop.setRequiresWorldRestart(false);
         debugModeEnabled = prop.getBoolean(false);
+
+        prop = config.get(CATEGORY_DEBUG, "showDebugOverlay", true);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.showDebugOverlay"));
+        prop.setRequiresWorldRestart(false);
+        showDebugOverlay = prop.getBoolean(true);
+
+        prop = config.get(CATEGORY_DEBUG, "drawBorders", true);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.drawBorders"));
+        prop.setRequiresWorldRestart(false);
+        drawBorders = prop.getBoolean(true);
 
         if (!debugModeEnabled && Boolean.getBoolean("fancywarpmenu.debugRendering")) {
             prop.set(true);
@@ -90,12 +114,34 @@ public class Settings {
         return warpMenuEnabled;
     }
 
+    public static boolean shouldShowIslandLabels() {
+        return showIslandLabels;
+    }
+
+    public static boolean shouldHideWarpLabelsUntilIslandHovered() {
+        return hideWarpLabelsUntilIslandHovered;
+    }
+
     public static boolean isDebugModeEnabled() {
         return debugModeEnabled;
     }
 
-    public static boolean shouldShowIslandLabels() {
-        return showIslandLabels;
+    public static boolean shouldShowDebugOverlay() {
+        return showDebugOverlay;
+    }
+
+    public static boolean shouldDrawBorders() {
+        return drawBorders;
+    }
+
+    public static void setShowDebugOverlay(boolean showDebugOverlay) {
+        config.get(CATEGORY_DEBUG, "showDebugOverlay", true).set(showDebugOverlay);
+        syncConfig(false);
+    }
+
+    public static void setDrawBorders(boolean drawBorders) {
+        config.get(CATEGORY_DEBUG, "drawBorders", true).set(drawBorders);
+        syncConfig(false);
     }
 
     public static boolean shouldRemindToUse() {

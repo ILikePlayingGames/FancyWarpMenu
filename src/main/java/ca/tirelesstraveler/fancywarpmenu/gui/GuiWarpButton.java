@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -68,7 +69,9 @@ public class GuiWarpButton extends GuiButtonExt {
             GlStateManager.disableBlend();
             GlStateManager.resetColor();
 
-            drawDisplayString(xPosition + width / 2 + 1, yPosition + height);
+            if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
+                drawDisplayString(xPosition + width / 2 + 1, yPosition + height);
+            }
         }
     }
 
