@@ -90,7 +90,7 @@ public class GuiFancyWarp extends GuiScreen {
             int nearestY;
             boolean tooltipDrawn = false;
             // Draw screen resolution
-            drawCenteredString(mc.fontRendererObj, String.format("%d x %d", res.getScaledWidth(), res.getScaledHeight()), width / 2, height - 20, 14737632);
+            drawCenteredString(mc.fontRendererObj, String.format("%d x %d (%d)", res.getScaledWidth(), res.getScaledHeight(), res.getScaleFactor()), width / 2, height - 20, 14737632);
             // Draw version number
             String modName = FancyWarpMenu.getInstance().getModContainer().getName();
             String modVersion = FancyWarpMenu.getInstance().getModContainer().getVersion();

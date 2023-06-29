@@ -39,6 +39,7 @@ public class Settings {
     // General settings
     private static boolean warpMenuEnabled;
     private static boolean showIslandLabels;
+    private static boolean hideWarpLabelsUntilIslandHovered;
     // Developer settings
     private static boolean debugModeEnabled;
     private static boolean showDebugOverlay;
@@ -74,6 +75,11 @@ public class Settings {
         prop.setRequiresWorldRestart(false);
         showIslandLabels = prop.getBoolean(true);
 
+        prop = config.get(CATEGORY_GENERAL, "hideWarpLabelsUntilIslandHovered", false);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.hideWarpLabelsUntilIslandHovered"));
+        prop.setRequiresWorldRestart(false);
+        hideWarpLabelsUntilIslandHovered = prop.getBoolean(false);
+
         prop = config.get(CATEGORY_DEBUG, "debugModeEnabled", false);
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
         prop.setRequiresWorldRestart(false);
@@ -102,12 +108,16 @@ public class Settings {
         return warpMenuEnabled;
     }
 
-    public static boolean isDebugModeEnabled() {
-        return debugModeEnabled;
-    }
-
     public static boolean shouldShowIslandLabels() {
         return showIslandLabels;
+    }
+
+    public static boolean shouldHideWarpLabelsUntilIslandHovered() {
+        return hideWarpLabelsUntilIslandHovered;
+    }
+
+    public static boolean isDebugModeEnabled() {
+        return debugModeEnabled;
     }
 
     public static boolean shouldShowDebugOverlay() {
