@@ -75,6 +75,7 @@ public class FancyWarpMenu {
         MinecraftForge.EVENT_BUS.register(skyblockJoinListener);
         bar.step("Loading Settings");
         Settings.setConfig(new Configuration(event.getSuggestedConfigurationFile(), modContainer.getVersion()));
+        Settings.setConfigPropertyOrder();
         Settings.syncConfig(true);
         logger = event.getModLog();
         event.getModMetadata().version = modContainer.getVersion();

@@ -29,6 +29,8 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Settings {
@@ -40,7 +42,7 @@ public class Settings {
     private static boolean warpMenuEnabled;
     private static boolean showIslandLabels;
     private static boolean hideWarpLabelsUntilIslandHovered;
-    private static boolean remindToUse;
+    private static boolean suggestWarpMenuOnWarpCommand;
     // Developer settings
     private static boolean debugModeEnabled;
     private static boolean showDebugOverlay;
@@ -57,6 +59,20 @@ public class Settings {
 
     public static void setConfig(Configuration config) {
         Settings.config = config;
+    }
+
+    /**
+     * Sets the order in which config properties are displayed on the settings menu
+     */
+    public static void setConfigPropertyOrder() {
+        List<String> topLevelPropertyOrder = new ArrayList<>();
+        Collections.addAll(topLevelPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand");
+
+        List<String> debugPropertyOrder = new ArrayList<>();
+        Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders");
+
+        config.setCategoryPropertyOrder(CATEGORY_GENERAL, topLevelPropertyOrder);
+        config.setCategoryPropertyOrder(CATEGORY_DEBUG, debugPropertyOrder);
     }
 
     public static void syncConfig(boolean load) {
@@ -81,15 +97,19 @@ public class Settings {
         prop.setRequiresWorldRestart(false);
         hideWarpLabelsUntilIslandHovered = prop.getBoolean(false);
 
-        prop = config.get(CATEGORY_GENERAL, "remindToUse", false);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.remindToUse"));
+        prop = config.get(CATEGORY_GENERAL, "suggestWarpMenuOnWarpCommand", false);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.suggestWarpMenuOnWarpCommand"));
         prop.setRequiresWorldRestart(false);
-        remindToUse = prop.getBoolean(false);
+        suggestWarpMenuOnWarpCommand = prop.getBoolean(false);
 
         prop = config.get(CATEGORY_DEBUG, "debugModeEnabled", false);
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
         prop.setRequiresWorldRestart(false);
         debugModeEnabled = prop.getBoolean(false);
+
+        if (!debugModeEnabled && Boolean.getBoolean("fancywarpmenu.debugRendering")) {
+            prop.set(true);
+        }
 
         prop = config.get(CATEGORY_DEBUG, "showDebugOverlay", true);
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.showDebugOverlay"));
@@ -100,10 +120,6 @@ public class Settings {
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.drawBorders"));
         prop.setRequiresWorldRestart(false);
         drawBorders = prop.getBoolean(true);
-
-        if (!debugModeEnabled && Boolean.getBoolean("fancywarpmenu.debugRendering")) {
-            prop.set(true);
-        }
 
         if (config.hasChanged()) {
             config.save();
@@ -120,6 +136,10 @@ public class Settings {
 
     public static boolean shouldHideWarpLabelsUntilIslandHovered() {
         return hideWarpLabelsUntilIslandHovered;
+    }
+
+    public static boolean shouldSuggestWarpMenuOnWarpCommand() {
+        return suggestWarpMenuOnWarpCommand;
     }
 
     public static boolean isDebugModeEnabled() {
@@ -142,9 +162,5 @@ public class Settings {
     public static void setDrawBorders(boolean drawBorders) {
         config.get(CATEGORY_DEBUG, "drawBorders", true).set(drawBorders);
         syncConfig(false);
-    }
-
-    public static boolean shouldRemindToUse() {
-        return remindToUse;
     }
 }

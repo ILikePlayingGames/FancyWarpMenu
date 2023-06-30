@@ -5,10 +5,11 @@ fancywarpmenu.config.title=Fancy Warp Menu Settings
 fancywarpmenu.config.warpMenuEnabled=Enable Fancy Warp Menu
 fancywarpmenu.config.warpMenuEnabled.tooltip=Replace the default warp menu with the Fancy Warp Menu
 fancywarpmenu.config.showIslandLabels=Show Island Names
-fancywarpmenu.config.remindToUse=Remind to use Fancy Warp Menu instead of commands
 fancywarpmenu.config.showIslandLabels.tooltip=Show each island's name below its picture
 fancywarpmenu.config.hideWarpLabelsUntilIslandHovered=Hide Warp Labels Until Island Hovered
 fancywarpmenu.config.hideWarpLabelsUntilIslandHovered.tooltip=Hide the island's warp button labels until the mouse is hovering over the island
+fancywarpmenu.config.suggestWarpMenuOnWarpCommand=Reminders to Use Warp Menu
+fancywarpmenu.config.suggestWarpMenuOnWarpCommand.tooltip=Show reminders to use the fancy warp menu when the player uses a warp command
 fancywarpmenu.config.developerModeEnabled=Enable Developer Mode
 fancywarpmenu.config.developerModeEnabled.tooltip=Enable all developer features
 fancywarpmenu.config.showDebugOverlay=Show Debug Overlay
@@ -20,6 +21,8 @@ fancywarpmenu.config.drawBorders.tooltip=Show borders around island and warp but
 fancywarpmenu.key.openMenu=Open Warp Menu
 
 fancywarpmenu.key.categories.fancyWarpMenu=Fancy Warp Menu
+
+fancywarpmenu.messages.useWarpMenuInsteadOfCommand=Reminder to use Fancy Warp Menu instead!
 
 fancywarpmenu.errors.notUnlocked=Not Unlocked
 fancywarpmenu.errors.unknownDestination=Unknown Destination

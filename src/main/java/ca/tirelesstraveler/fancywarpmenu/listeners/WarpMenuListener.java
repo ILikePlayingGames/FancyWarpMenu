@@ -34,9 +34,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -123,12 +121,12 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                     mc.ingameGUI.getChatGUI().addToSentMessages(chatMessage);
                     event.setCanceled(true);
                 } else {
-                    if (Settings.shouldRemindToUse()) {
-                        if (isWarpingCommand(chatMessage)) {
-                            mc.thePlayer.addChatMessage(new ChatComponentText("§cReminder to use Fancy Warp Menu instead!"));
+                    if (Settings.shouldSuggestWarpMenuOnWarpCommand()) {
+                        if (isWarpCommand(chatMessage)) {
+                            mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu.getInstance().getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
+                                    .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
                         }
                     }
-
                 }
             } catch (Throwable e) {
                 throw new ReportedException(CrashReport.makeCrashReport(e, "Failed to get chat message from GuiChat"));
@@ -136,7 +134,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
         }
     }
 
-    private static boolean isWarpingCommand(String chatMessage) {
+    private static boolean isWarpCommand(String chatMessage) {
         if (chatMessage.startsWith("/warp ")) return true;
 
         switch (chatMessage) {
