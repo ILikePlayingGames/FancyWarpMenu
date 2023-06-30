@@ -71,11 +71,13 @@ jobs:
         echo "$EOF" >> "$GITHUB_ENV"
     - name: Post Build Information to Discord
       if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' && contains(github.event.inputs.upload_artifact, 'yes') }}
+      env:
+        jarPath: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar
       uses: tsickert/discord-webhook@v5.3.0
       with:
         webhook-url: ${{ secrets.BUILD_WEBHOOK_URL }}
         embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
         embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
         embed-description: ${{ env.COMMIT_LOG }}
-        embed-footer-text: ${{ hashFiles(build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar) }}
-        filename: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar
+        embed-footer-text: ${{ hashFiles(env.jarPath) }}
+        filename: ${{ env.jarPath }}
