@@ -22,7 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
-import io.netty.channel.Channel;
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -43,7 +43,6 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     private static final String SERVER_BRAND_START = "Hypixel BungeeCord";
 
     private static final Logger logger = LogManager.getLogger();
-    private Channel channel;
     private boolean serverBrandChecked;
     private boolean onHypixel;
     private boolean onSkyBlock;
@@ -54,11 +53,9 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
 
     @SubscribeEvent
     public void onClientConnect(FMLNetworkEvent.ClientConnectedToServerEvent e) {
-        if (!e.isLocal && e.connectionType.equals("MODDED")) {
-            channel = e.manager.channel();
-            // Insert before vanilla's packet handler.
-            channel.pipeline().addBefore("packet_handler", "skyblock_join_listener", this);
-            logger.debug("Connected to a server.");
+        if (e.connectionType.equals("MODDED")) {
+            e.manager.channel().pipeline().addBefore("packet_handler", String.format("%s:skyblock_join_listener",
+                    FancyWarpMenu.getInstance().getModId()), this);
         }
     }
 
@@ -68,13 +65,7 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
             serverBrandChecked = false;
             onHypixel = false;
             onSkyBlock = false;
-            channel = null;
             logger.debug("Disconnected from Hypixel.");
-            try {
-                channel.pipeline().remove("skyblock_join_listener");
-            } catch (Exception ignored) {
-                // It throws when the handler doesn't exist, which is fine in this case
-            }
         }
     }
 
@@ -93,12 +84,6 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
 
                     if (onHypixel) {
                         logger.info("Player joined Hypixel.");
-                    } else {
-                        try {
-                            channel.pipeline().remove("skyblock_join_listener");
-                        } catch (Exception ignored) {
-                            // It throws when the handler doesn't exist, which is fine in this case
-                        }
                     }
                 }
 
