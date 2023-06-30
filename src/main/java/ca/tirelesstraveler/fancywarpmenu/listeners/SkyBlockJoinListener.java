@@ -35,20 +35,21 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Forge event and packet listener that detects when the player joins/leaves SkyBlock
+ */
 @ChannelHandler.Sharable
 public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketDisplayScoreboard> {
     private static final String SERVER_BRAND_START = "Hypixel BungeeCord";
 
     private static final Logger logger = LogManager.getLogger();
     private Channel channel;
-    private final WarpMenuListener warpMenuListener;
     private boolean serverBrandChecked;
     private boolean onHypixel;
     private boolean onSkyBlock;
 
-    public SkyBlockJoinListener(WarpMenuListener warpMenuListener) {
+    public SkyBlockJoinListener() {
         super(false);
-        this.warpMenuListener = warpMenuListener;
     }
 
     @SubscribeEvent
@@ -95,7 +96,6 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
                     } else {
                         try {
                             channel.pipeline().remove("skyblock_join_listener");
-                            channel.pipeline().remove("warp_menu_blocker");
                         } catch (Exception ignored) {
                             // It throws when the handler doesn't exist, which is fine in this case
                         }

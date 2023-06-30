@@ -33,6 +33,7 @@ public class WarpConfiguration {
     private List<Island> islandList;
     private WarpIcon warpIcon;
     private WarpMessages warpMessages;
+    private List<String> warpCommandVariants;
 
     private WarpConfiguration(){}
 
@@ -46,6 +47,10 @@ public class WarpConfiguration {
 
     public WarpMessages getWarpMessages() {
         return warpMessages;
+    }
+
+    public List<String> getWarpCommandVariants() {
+        return warpCommandVariants;
     }
 
     public static void validateWarpConfiguration(WarpConfiguration warpConfiguration) throws IllegalArgumentException, NullPointerException {
@@ -64,5 +69,21 @@ public class WarpConfiguration {
 
         WarpIcon.validateWarpIcon(warpConfiguration.getWarpIcon());
         WarpMessages.validateWarpMessages(warpConfiguration.getWarpMessages());
+
+        if (warpConfiguration.warpCommandVariants == null || warpConfiguration.warpCommandVariants.isEmpty()) {
+            throw new NullPointerException("Warp command variant list cannot be empty");
+        }
+
+        for (String warpCommandVariant:
+                warpConfiguration.warpCommandVariants) {
+            if (warpCommandVariant.equals("")) {
+                throw new IllegalArgumentException(String.format("Warp command variant at index %d is an empty string",
+                        warpConfiguration.warpCommandVariants.indexOf(warpCommandVariant)));
+            } else if (warpCommandVariant.contains("/") || warpCommandVariant.contains(" ")) {
+                throw new IllegalArgumentException(String.format("Warp command variant at index %d has slashes or spaces. " +
+                        "Include only the command name without slashes or spaces.",
+                        warpConfiguration.warpCommandVariants.indexOf(warpCommandVariant)));
+            }
+        }
     }
 }

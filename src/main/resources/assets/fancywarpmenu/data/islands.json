@@ -364,5 +364,11 @@
     "texturePath": "textures/gui/Portal.png",
     "widthPercentage": 0.02,
     "heightPercentage": 1.2
-  }
+  },
+  "warpCommandVariants": [
+    "warp",
+    "is",
+    "warpforge",
+    "savethejerrys"
+  ]
 }

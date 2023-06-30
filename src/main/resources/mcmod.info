@@ -3,7 +3,7 @@
 	"modid": "fancywarpmenu",
 	"name": "Fancy Warp Menu",
 	"description": "A recreation of the fancy warp menu from SkyblockAddons\nLicenses: https://github.com/ILikePlayingGames/FancyWarpMenu/wiki/Licenses",
-	"mcversion": "1.8.9",
+	"mcversion": "${mcversion}",
 	"url": "https://github.com/ILikePlayingGames/SkyblockWarpMenu",
 	"updateUrl": "",
 	"authorList": [

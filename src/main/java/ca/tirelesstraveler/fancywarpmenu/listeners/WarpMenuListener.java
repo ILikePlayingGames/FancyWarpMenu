@@ -23,55 +23,41 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.commands.DummyWarpCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.crash.CrashReport;
 import net.minecraft.inventory.ContainerChest;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.*;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
-
 /**
- * This class listens for the player's attempts to access the warp menu and redirects them to the fancy warp menu instead
- * of the regular Hypixel menu. It also listens for changes to the mod's settings and saves them to the config file.
+ * General purpose event listener
  */
 @ChannelHandler.Sharable
 public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     private static final Minecraft mc;
     private static final FancyWarpMenu modInstance;
-    private static final Field chatInputField;
-    private static final MethodHandle inputFieldGetterHandle;
 
     private static GuiFancyWarp warpScreen;
+    private static boolean openMenuRequested;
 
     static {
         mc = Minecraft.getMinecraft();
         modInstance = FancyWarpMenu.getInstance();
-
-        try {
-            String inputFieldName = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") ? "inputField" : "field_146415_a";
-            chatInputField = GuiChat.class.getDeclaredField(inputFieldName);
-            chatInputField.setAccessible(true);
-            inputFieldGetterHandle = MethodHandles.lookup().unreflectGetter(chatInputField);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new ReportedException(CrashReport.makeCrashReport(e, "Failed to access chat text box"));
-        }
     }
 
     @SubscribeEvent
@@ -89,6 +75,40 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     }
 
     /**
+     * Intercepts warp commands using {@link DummyWarpCommand} to cause a {@link CommandEvent} to be posted.
+     * This is retained as a second warp command detection mechanism in case mixin injection fails.
+     */
+    @SubscribeEvent
+    public void onCommandReceived(CommandEvent event) {
+        if (event.command instanceof DummyWarpCommand) {
+            if (Settings.isWarpMenuEnabled() && modInstance.isPlayerOnSkyBlock()) {
+                if (event.parameters.length == 0) {
+                    warpScreen = new GuiFancyWarp();
+                    mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
+                    openMenuRequested = true;
+                    // Block command from reaching server
+                    return;
+                }
+            }
+
+            // Forward command to server
+            event.setCanceled(true);
+        }
+    }
+
+    /**
+     * If the player requested the warp menu to open by executing the warp command, switch to the warp menu instead
+     * of closing the chat window.
+     */
+    @SubscribeEvent
+    public void onGuiOpen(GuiOpenEvent event) {
+        if (event.gui == null && openMenuRequested) {
+            event.gui = warpScreen;
+            openMenuRequested = false;
+        }
+    }
+
+    /**
      * Open the fancy warp menu when the player presses the open warp menu hotkey while the mod is enabled
      */
     @SubscribeEvent
@@ -98,54 +118,6 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
             warpScreen = new GuiFancyWarp();
             mc.displayGuiScreen(warpScreen);
-        }
-    }
-
-    /**
-     * Redirect to the fancy warp menu when the player attempts to access the warp menu with the /warp command
-     */
-    @SubscribeEvent
-    public void onGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent event) {
-        if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyBlock()
-                && event.gui instanceof GuiChat
-                && (Keyboard.getEventKey() == Keyboard.KEY_RETURN
-                || Keyboard.getEventKey() == Keyboard.KEY_NUMPADENTER)) {
-            try {
-                GuiTextField textField = (GuiTextField) inputFieldGetterHandle.invokeExact((GuiChat) event.gui);
-                String chatMessage = textField.getText().trim().toLowerCase();
-
-                if (chatMessage.equals("/warp")) {
-                    warpScreen = new GuiFancyWarp();
-                    mc.displayGuiScreen(warpScreen);
-                    mc.ingameGUI.getChatGUI().addToSentMessages(chatMessage);
-                    event.setCanceled(true);
-                } else {
-                    if (Settings.shouldSuggestWarpMenuOnWarpCommand()) {
-                        if (isWarpCommand(chatMessage)) {
-                            mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu.getInstance().getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
-                                    .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
-                        }
-                    }
-                }
-            } catch (Throwable e) {
-                throw new ReportedException(CrashReport.makeCrashReport(e, "Failed to get chat message from GuiChat"));
-            }
-        }
-    }
-
-    private static boolean isWarpCommand(String chatMessage) {
-        if (chatMessage.startsWith("/warp ")) return true;
-
-        switch (chatMessage) {
-            case "/is":
-            case "/hub":
-            case "/warpforge":
-            case "/savethejerrys":
-                return true;
-
-            default:
-                return false;
         }
     }
 
@@ -183,5 +155,28 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
         if (event.modID.equals(modInstance.getModId())) {
             Settings.syncConfig(false);
         }
+    }
+
+    /**
+     * Checks if the command name of the command the player sent is the name of the warp command or any of its variants
+     *
+     * @param commandName name of the command the player sent, excluding the slash and any arguments
+     */
+    public static boolean isWarpCommand(String commandName) {
+        return modInstance.getWarpCommandVariants().contains(commandName);
+    }
+
+    public static void setWarpScreen(GuiFancyWarp warpScreen) {
+        if (warpScreen == null) {
+            throw new NullPointerException("Warp screen cannot be null");
+        }
+
+        WarpMenuListener.warpScreen = warpScreen;
+    }
+
+    public static void sendReminderToUseWarpScreen() {
+        mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu.getInstance()
+                .getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
+                .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }
 }

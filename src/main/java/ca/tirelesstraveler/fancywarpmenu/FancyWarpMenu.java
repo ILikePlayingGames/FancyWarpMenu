@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
+import ca.tirelesstraveler.fancywarpmenu.commands.DummyWarpCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
@@ -31,6 +32,7 @@ import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -64,14 +66,16 @@ public class FancyWarpMenu {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 3);
+        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 4);
 
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
+        bar.step("Registering Dummy Warp Command");
+        ClientCommandHandler.instance.registerCommand(new DummyWarpCommand());
         bar.step("Initializing Listeners");
         warpMenuListener = new WarpMenuListener();
         MinecraftForge.EVENT_BUS.register(warpMenuListener);
-        skyblockJoinListener = new SkyBlockJoinListener(warpMenuListener);
+        skyblockJoinListener = new SkyBlockJoinListener();
         MinecraftForge.EVENT_BUS.register(skyblockJoinListener);
         bar.step("Loading Settings");
         Settings.setConfig(new Configuration(event.getSuggestedConfigurationFile(), modContainer.getVersion()));
@@ -133,6 +137,10 @@ public class FancyWarpMenu {
 
     public WarpMessages getWarpMessages() {
         return  warpConfig.getWarpMessages();
+    }
+
+    public List<String> getWarpCommandVariants() {
+        return warpConfig.getWarpCommandVariants();
     }
 
     public boolean isPlayerOnSkyBlock() {
