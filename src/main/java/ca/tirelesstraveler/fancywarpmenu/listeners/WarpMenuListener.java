@@ -34,8 +34,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -64,7 +63,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     static {
         mc = Minecraft.getMinecraft();
         modInstance = FancyWarpMenu.getInstance();
-        
+
         try {
             String inputFieldName = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") ? "inputField" : "field_146415_a";
             chatInputField = GuiChat.class.getDeclaredField(inputFieldName);
@@ -121,10 +120,32 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                     mc.displayGuiScreen(warpScreen);
                     mc.ingameGUI.getChatGUI().addToSentMessages(chatMessage);
                     event.setCanceled(true);
+                } else {
+                    if (Settings.shouldSuggestWarpMenuOnWarpCommand()) {
+                        if (isWarpCommand(chatMessage)) {
+                            mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu.getInstance().getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
+                                    .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+                        }
+                    }
                 }
             } catch (Throwable e) {
                 throw new ReportedException(CrashReport.makeCrashReport(e, "Failed to get chat message from GuiChat"));
             }
+        }
+    }
+
+    private static boolean isWarpCommand(String chatMessage) {
+        if (chatMessage.startsWith("/warp ")) return true;
+
+        switch (chatMessage) {
+            case "/is":
+            case "/hub":
+            case "/warpforge":
+            case "/savethejerrys":
+                return true;
+
+            default:
+                return false;
         }
     }
 
@@ -138,22 +159,22 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 && Mouse.getEventButton() == 0
                 && Mouse.getEventButtonState()
                 && event.gui instanceof GuiChest) {
-                GuiChest guiChest = (GuiChest) event.gui;
+            GuiChest guiChest = (GuiChest) event.gui;
 
-                if (guiChest.inventorySlots instanceof ContainerChest) {
-                    ContainerChest container = (ContainerChest) guiChest.inventorySlots;
+            if (guiChest.inventorySlots instanceof ContainerChest) {
+                ContainerChest container = (ContainerChest) guiChest.inventorySlots;
 
-                    if (container.getLowerChestInventory() != null
-                            && container.getLowerChestInventory().getDisplayName() != null
-                            && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
-                            && guiChest.getSlotUnderMouse() != null
-                            && guiChest.getSlotUnderMouse().getSlotIndex() == 47
-                            // Rift SkyBlock Menu has a return to hub button in slot 47
-                            && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
-                        mc.displayGuiScreen(new GuiFancyWarp());
-                        event.setCanceled(true);
-                    }
+                if (container.getLowerChestInventory() != null
+                        && container.getLowerChestInventory().getDisplayName() != null
+                        && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
+                        && guiChest.getSlotUnderMouse() != null
+                        && guiChest.getSlotUnderMouse().getSlotIndex() == 47
+                        // Rift SkyBlock Menu has a return to hub button in slot 47
+                        && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
+                    mc.displayGuiScreen(new GuiFancyWarp());
+                    event.setCanceled(true);
                 }
+            }
         }
     }
 
