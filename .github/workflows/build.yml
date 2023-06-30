@@ -77,4 +77,5 @@ jobs:
         embed-title: ${{ steps.read_project_version.outputs.version }} Build \#${{ github.run_number }}
         embed-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/
         embed-description: ${{ env.COMMIT_LOG }}
+        embed-footer-text: ${{ hashFiles(build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar) }}
         filename: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar
