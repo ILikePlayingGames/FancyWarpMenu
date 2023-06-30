@@ -23,13 +23,17 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.network.ThreadQuickExitException;
 import net.minecraft.network.play.server.S3DPacketDisplayScoreboard;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +45,8 @@ import org.apache.logging.log4j.Logger;
 @ChannelHandler.Sharable
 public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketDisplayScoreboard> {
     private static final String SERVER_BRAND_START = "Hypixel BungeeCord";
+    private static final String PACKET_LISTENER_NAME = String.format("%s:skyblock_join_listener",
+            FancyWarpMenu.getInstance().getModId());
 
     private static final Logger logger = LogManager.getLogger();
     private boolean serverBrandChecked;
@@ -52,10 +58,13 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     }
 
     @SubscribeEvent
-    public void onClientConnect(FMLNetworkEvent.ClientConnectedToServerEvent e) {
-        if (e.connectionType.equals("MODDED")) {
-            e.manager.channel().pipeline().addBefore("packet_handler", String.format("%s:skyblock_join_listener",
-                    FancyWarpMenu.getInstance().getModId()), this);
+    public void onGuiOpen(GuiOpenEvent e) {
+        if (e.gui instanceof GuiDownloadTerrain) {
+            Channel channel = FMLClientHandler.instance().getClientToServerNetworkManager().channel();
+
+            if (channel.pipeline().get(PACKET_LISTENER_NAME) == null) {
+                channel.pipeline().addBefore("packet_handler", PACKET_LISTENER_NAME, this);
+            }
         }
     }
 
