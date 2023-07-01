@@ -23,17 +23,12 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiDownloadTerrain;
-import net.minecraft.network.ThreadQuickExitException;
 import net.minecraft.network.play.server.S3DPacketDisplayScoreboard;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -58,13 +53,9 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     }
 
     @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent e) {
-        if (e.gui instanceof GuiDownloadTerrain) {
-            Channel channel = FMLClientHandler.instance().getClientToServerNetworkManager().channel();
-
-            if (channel.pipeline().get(PACKET_LISTENER_NAME) == null) {
-                channel.pipeline().addBefore("packet_handler", PACKET_LISTENER_NAME, this);
-            }
+    public void onClientConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent e) {
+        if (e.manager.channel().pipeline().get(PACKET_LISTENER_NAME) == null) {
+            e.manager.channel().pipeline().addBefore("packet_handler", PACKET_LISTENER_NAME, this);
         }
     }
 
@@ -85,32 +76,42 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, S3DPacketDisplayScoreboard packet) {
         if (channelHandlerContext.channel().isOpen()) {
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+
             try {
-                if (!serverBrandChecked) {
-                    EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-                    onHypixel = thePlayer.getClientBrand().startsWith(SERVER_BRAND_START);
-                    serverBrandChecked = true;
+                logger.debug("Received S3DPacketDisplayScoreboard packet with title \"{}\"", packet.func_149370_d());
 
-                    if (onHypixel) {
-                        logger.info("Player joined Hypixel.");
-                    }
-                }
+                // Player hasn't been spawned yet, skip this packet.
+                if (thePlayer != null && thePlayer.getClientBrand() != null) {
+                    if (!serverBrandChecked) {
+                        onHypixel = thePlayer.getClientBrand().startsWith(SERVER_BRAND_START);
+                        serverBrandChecked = true;
 
-                // 1 is the sidebar objective slot.
-                if (onHypixel && packet.func_149371_c() == 1) {
-                     String objectiveName = packet.func_149370_d();
-                     boolean newSkyBlockState = objectiveName.equals("SBScoreboard");
-
-                    if (newSkyBlockState && !onSkyBlock) {
-                        logger.info("Player joined SkyBlock.");
-                    } else if (!newSkyBlockState && onSkyBlock) {
-                        logger.info("Player left SkyBlock.");
+                        if (onHypixel) {
+                            logger.info("Player joined Hypixel.");
+                        }
                     }
 
-                    onSkyBlock = newSkyBlockState;
+                    // 1 is the sidebar objective slot.
+                    if (onHypixel && packet.func_149371_c() == 1) {
+                        String objectiveName = packet.func_149370_d();
+                        boolean newSkyBlockState = objectiveName.equals("SBScoreboard");
+
+                        if (newSkyBlockState && !onSkyBlock) {
+                            logger.info("Player joined SkyBlock.");
+                        } else if (!newSkyBlockState && onSkyBlock) {
+                            logger.info("Player left SkyBlock.");
+                        }
+
+                        onSkyBlock = newSkyBlockState;
+                    }
                 }
-            } catch (ThreadQuickExitException e) {
-                //ignored
+            } catch (RuntimeException e) {
+                logger.error(String.format("SkyBlock Join Check Failed: %s" +
+                        "\n Brand: %s" +
+                        "\nPacket contents:" +
+                        "\n  Position: %s" +
+                        "\n  Score Name: %s", e.getMessage(), thePlayer.getClientBrand(), packet.func_149371_c(), packet.func_149370_d()), e);
             }
         }
 

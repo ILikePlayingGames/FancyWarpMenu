@@ -3,6 +3,14 @@
     <!-- Filter out Hypixel scoreboard and sound errors -->
     <RegexFilter regex="Error executing task.*|Unable to play unknown soundEvent.*" onMatch="DENY" onMismatch="NEUTRAL"/>
     <Loggers>
-        <Logger name="FML" level="DEBUG"/>
+        <Logger level="INFO" name="net.minecraft.util.MessageDeserializer" additivity="false">
+            <AppenderRef ref="SysOut" level="DEBUG" />
+            <Filters>
+                <RegexFilter regex=".*S18PacketEntityTeleport.*" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+        </Logger>
+        <Logger level="DEBUG" name="ca.tirelesstraveler.fancywarpmenu" additivity="false">
+            <AppenderRef ref="SysOut" level="DEBUG" />
+        </Logger>
     </Loggers>
 </Configuration>
