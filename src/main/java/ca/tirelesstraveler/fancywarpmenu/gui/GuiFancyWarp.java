@@ -137,7 +137,7 @@ public class GuiFancyWarp extends GuiScreen {
                         nearestY = islandButton.findNearestGridY(mouseY);
                         drawX = islandButton.getActualX(nearestX);
                         drawY = islandButton.getActualY(nearestY);
-                        drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY);
+                        drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, islandButton.getZLevel());
                         tooltipDrawn = true;
                         break;
                     }
@@ -150,7 +150,7 @@ public class GuiFancyWarp extends GuiScreen {
                 nearestY = findNearestGridY(mouseY);
                 drawX = getActualX(nearestX);
                 drawY = getActualY(nearestY);
-                drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY);
+                drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, -1);
             }
         }
     }
@@ -217,9 +217,13 @@ public class GuiFancyWarp extends GuiScreen {
         return (int) (remainder > gridUnitHeight / 2 ? quotient + 1 : quotient);
     }
 
-    private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY) {
+    private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {
         debugStrings.add("gridX: " + nearestGridX);
         debugStrings.add("gridY: " + nearestGridY);
+        // zLevel of -1 means z is not relevant, like in the case of screen coordinates
+        if (zLevel > -1) {
+            debugStrings.add("zLevel: " + zLevel);
+        }
         drawHoveringText(debugStrings, drawX, drawY);
         drawRect(drawX - 1, drawY - 1, drawX + 1, drawY + 1, Color.RED.getRGB());
     }

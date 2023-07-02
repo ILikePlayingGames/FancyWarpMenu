@@ -55,10 +55,10 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(0, 0, zLevel);
-        drawRect(scaledMinX, scaledMinY, scaledMaxX, scaledMinY + borderWidth, Color.black.getRGB());
-        drawRect(scaledMinX, scaledMinY, scaledMinX + borderWidth, scaledMaxY, Color.black.getRGB());
-        drawRect(scaledMinX, scaledMaxY - borderWidth, scaledMaxX, scaledMaxY, Color.black.getRGB());
-        drawRect(scaledMaxX - borderWidth, scaledMinY, scaledMaxX, scaledMaxY, Color.black.getRGB());
+        drawRect(scaledMinX, scaledMinY, scaledMaxX, scaledMinY + borderWidth, Color.white.getRGB());
+        drawRect(scaledMinX, scaledMinY, scaledMinX + borderWidth, scaledMaxY, Color.white.getRGB());
+        drawRect(scaledMinX, scaledMaxY - borderWidth, scaledMaxX, scaledMaxY, Color.white.getRGB());
+        drawRect(scaledMaxX - borderWidth, scaledMinY, scaledMaxX, scaledMaxY, Color.white.getRGB());
         GlStateManager.popMatrix();
     }
 
@@ -112,5 +112,9 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
     @Override
     public int compareTo(@NotNull GuiButtonExt o) {
         return (int) (this.zLevel - o.zLevel);
+    }
+
+    public int getZLevel() {
+        return (int) zLevel;
     }
 }
