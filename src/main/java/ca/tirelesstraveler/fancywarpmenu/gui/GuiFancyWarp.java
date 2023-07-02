@@ -31,6 +31,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 
@@ -171,7 +172,13 @@ public class GuiFancyWarp extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         // Block repeat clicks if the last warp failed
         if (button instanceof GuiWarpButton && Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
-            sendChatMessage(((GuiWarpButton)button).getWarpCommand());
+            String warpCommand = ((GuiWarpButton) button).getWarpCommand();
+            try {
+                mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
+                mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(warpCommand));
+            } catch (Exception e) {
+                new RuntimeException("Error while trying to send chat message with '" + warpCommand + "'", e).printStackTrace();
+            }
         }
     }
 
