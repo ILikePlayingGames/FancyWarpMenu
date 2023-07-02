@@ -59,11 +59,11 @@ public class GuiFancyWarp extends GuiScreen {
         gridUnitHeight = (float) res.getScaledHeight() / Island.GRID_UNIT_HEIGHT_FACTOR;
         Warp.initDefaults(res);
 
-        for (Island island: FancyWarpMenu.getInstance().getIslands()) {
+        for (Island island : FancyWarpMenu.getInstance().getIslands()) {
             GuiIslandButton islandButton = new GuiIslandButton(this, buttonList.size(), res, island);
             buttonList.add(islandButton);
 
-            for (Warp warp: island.getWarps()) {
+            for (Warp warp : island.getWarps()) {
                 buttonList.add(new GuiWarpButton(buttonList.size(), islandButton, warp));
             }
         }
@@ -83,8 +83,7 @@ public class GuiFancyWarp extends GuiScreen {
         GuiButtonExt lastHoveredButton = null;
 
         // When multiple buttons overlap, mark only the top one as hovered.
-        for (GuiButton button:
-             buttonList) {
+        for (GuiButton button : buttonList) {
             if (button instanceof GuiIslandButton && button.visible) {
                 if (button.isMouseOver()) {
                     if (lastHoveredButton != null) {
@@ -116,8 +115,7 @@ public class GuiFancyWarp extends GuiScreen {
             drawCenteredString(mc.fontRendererObj, modName + " " + modVersion, width / 2, height - 10, 14737632);
 
             if (Settings.shouldDrawBorders()) {
-                for (GuiButton button:
-                        buttonList) {
+                for (GuiButton button : buttonList) {
                     //Draw borders
                     if (button instanceof GuiButtonExt) {
                         ((GuiButtonExt) button).drawBorders(1, 1);
@@ -127,8 +125,7 @@ public class GuiFancyWarp extends GuiScreen {
 
             // Shift to draw island grid instead of warp grid
             if (!isShiftKeyDown()) {
-                for (GuiButton button:
-                        buttonList) {
+                for (GuiButton button : buttonList) {
                     // Draw island button coordinate tooltips, draw last to prevent clipping
                     if (button instanceof GuiIslandButton && button.isMouseOver()) {
                         GuiIslandButton islandButton = (GuiIslandButton) button;

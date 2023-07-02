@@ -35,8 +35,6 @@ public class WarpConfiguration {
     private WarpMessages warpMessages;
     private List<String> warpCommandVariants;
 
-    private WarpConfiguration(){}
-
     public List<Island> getIslandList() {
         return islandList;
     }
@@ -62,8 +60,7 @@ public class WarpConfiguration {
             throw new IllegalArgumentException("Island list cannot be empty");
         }
 
-        for (Island island:
-                warpConfiguration.getIslandList()) {
+        for (Island island : warpConfiguration.getIslandList()) {
             Island.validateIsland(island);
         }
 
@@ -74,8 +71,7 @@ public class WarpConfiguration {
             throw new NullPointerException("Warp command variant list cannot be empty");
         }
 
-        for (String warpCommandVariant:
-                warpConfiguration.warpCommandVariants) {
+        for (String warpCommandVariant : warpConfiguration.warpCommandVariants) {
             if (warpCommandVariant.equals("")) {
                 throw new IllegalArgumentException(String.format("Warp command variant at index %d is an empty string",
                         warpConfiguration.warpCommandVariants.indexOf(warpCommandVariant)));
