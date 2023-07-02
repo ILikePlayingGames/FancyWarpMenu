@@ -33,6 +33,8 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.EnumChatFormatting;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -45,6 +47,7 @@ public class GuiFancyWarp extends GuiScreen {
     private static final long WARP_FAIL_COOL_DOWN = 500L;
     /** The amount of time in ms that the error message remains on-screen after a failed warp attempt */
     private static final long WARP_FAIL_TOOLTIP_DISPLAY_TIME = 2000L;
+    private static final Logger logger = LogManager.getLogger();
 
     private ScaledResolution res;
     private float gridUnitWidth;
@@ -177,7 +180,7 @@ public class GuiFancyWarp extends GuiScreen {
                 mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
                 mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(warpCommand));
             } catch (Exception e) {
-                new RuntimeException("Error while trying to send chat message with '" + warpCommand + "'", e).printStackTrace();
+                logger.error(String.format("Failed to send command \"%s\": %s", warpCommand, e.getMessage()), e);
             }
         }
     }
