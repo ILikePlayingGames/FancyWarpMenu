@@ -25,6 +25,7 @@ package ca.tirelesstraveler.fancywarpmenu.listeners;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.commands.DummyWarpCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -43,6 +44,8 @@ import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Mouse;
+
+import java.util.Map;
 
 /**
  * General purpose event listener
@@ -69,7 +72,10 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
             if (modInstance.getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
                 mc.displayGuiScreen(null);
             } else if (modInstance.getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
-                warpScreen.onWarpFail(modInstance.getWarpMessages().getWarpFailMessages().get(unformattedText));
+                WarpMessages warpMessages = modInstance.getWarpMessages();
+                Map<String, String> warpFailMessages = warpMessages.getWarpFailMessages();
+                String failMessageKey = warpFailMessages.get(unformattedText);
+                warpScreen.onWarpFail(failMessageKey);
             }
         }
     }
@@ -163,7 +169,8 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
      * @param commandName name of the command the player sent, excluding the slash and any arguments
      */
     public static boolean isWarpCommand(String commandName) {
-        return modInstance.getWarpCommandVariants().contains(commandName);
+        String baseCommand = commandName.substring(1).split(" ")[0];
+        return modInstance.getWarpCommandVariants().contains(baseCommand);
     }
 
     public static void setWarpScreen(GuiFancyWarp warpScreen) {
