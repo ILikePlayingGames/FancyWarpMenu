@@ -36,18 +36,25 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Island {
     /** Grid unit width is screenWidth / widthFactor */
-    public static final float GRID_UNIT_WIDTH_FACTOR = 32;
+    public static final float GRID_UNIT_WIDTH_FACTOR = 64;
     /** Grid unit height is screenHeight / heightFactor */
-    public static final float GRID_UNIT_HEIGHT_FACTOR = 18;
+    public static final float GRID_UNIT_HEIGHT_FACTOR = 36;
 
+    /** Island name to be displayed below the island button*/
     private String name;
+    /** Path to texture relative to {@code resources/assets/fancywarpmenu} */
     private String texturePath;
+    /** x-coordinate to draw island button at (0-64) */
     private int gridX;
+    /** y-coordinate to draw island button at (0-36) */
     private int gridY;
+    /** z-coordinate to draw island button at (0-9) */
+    private int zLevel;
     /** Width to render the island texture, given as a percentage of total screen width */
     private float widthPercentage;
     /** Height to render the island texture, given as a percentage of island texture width */
     private float heightPercentage;
+    /** List of warps to draw as buttons above the island */
     private List<Warp> warpList;
     private transient ResourceLocation textureLocation;
     private transient int width;
@@ -82,6 +89,10 @@ public class Island {
 
     public int getGridY() {
         return gridY;
+    }
+
+    public int getzLevel() {
+        return zLevel;
     }
 
     public void init(ScaledResolution res) {
@@ -129,6 +140,12 @@ public class Island {
 
         if (island.gridY < 0 || island.gridY > GRID_UNIT_HEIGHT_FACTOR) {
             throw new IllegalArgumentException(String.format("Island %s gridY is outside screen", name));
+        }
+
+        if (island.zLevel < 0) {
+            throw new IllegalArgumentException(String.format("Island %s zLevel is outside screen", name));
+        } else if (island.zLevel >= 10) {
+            throw new IllegalArgumentException(String.format("Island %s zLevel is too high. Z levels 10+ are reserved for warp buttons.", name));
         }
 
         if (island.widthPercentage < 0 || island.widthPercentage > 1) {

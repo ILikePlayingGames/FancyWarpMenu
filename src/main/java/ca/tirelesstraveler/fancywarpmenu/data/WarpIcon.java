@@ -33,6 +33,7 @@ import java.io.IOException;
  */
 @SuppressWarnings("unused")
 public class WarpIcon {
+    /** Path to the warp button texture relative to {@code resources/assets/fancywarpmenu} */
     private String texturePath;
 
     /** Width to render the warp icon texture at as a percentage of the screen width */

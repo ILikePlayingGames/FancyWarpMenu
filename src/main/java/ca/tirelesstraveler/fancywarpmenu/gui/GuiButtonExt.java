@@ -25,13 +25,15 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
 /**
  * Button class with additional utility methods
  */
-public abstract class GuiButtonExt extends GuiButton {
+public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiButtonExt> {
     protected final ScaledResolution RES;
 
     /**
@@ -50,18 +52,31 @@ public abstract class GuiButtonExt extends GuiButton {
         int scaledMinY = (int) (yPosition / scale);
         int scaledMaxX = (int) ((xPosition + width) / scale);
         int scaledMaxY = (int) ((yPosition + height) / scale);
-        
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, zLevel);
         drawRect(scaledMinX, scaledMinY, scaledMaxX, scaledMinY + borderWidth, Color.black.getRGB());
         drawRect(scaledMinX, scaledMinY, scaledMinX + borderWidth, scaledMaxY, Color.black.getRGB());
         drawRect(scaledMinX, scaledMaxY - borderWidth, scaledMaxX, scaledMaxY, Color.black.getRGB());
         drawRect(scaledMaxX - borderWidth, scaledMinY, scaledMaxX, scaledMaxY, Color.black.getRGB());
+        GlStateManager.popMatrix();
+    }
+
+    void setUnHovered() {
+        if (visible) {
+            this.hovered = false;
+        }
     }
 
     /**
      * Draws this button to the screen.
      */
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {}
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        if (visible) {
+            hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+        }
+    }
 
     /**
      * Draw the button's display string (label).
@@ -85,5 +100,17 @@ public abstract class GuiButtonExt extends GuiButton {
             drawCenteredString(Minecraft.getMinecraft().fontRendererObj, lines[i],
                     x, y + (10 * i), rgb);
         }
+    }
+
+    /**
+     * Compares the z-level of this {@code GuiButtonExt} with another {@code GuiButtonExt}
+     * Returns negative if this button's z-level is smaller than the other button's, 0 if their z-levels are equal,
+     * and positive if this button's z-level is greater than the other button's.
+     *
+     * @param o the object to be compared.
+     */
+    @Override
+    public int compareTo(@NotNull GuiButtonExt o) {
+        return (int) (this.zLevel - o.zLevel);
     }
 }

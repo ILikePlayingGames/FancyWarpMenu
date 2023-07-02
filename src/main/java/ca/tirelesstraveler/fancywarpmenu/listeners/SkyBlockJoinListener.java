@@ -108,7 +108,7 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
                 }
             } catch (RuntimeException e) {
                 logger.error(String.format("SkyBlock Join Check Failed: %s" +
-                        "\n Brand: %s" +
+                        "\nBrand: %s" +
                         "\nPacket contents:" +
                         "\n  Position: %s" +
                         "\n  Score Name: %s", e.getMessage(), thePlayer.getClientBrand(), packet.func_149371_c(), packet.func_149370_d()), e);

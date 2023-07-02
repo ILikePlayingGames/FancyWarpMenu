@@ -41,6 +41,7 @@ public class GuiIslandButton extends GuiButtonExt {
         island.init(res);
         xPosition = parent.getActualX(island.getGridX());
         yPosition = parent.getActualY(island.getGridY());
+        zLevel = island.getzLevel();
         width = island.getWidth();
         height = island.getHeight();
         GRID_UNIT_WIDTH = width / Warp.GRID_UNIT_WIDTH_FACTOR;
@@ -49,20 +50,23 @@ public class GuiIslandButton extends GuiButtonExt {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        super.drawButton(mc, mouseX, mouseY);
         if (this.visible) {
-            this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY <yPosition + height;
             mc.getTextureManager().bindTexture(island.getTextureLocation());
             if (hovered) {
                 GlStateManager.color(1, 1, 1, 1);
             } else {
                 GlStateManager.color(0.85F, 0.85F, 0.85F, 1F);
             }
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, zLevel);
             drawScaledCustomSizeModalRect(xPosition, yPosition, 0, 0, 1, 1, island.getWidth(), island.getHeight(), 1, 1);
             GlStateManager.resetColor();
 
             if (Settings.shouldShowIslandLabels()) {
                 drawDisplayString( xPosition + width / 2 + 1, yPosition + height + 1);
             }
+            GlStateManager.popMatrix();
         }
     }
     int findNearestGridX(int mouseX) {

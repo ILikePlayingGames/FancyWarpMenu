@@ -44,6 +44,7 @@ public class GuiWarpButton extends GuiButtonExt {
         WARP = warp;
         xPosition = parent.getActualX(warp.getGridX());
         yPosition = parent.getActualY(warp.getGridY());
+        zLevel = 10;
         width = warp.getWidth();
         height = warp.getHeight();
         displayString = warp.getDisplayName();
@@ -54,8 +55,8 @@ public class GuiWarpButton extends GuiButtonExt {
      */
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+        super.drawButton(mc, mouseX, mouseY);
         if (this.visible) {
-            this.hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY <yPosition + height;
             mc.getTextureManager().bindTexture(WARP.getWarpTextureLocation());
             GlStateManager.enableBlend();
             if (PARENT.isMouseOver()) {
@@ -65,6 +66,8 @@ public class GuiWarpButton extends GuiButtonExt {
             }
             // Blend allows the texture to be drawn with transparency intact
             GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, zLevel);
             drawScaledCustomSizeModalRect(xPosition, yPosition, 0, 0, 1, 1, WARP.getWidth(), WARP.getHeight(), 1, 1);
             GlStateManager.disableBlend();
             GlStateManager.resetColor();
@@ -72,6 +75,7 @@ public class GuiWarpButton extends GuiButtonExt {
             if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
                 drawDisplayString(xPosition + width / 2 + 1, yPosition + height);
             }
+            GlStateManager.popMatrix();
         }
     }
 

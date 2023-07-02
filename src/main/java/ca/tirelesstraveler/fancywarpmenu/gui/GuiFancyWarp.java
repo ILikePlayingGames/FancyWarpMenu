@@ -67,6 +67,9 @@ public class GuiFancyWarp extends GuiScreen {
                 buttonList.add(new GuiWarpButton(buttonList.size(), islandButton, warp));
             }
         }
+
+        // Sort by z level
+        buttonList.sort(null);
     }
 
     /**
@@ -76,6 +79,22 @@ public class GuiFancyWarp extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
+
+        GuiButtonExt lastHoveredButton = null;
+
+        // When multiple buttons overlap, mark only the top one as hovered.
+        for (GuiButton button:
+             buttonList) {
+            if (button instanceof GuiIslandButton && button.visible) {
+                if (button.isMouseOver()) {
+                    if (lastHoveredButton != null) {
+                        lastHoveredButton.setUnHovered();
+                    }
+
+                    lastHoveredButton = (GuiButtonExt) button;
+                }
+            }
+        }
 
         // Draw warp fail tooltip
         if (Minecraft.getSystemTime() <= warpFailTooltipExpiryTime && warpFailMessage != null) {
@@ -111,7 +130,7 @@ public class GuiFancyWarp extends GuiScreen {
                 for (GuiButton button:
                         buttonList) {
                     // Draw island button coordinate tooltips, draw last to prevent clipping
-                    if (!tooltipDrawn && button instanceof GuiIslandButton && button.isMouseOver()) {
+                    if (button instanceof GuiIslandButton && button.isMouseOver()) {
                         GuiIslandButton islandButton = (GuiIslandButton) button;
                         debugStrings.add(EnumChatFormatting.GREEN + button.displayString);
                         nearestX = islandButton.findNearestGridX(mouseX);
@@ -120,6 +139,7 @@ public class GuiFancyWarp extends GuiScreen {
                         drawY = islandButton.getActualY(nearestY);
                         drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY);
                         tooltipDrawn = true;
+                        break;
                     }
                 }
             }

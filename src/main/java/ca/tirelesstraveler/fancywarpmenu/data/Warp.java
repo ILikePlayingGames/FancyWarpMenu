@@ -33,12 +33,19 @@ public class Warp {
     // Height scale is the same as width
     /** Grid unit width is islandWidth / widthFactor */
     public static float GRID_UNIT_WIDTH_FACTOR = 40;
+    /** Warp button texture, shared between all warp buttons */
     public static WarpIcon warpIcon;
+    /** Warp button width in pixels, see {@link this#calculateAndSetWidth(ScaledResolution)} */
     private static int width;
+    /** Warp button height in pixels, see {@link this#calculateAndSetHeight()} */
     private static int height;
+    /** x-coordinate to draw the warp button at (0-40) */
     private int gridX;
+    /** y-coordinate to draw the warp button at (0-${@code GRID_UNIT_WIDTH_FACTOR * warpIcon.getHeightPercentage()}) */
     private int gridY;
+    /** Name of the warp, rendered below the warp button texture */
     private String displayName;
+    /** Name of the warp as used in the {@code /warp} command */
     private String commandName;
 
     private Warp() {
@@ -119,7 +126,7 @@ public class Warp {
             throw new IllegalArgumentException(String.format("Warp %s gridX is outside screen", name));
         }
 
-        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR) {
+        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR * warpIcon.getHeightPercentage()) {
             throw new IllegalArgumentException(String.format("Warp %s gridY is outside screen", name));
         }
     }

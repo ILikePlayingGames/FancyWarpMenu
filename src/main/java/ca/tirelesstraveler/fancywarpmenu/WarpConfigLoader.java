@@ -59,16 +59,17 @@ public class WarpConfigLoader {
             try (InputStream stream = islandResource.getInputStream();
                  JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(stream)))){
                  WarpConfiguration warpConfig = gson.fromJson(reader, WarpConfiguration.class);
-                 WarpConfiguration.validateWarpConfiguration(warpConfig);
+                Warp.setWarpIcon(warpConfig.getWarpIcon());
+                WarpConfiguration.validateWarpConfiguration(warpConfig);
+
+                warpConfig.getWarpIcon().init();
 
                 for (Island island:
                      warpConfig.getIslandList()) {
                     island.setTextureLocation();
                 }
 
-                 warpConfig.getWarpIcon().init();
-                 Warp.setWarpIcon(warpConfig.getWarpIcon());
-                 return warpConfig;
+                return warpConfig;
             } catch (RuntimeException e) {
                 if (modLoadingComplete) {
                     logger.error(String.format("Warp config loading failed: %s", e.getMessage()), e);
