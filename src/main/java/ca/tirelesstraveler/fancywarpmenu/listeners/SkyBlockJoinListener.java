@@ -65,7 +65,7 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
             serverBrandChecked = false;
             onHypixel = false;
             onSkyBlock = false;
-            logger.debug("Disconnected from Hypixel.");
+            logger.info("Disconnected from Hypixel.");
         }
     }
 
