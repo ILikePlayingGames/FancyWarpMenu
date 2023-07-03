@@ -22,7 +22,6 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
-import ca.tirelesstraveler.fancywarpmenu.commands.DummyWarpCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
@@ -32,7 +31,6 @@ import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -54,11 +52,11 @@ public class FancyWarpMenu {
     private static FancyWarpMenu instance;
     private static ModContainer modContainer;
     private static String modId;
+    static Logger logger;
     private static WarpConfiguration warpConfig;
     private static SkyBlockJoinListener skyblockJoinListener;
     private static WarpMenuListener warpMenuListener;
     private static KeyBinding keyBindingOpenWarpMenu;
-    private static Logger logger;
 
     public static FancyWarpMenu getInstance() {
         return instance;
@@ -71,7 +69,6 @@ public class FancyWarpMenu {
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
         bar.step("Registering Dummy Warp Command");
-        ClientCommandHandler.instance.registerCommand(new DummyWarpCommand());
         bar.step("Initializing Listeners");
         warpMenuListener = new WarpMenuListener();
         MinecraftForge.EVENT_BUS.register(warpMenuListener);
@@ -125,6 +122,10 @@ public class FancyWarpMenu {
      */
     public String getFullLanguageKey(String path) {
         return modId + "." + path;
+    }
+
+    public WarpMenuListener getWarpMenuListener() {
+        return warpMenuListener;
     }
 
     public List<Island> getIslands() {

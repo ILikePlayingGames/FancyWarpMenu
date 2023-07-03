@@ -23,7 +23,6 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.commands.DummyWarpCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
@@ -39,7 +38,6 @@ import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -77,28 +75,6 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
                 String failMessageKey = warpFailMessages.get(unformattedText);
                 warpScreen.onWarpFail(failMessageKey);
             }
-        }
-    }
-
-    /**
-     * Intercepts warp commands using {@link DummyWarpCommand} to cause a {@link CommandEvent} to be posted.
-     * This is retained as a second warp command detection mechanism in case mixin injection fails.
-     */
-    @SubscribeEvent
-    public void onCommandReceived(CommandEvent event) {
-        if (event.command instanceof DummyWarpCommand) {
-            if (Settings.isWarpMenuEnabled() && modInstance.isPlayerOnSkyBlock()) {
-                if (event.parameters.length == 0) {
-                    warpScreen = new GuiFancyWarp();
-                    mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
-                    openMenuRequested = true;
-                    // Block command from reaching server
-                    return;
-                }
-            }
-
-            // Forward command to server
-            event.setCanceled(true);
         }
     }
 
@@ -164,6 +140,21 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     }
 
     /**
+     * Called when the {@code /warp} command is run without any arguments
+     */
+    public void onWarpCommand() {
+        warpScreen = new GuiFancyWarp();
+        mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
+
+        if (mc.currentScreen != null) {
+            // Display on next GUI open in case the current screen closes itself after this method returns (e.g. GuiChat)
+            openMenuRequested = true;
+        } else {
+            mc.displayGuiScreen(warpScreen);
+        }
+    }
+
+    /**
      * Checks if the command name of the command the player sent is the name of the warp command or any of its variants
      *
      * @param commandName name of the command the player sent, excluding the slash and any arguments
@@ -171,14 +162,6 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
     public static boolean isWarpCommand(String commandName) {
         String baseCommand = commandName.substring(1).split(" ")[0];
         return modInstance.getWarpCommandVariants().contains(baseCommand);
-    }
-
-    public static void setWarpScreen(GuiFancyWarp warpScreen) {
-        if (warpScreen == null) {
-            throw new NullPointerException("Warp screen cannot be null");
-        }
-
-        WarpMenuListener.warpScreen = warpScreen;
     }
 
     public static void sendReminderToUseWarpScreen() {
