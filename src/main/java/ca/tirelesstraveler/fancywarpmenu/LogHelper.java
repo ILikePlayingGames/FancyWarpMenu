@@ -30,7 +30,7 @@ import org.apache.logging.log4j.message.Message;
 public class LogHelper {
     public static final boolean DEBUG_ENABLED = FancyWarpMenu.logger.isDebugEnabled()
             || ((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")
-            && System.getProperties().containsKey("fancywarpmenu.debug"));
+            || Boolean.getBoolean("fancywarpmenu.debug"));
 
     public static void logDebug(String message, Throwable throwable) {
         logDebug(message, throwable, new Object[0]);

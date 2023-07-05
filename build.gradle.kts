@@ -138,5 +138,13 @@ tasks.shadowJar {
     // fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
 }
 
+/**
+ * Copy built jar into a Minecraft launcher instance for debugging in a production environment
+ */
+val copyJarToMinecraftLauncher by tasks.registering(Copy::class) {
+    from(file(buildDir.resolve("libs")))
+    into(file(System.getenv("MC_LAUNCHER_DIR")))
+}
+
 tasks.assemble.get().dependsOn(tasks.remapJar)
 
