@@ -29,6 +29,7 @@ import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.util.ChatComponentTranslation;
@@ -146,8 +147,8 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
         warpScreen = new GuiFancyWarp();
         mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
 
-        if (mc.currentScreen != null) {
-            // Display on next GUI open in case the current screen closes itself after this method returns (e.g. GuiChat)
+        // GuiChat closes itself after executing the command so wait until after it closes to open the warp menu.
+        if (mc.currentScreen instanceof GuiChat) {
             openMenuRequested = true;
         } else {
             mc.displayGuiScreen(warpScreen);
