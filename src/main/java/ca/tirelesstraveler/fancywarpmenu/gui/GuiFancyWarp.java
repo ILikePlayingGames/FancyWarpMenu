@@ -191,7 +191,9 @@ public class GuiFancyWarp extends GuiScreen {
         FancyWarpMenu mod = FancyWarpMenu.getInstance();
 
         if (Settings.isDebugModeEnabled()) {
-            if (keyCode == Keyboard.KEY_R) {
+            if (keyCode == mc.gameSettings.keyBindInventory.getKeyCode()) {
+                mc.displayGuiScreen(null);
+            } else if (keyCode == Keyboard.KEY_R) {
                 mod.reloadResources();
                 buttonList.clear();
                 initGui();
