@@ -47,12 +47,14 @@ public class Warp {
     private String displayName;
     /** Name of the warp as used in the {@code /warp} command */
     private String commandName;
+    /** Don't draw the display name under the warp's button */
+    private boolean hideDisplayName;
 
     private Warp() {
     }
 
     public String getDisplayName() {
-        return displayName;
+        return hideDisplayName ? "" : displayName;
     }
 
     public ResourceLocation getWarpTextureLocation() {

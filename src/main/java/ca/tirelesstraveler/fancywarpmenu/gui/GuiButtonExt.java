@@ -62,10 +62,8 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
         GlStateManager.popMatrix();
     }
 
-    void setUnHovered() {
-        if (visible) {
-            this.hovered = false;
-        }
+    void setHovered(boolean hovered) {
+        this.hovered = hovered;
     }
 
     /**

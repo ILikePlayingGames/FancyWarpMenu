@@ -41,6 +41,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class GuiFancyWarp extends GuiScreen {
     /** Delay in ms before the player can warp again if the last warp attempt failed */
@@ -82,22 +83,26 @@ public class GuiFancyWarp extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawDefaultBackground();
-        super.drawScreen(mouseX, mouseY, partialTicks);
 
-        GuiButtonExt lastHoveredButton = null;
+        List<GuiButtonExt> hoveredButtons = new ArrayList<>();
 
-        // When multiple buttons overlap, mark only the top one as hovered.
+        // When multiple island buttons overlap, mark only the top one as hovered.
         for (GuiButton button : buttonList) {
-            if (button instanceof GuiIslandButton && button.visible) {
-                if (button.isMouseOver()) {
-                    if (lastHoveredButton != null) {
-                        lastHoveredButton.setUnHovered();
-                    }
+            if (button instanceof GuiIslandButton) {
+                ((GuiIslandButton) button).setHovered(mouseX >= button.xPosition && mouseY >= button.yPosition
+                        && mouseX < button.xPosition + button.width && mouseY < button.yPosition + button.height);
 
-                    lastHoveredButton = (GuiButtonExt) button;
+                if (button.isMouseOver()) {
+                    hoveredButtons.add((GuiButtonExt) button);
                 }
             }
         }
+
+        for (int i = 0; i < hoveredButtons.size() - 1; i++) {
+            hoveredButtons.get(i).setHovered(false);
+        }
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
 
         // Draw warp fail tooltip
         if (Minecraft.getSystemTime() <= warpFailTooltipExpiryTime && warpFailMessage != null) {
@@ -171,13 +176,17 @@ public class GuiFancyWarp extends GuiScreen {
     @Override
     protected void actionPerformed(GuiButton button) {
         // Block repeat clicks if the last warp failed
-        if (button instanceof GuiWarpButton && Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
-            String warpCommand = ((GuiWarpButton) button).getWarpCommand();
-            try {
-                mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
-                mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(warpCommand));
-            } catch (Exception e) {
-                logger.error(String.format("Failed to send command \"%s\": %s", warpCommand, e.getMessage()), e);
+        if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
+            if (button instanceof GuiWarpButton) {
+                String warpCommand = ((GuiWarpButton) button).getWarpCommand();
+                sendWarpCommand(warpCommand);
+            } else if (button instanceof GuiIslandButton) {
+                Island island = ((GuiIslandButton) button).getIsland();
+
+                if (island.getWarpCount() == 1) {
+                    String warpCommand = island.getWarps().get(0).getWarpCommand();
+                    sendWarpCommand(warpCommand);
+                }
             }
         }
     }
@@ -235,5 +244,14 @@ public class GuiFancyWarp extends GuiScreen {
         }
         drawHoveringText(debugStrings, drawX, drawY);
         drawRect(drawX - 1, drawY - 1, drawX + 1, drawY + 1, Color.RED.getRGB());
+    }
+
+    private void sendWarpCommand(String warpCommand) {
+        try {
+            mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
+            mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(warpCommand));
+        } catch (Exception e) {
+            logger.error(String.format("Failed to send command \"%s\": %s", warpCommand, e.getMessage()), e);
+        }
     }
 }
