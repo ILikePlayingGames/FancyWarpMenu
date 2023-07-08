@@ -219,10 +219,11 @@
       "widthPercentage": 0.05,
       "warpList": [
         {
-          "displayName": "",
+          "displayName": "Home",
           "commandName": "home",
           "gridX": 3,
-          "gridY": 3
+          "gridY": 3,
+          "hideDisplayName": true
         }
       ]
     },
@@ -235,10 +236,11 @@
       "widthPercentage": 0.2,
       "warpList": [
         {
-          "displayName": "",
+          "displayName": "Garden",
           "commandName": "garden",
           "gridX": 10,
-          "gridY": 8
+          "gridY": 8,
+          "hideDisplayName": true
         }
       ]
     },

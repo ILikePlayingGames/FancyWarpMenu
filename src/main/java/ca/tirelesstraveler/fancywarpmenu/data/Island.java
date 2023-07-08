@@ -95,6 +95,10 @@ public class Island {
         return zLevel;
     }
 
+    public int getWarpCount() {
+        return warpList.size();
+    }
+
     public void init(ScaledResolution res) {
         float scaleFactor;
         width = (int) (res.getScaledWidth() * widthPercentage);

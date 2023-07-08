@@ -53,7 +53,6 @@ public class GuiIslandButton extends GuiButtonExt {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-        super.drawButton(mc, mouseX, mouseY);
         if (this.visible) {
             mc.getTextureManager().bindTexture(island.getTextureLocation());
             GlStateManager.enableBlend();
@@ -76,6 +75,11 @@ public class GuiIslandButton extends GuiButtonExt {
             GlStateManager.popMatrix();
         }
     }
+
+    public Island getIsland() {
+        return island;
+    }
+
     int findNearestGridX(int mouseX) {
         float quotient = (mouseX - xPosition) / GRID_UNIT_WIDTH;
         float remainder = (mouseX - xPosition) % GRID_UNIT_WIDTH;
