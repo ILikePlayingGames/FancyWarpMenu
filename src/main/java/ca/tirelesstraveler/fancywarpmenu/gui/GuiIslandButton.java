@@ -30,6 +30,9 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
 
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+
 public class GuiIslandButton extends GuiButtonExt {
     private final Island island;
     // The width of the grid squares on which to place the warps
@@ -53,14 +56,18 @@ public class GuiIslandButton extends GuiButtonExt {
         super.drawButton(mc, mouseX, mouseY);
         if (this.visible) {
             mc.getTextureManager().bindTexture(island.getTextureLocation());
+            GlStateManager.enableBlend();
             if (hovered) {
-                GlStateManager.color(1, 1, 1, 1);
+                GlStateManager.color(1F, 1F, 1F);
             } else {
-                GlStateManager.color(0.85F, 0.85F, 0.85F, 1F);
+                GlStateManager.color(0.5F, 0.5F, 0.5F);
             }
+            // Blend allows the texture to be drawn with transparency intact
+            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, 0, zLevel);
             drawScaledCustomSizeModalRect(xPosition, yPosition, 0, 0, 1, 1, island.getWidth(), island.getHeight(), 1, 1);
+            GlStateManager.disableBlend();
             GlStateManager.resetColor();
 
             if (Settings.shouldShowIslandLabels()) {

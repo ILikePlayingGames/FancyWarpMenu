@@ -2,12 +2,11 @@
   "islandList": [
     {
       "name": "Hub",
-      "texturePath": "textures/gui/islands/The Hub.png",
+      "texturePath": "textures/gui/islands/Hub.png",
       "gridX": 19,
       "gridY": 19,
       "zLevel": 0,
       "widthPercentage": 0.4,
-      "heightPercentage": 0.5121412803532,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -60,7 +59,6 @@
       "gridY": 0,
       "zLevel": 0,
       "widthPercentage": 0.25,
-      "heightPercentage": 0.53710624666311,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -107,7 +105,6 @@
       "gridY": 10,
       "zLevel": 0,
       "widthPercentage": 0.2,
-      "heightPercentage": 0.64354066985646,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -131,12 +128,11 @@
     },
     {
       "name": "The End",
-      "texturePath": "textures/gui/islands/The End.png",
+      "texturePath": "textures/gui/islands/End.png",
       "gridX": 18,
       "gridY": 0,
       "zLevel": 2,
       "widthPercentage": 0.2,
-      "heightPercentage": 0.78677042801556,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -165,7 +161,6 @@
       "gridY": 14,
       "zLevel": 1,
       "widthPercentage": 0.10,
-      "heightPercentage": 1.06829765545362,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -177,12 +172,11 @@
     },
     {
       "name": "Deep Caverns",
-      "texturePath": "textures/gui/islands/Deep Caverns Island.png",
+      "texturePath": "textures/gui/islands/Deep Caverns.png",
       "gridX": 47,
       "gridY": 4,
       "zLevel": 1,
       "widthPercentage": 0.12,
-      "heightPercentage": 1.31904161412358,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -218,12 +212,11 @@
     },
     {
       "name": "Home",
-      "texturePath": "textures/gui/islands/Private Island Small.png",
+      "texturePath": "textures/gui/islands/Private Island.png",
       "gridX": 23,
       "gridY": 29,
       "zLevel": 1,
       "widthPercentage": 0.05,
-      "heightPercentage": 1.19598765432099,
       "warpList": [
         {
           "displayName": "",
@@ -240,7 +233,6 @@
       "gridY": 27,
       "zLevel": 1,
       "widthPercentage": 0.2,
-      "heightPercentage": 0.44979686593151,
       "warpList": [
         {
           "displayName": "",
@@ -252,12 +244,11 @@
     },
     {
       "name": "The Barn",
-      "texturePath": "textures/gui/islands/The Barn.png",
+      "texturePath": "textures/gui/islands/Barn.png",
       "gridX": 46,
       "gridY": 22,
       "zLevel": 0,
       "widthPercentage": 0.11,
-      "heightPercentage": 0.96516007532957,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -274,7 +265,6 @@
       "gridY": 14,
       "zLevel": 0,
       "widthPercentage": 0.2,
-      "heightPercentage": 0.65492498369211,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -292,12 +282,11 @@
     },
     {
       "name": "The Park",
-      "texturePath": "textures/gui/islands/The Park.png",
+      "texturePath": "textures/gui/islands/Park.png",
       "gridX": 16,
       "gridY": 10,
       "zLevel": 1,
       "widthPercentage": 0.15,
-      "heightPercentage": 0.97255260750229,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -326,7 +315,6 @@
       "gridY": 16,
       "zLevel": 2,
       "widthPercentage": 0.25,
-      "heightPercentage": 0.62332361516035,
       "warpList": [
         {
           "displayName": "Spawn",

@@ -35,9 +35,9 @@ public class Warp {
     public static float GRID_UNIT_WIDTH_FACTOR = 40;
     /** Warp button texture, shared between all warp buttons */
     public static WarpIcon warpIcon;
-    /** Warp button width in pixels, see {@link this#calculateAndSetWidth(ScaledResolution)} */
+    /** Warp button width in pixels, see {@link this#initDefaults(ScaledResolution)} */
     private static int width;
-    /** Warp button height in pixels, see {@link this#calculateAndSetHeight()} */
+    /** Warp button height in pixels, see {@link this#initDefaults(ScaledResolution)} */
     private static int height;
     /** x-coordinate to draw the warp button at (0-40) */
     private int gridX;
@@ -92,20 +92,14 @@ public class Warp {
      * Initializes width and height for all warp buttons
      */
     public static void initDefaults(ScaledResolution res) {
-        calculateAndSetWidth(res);
-        calculateAndSetHeight();
+        float scaleFactor;
+        width = (int) (res.getScaledWidth() * warpIcon.getWidthPercentage());
+        scaleFactor = (float) width / warpIcon.getTextureWidth();
+        height = (int) (warpIcon.getTextureHeight() * scaleFactor);
     }
 
     public static void setWarpIcon(WarpIcon warpIcon) {
         Warp.warpIcon = warpIcon;
-    }
-
-    private static void calculateAndSetWidth(ScaledResolution res) {
-        width = (int) (res.getScaledWidth() * warpIcon.getWidthPercentage());
-    }
-
-    private static void calculateAndSetHeight() {
-        height = (int) (width * warpIcon.getHeightPercentage());
     }
 
     public static void validateWarp(Warp warp) throws IllegalArgumentException, NullPointerException {
@@ -123,11 +117,11 @@ public class Warp {
         }
 
         if (warp.gridX < 0 || warp.gridX > GRID_UNIT_WIDTH_FACTOR) {
-            throw new IllegalArgumentException(String.format("Warp %s gridX is outside screen", name));
+            throw new IllegalArgumentException(String.format("Warp %s gridX is outside island", name));
         }
 
-        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR * warpIcon.getHeightPercentage()) {
-            throw new IllegalArgumentException(String.format("Warp %s gridY is outside screen", name));
+        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR * Warp.warpIcon.getHeightPercentage()) {
+            throw new IllegalArgumentException(String.format("Warp %s gridY is outside island", name));
         }
     }
 }

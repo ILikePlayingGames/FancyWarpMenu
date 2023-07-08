@@ -47,6 +47,7 @@ public class Settings {
     private static boolean debugModeEnabled;
     private static boolean showDebugOverlay;
     private static boolean drawBorders;
+    private static boolean skipSkyBlockCheck;
 
     public static List<IConfigElement> getConfigElements() {
         List<IConfigElement> topLevelElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
@@ -69,7 +70,7 @@ public class Settings {
         Collections.addAll(topLevelPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand");
 
         List<String> debugPropertyOrder = new ArrayList<>();
-        Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders");
+        Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders", "skipSkyBlockCheck");
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, topLevelPropertyOrder);
         config.setCategoryPropertyOrder(CATEGORY_DEBUG, debugPropertyOrder);
@@ -121,6 +122,11 @@ public class Settings {
         prop.setRequiresWorldRestart(false);
         drawBorders = prop.getBoolean(true);
 
+        prop = config.get(CATEGORY_DEBUG, "skipSkyBlockCheck", false);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.skipSkyBlockCheck"));
+        prop.setRequiresWorldRestart(false);
+        skipSkyBlockCheck = prop.getBoolean(false);
+
         if (config.hasChanged()) {
             config.save();
         }
@@ -152,6 +158,10 @@ public class Settings {
 
     public static boolean shouldDrawBorders() {
         return drawBorders;
+    }
+
+    public static boolean shouldSkipSkyBlockCheck() {
+        return skipSkyBlockCheck;
     }
 
     public static void setShowDebugOverlay(boolean showDebugOverlay) {
