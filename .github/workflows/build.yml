@@ -83,6 +83,6 @@ jobs:
         embed-description: | 
                         ${{ env.COMMIT_LOG }}
                         
-                        [File SHA-256](https://emn178.github.io/online-tools/sha256_checksum.html 'Drop jar onto linked site and verify hash matches the one below.') below
+                        [File SHA-256](https://emn178.github.io/online-tools/sha256_checksum.html 'Drop jar onto linked site and verify hash matches the one below.') below ([what's this?](https://github.com/BiscuitDevelopment/SkyblockAddons/wiki/How-to-Verify-the-File-Hash))
         embed-footer-text: ${{ hashFiles(env.jarPath) }}
         filename: ${{ env.jarPath }}
