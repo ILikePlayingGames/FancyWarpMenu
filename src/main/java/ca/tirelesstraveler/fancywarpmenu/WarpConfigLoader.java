@@ -25,10 +25,13 @@ package ca.tirelesstraveler.fancywarpmenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
+import ca.tirelesstraveler.fancywarpmenu.data.WarpIcon;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
@@ -36,9 +39,11 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,15 +63,21 @@ public class WarpConfigLoader {
 
             try (InputStream stream = islandResource.getInputStream();
                  JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(stream)))){
-                 WarpConfiguration warpConfig = gson.fromJson(reader, WarpConfiguration.class);
-                Warp.setWarpIcon(warpConfig.getWarpIcon());
+                WarpConfiguration warpConfig = gson.fromJson(reader, WarpConfiguration.class);
+                WarpIcon warpIcon = warpConfig.getWarpIcon();
+                warpIcon.init();
+                Pair<Integer, Integer> warpIconDimensions = getTextureDimensions(warpIcon.getTextureLocation());
+                warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
+                Warp.setWarpIcon(warpIcon);
                 WarpConfiguration.validateWarpConfiguration(warpConfig);
-
-                warpConfig.getWarpIcon().init();
 
                 for (Island island:
                      warpConfig.getIslandList()) {
+                    Pair<Integer, Integer> islandTextureDimensions;
+
                     island.setTextureLocation();
+                    islandTextureDimensions = getTextureDimensions(island.getTextureLocation());
+                    island.setTextureDimensions(islandTextureDimensions.getLeft(), islandTextureDimensions.getRight());
                 }
 
                 return warpConfig;
@@ -85,6 +96,18 @@ public class WarpConfigLoader {
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static Pair<Integer, Integer> getTextureDimensions(ResourceLocation resourceLocation) {
+        IResourceManager resourceManager = Minecraft.getMinecraft().getResourceManager();
+
+        try (InputStream textureStream = resourceManager.getResource(resourceLocation).getInputStream()) {
+            BufferedImage bufferedImage = TextureUtil.readBufferedImage(textureStream);
+            return Pair.of(bufferedImage.getWidth(), bufferedImage.getHeight());
+        } catch (IOException e) {
+            throw new ReportedException(CrashReport.makeCrashReport(e,
+                    String.format("Failed to read texture \"%s\"", resourceLocation)));
         }
     }
 }

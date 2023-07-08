@@ -36,11 +36,14 @@ public class WarpIcon {
     /** Path to the warp button texture relative to {@code resources/assets/fancywarpmenu} */
     private String texturePath;
 
-    /** Width to render the warp icon texture at as a percentage of the screen width */
+    /** Width to render the warp icon texture at as a percentage of the screen width. Texture height is set automatically. */
     private float widthPercentage;
-    /** Height to render the warp icon texture at as a percentage of {@code screenWidth * widthPercentage} */
-    private float heightPercentage;
+    private int height;
     private transient ResourceLocation textureLocation;
+    private transient int textureWidth;
+    private transient int textureHeight;
+    /** {@link this#textureHeight} as a percentage of {@link this#textureWidth}*/
+    private transient int heightPercentage;
 
     private WarpIcon(){}
 
@@ -56,10 +59,23 @@ public class WarpIcon {
         return widthPercentage;
     }
 
+    public int getTextureWidth() {
+        return textureWidth;
+    }
+
+    public int getTextureHeight() {
+        return textureHeight;
+    }
+
     public float getHeightPercentage() {
         return heightPercentage;
     }
 
+    public void setTextureDimensions(int textureWidth, int textureHeight) {
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
+        heightPercentage = textureHeight / textureWidth;
+    }
     public String toString() {
         return WarpConfiguration.gson.toJson(this);
     }
@@ -82,10 +98,6 @@ public class WarpIcon {
 
         if (warpIcon.widthPercentage < 0 || warpIcon.widthPercentage > 1) {
             throw new IllegalArgumentException("Warp icon widthPercentage must be between 0 and 1");
-        }
-
-        if (warpIcon.heightPercentage < 0) {
-            throw new IllegalArgumentException("Island %s heightPercentage must be zero or greater");
         }
     }
 }

@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -119,6 +120,6 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     }
 
     public boolean isOnSkyBlock() {
-        return onSkyBlock;
+        return (Settings.isDebugModeEnabled() && Settings.shouldSkipSkyBlockCheck()) || onSkyBlock;
     }
 }

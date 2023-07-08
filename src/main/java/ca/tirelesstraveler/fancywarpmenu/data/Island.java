@@ -50,13 +50,13 @@ public class Island {
     private int gridY;
     /** z-coordinate to draw island button at (0-9) */
     private int zLevel;
-    /** Width to render the island texture, given as a percentage of total screen width */
+    /** Width to render the island texture, given as a percentage of total screen width. Texture height is set automatically. */
     private float widthPercentage;
-    /** Height to render the island texture, given as a percentage of island texture width */
-    private float heightPercentage;
     /** List of warps to draw as buttons above the island */
     private List<Warp> warpList;
     private transient ResourceLocation textureLocation;
+    private transient int textureWidth;
+    private transient int textureHeight;
     private transient int width;
     private transient int height;
 
@@ -96,7 +96,15 @@ public class Island {
     }
 
     public void init(ScaledResolution res) {
-        calculateAndSetDimensions(res);
+        float scaleFactor;
+        width = (int) (res.getScaledWidth() * widthPercentage);
+        scaleFactor = (float) width / textureWidth;
+        height = (int) (textureHeight * scaleFactor);
+    }
+
+    public void setTextureDimensions(int textureWidth, int textureHeight) {
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
     }
 
     public void setTextureLocation() {
@@ -105,11 +113,6 @@ public class Island {
 
     public String toString() {
         return WarpConfiguration.gson.toJson(this);
-    }
-
-    private void calculateAndSetDimensions(ScaledResolution res) {
-        width = (int) (res.getScaledWidth() * widthPercentage);
-        height = (int) (width * heightPercentage);
     }
 
     public static void validateIsland(Island island) throws IllegalArgumentException, NullPointerException {
@@ -150,10 +153,6 @@ public class Island {
 
         if (island.widthPercentage < 0 || island.widthPercentage > 1) {
             throw new IllegalArgumentException(String.format("Island %s widthPercentage must be between 0 and 1", name));
-        }
-
-        if (island.heightPercentage < 0) {
-            throw new IllegalArgumentException(String.format("Island %s heightPercentage must be zero or greater", name));
         }
 
         if (island.warpList == null || island.warpList.isEmpty()) {

@@ -16,6 +16,8 @@ fancywarpmenu.config.showDebugOverlay=Show Debug Overlay
 fancywarpmenu.config.showDebugOverlay.tooltip=Show an overlay with coordinate values and button borders over the warp menu. Press TAB while the warp menu is open to toggle.
 fancywarpmenu.config.drawBorders=Draw Button Borders
 fancywarpmenu.config.drawBorders.tooltip=Show borders around island and warp buttons. Press B while the warp menu is open to toggle.
+fancywarpmenu.config.skipSkyBlockCheck=Skip SkyBlock Check
+fancywarpmenu.config.skipSkyBlockCheck.tooltip=Skip checking for whether the player is on SkyBlock
 
 
 fancywarpmenu.key.openMenu=Open Warp Menu
