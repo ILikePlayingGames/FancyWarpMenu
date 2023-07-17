@@ -35,11 +35,10 @@ import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
 public class GuiIslandButton extends GuiButtonExt {
     private final Island island;
-    // The width of the grid squares on which to place the warps
-    private final float GRID_UNIT_WIDTH;
+    private final ScaledGrid scaledGrid;
 
     public GuiIslandButton(GuiFancyWarp parent, int buttonId, ScaledResolution res, Island island) {
-        super(buttonId, "", res);
+        super(buttonId, "");
         this.island = island;
         island.init(res);
         xPosition = parent.getActualX(island.getGridX());
@@ -47,7 +46,7 @@ public class GuiIslandButton extends GuiButtonExt {
         zLevel = island.getzLevel();
         width = island.getWidth();
         height = island.getHeight();
-        GRID_UNIT_WIDTH = width / Warp.GRID_UNIT_WIDTH_FACTOR;
+        scaledGrid = new ScaledGrid(xPosition, yPosition, width / Warp.GRID_UNIT_WIDTH_FACTOR);
         displayString = EnumChatFormatting.GREEN + island.getName();
     }
 
@@ -65,12 +64,12 @@ public class GuiIslandButton extends GuiButtonExt {
             GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.pushMatrix();
             GlStateManager.translate(0, 0, zLevel);
-            drawScaledCustomSizeModalRect(xPosition, yPosition, 0, 0, 1, 1, island.getWidth(), island.getHeight(), 1, 1);
+            drawScaledCustomSizeModalRect(scaledGrid.getScaledPosition(xPosition), scaledGrid.getScaledPosition(yPosition), 0, 0, 1, 1, scaledGrid.getScaledDimension(island.getWidth()), scaledGrid.getScaledDimension(island.getHeight()), 1, 1);
             GlStateManager.disableBlend();
             GlStateManager.resetColor();
 
             if (Settings.shouldShowIslandLabels()) {
-                drawDisplayString( xPosition + width / 2 + 1, yPosition + height + 1);
+                drawDisplayString(scaledGrid.getScaledPosition(xPosition + width / 2 + 1), scaledGrid.getScaledPosition(yPosition + height + 1));
             }
             GlStateManager.popMatrix();
         }
@@ -81,26 +80,18 @@ public class GuiIslandButton extends GuiButtonExt {
     }
 
     int findNearestGridX(int mouseX) {
-        float quotient = (mouseX - xPosition) / GRID_UNIT_WIDTH;
-        float remainder = (mouseX - xPosition) % GRID_UNIT_WIDTH;
-
-        // Truncate instead of rounding to keep the point left of the cursor
-        return (int) (remainder > GRID_UNIT_WIDTH / 2 ? quotient + 1 : quotient);
+        return scaledGrid.findNearestGridX(mouseX);
     }
 
     int findNearestGridY(int mouseY) {
-        float quotient = (mouseY - yPosition) / GRID_UNIT_WIDTH;
-        float remainder = (mouseY - yPosition) % GRID_UNIT_WIDTH;
-
-        // Truncate instead of rounding to keep the point left of the cursor
-        return (int) (remainder > GRID_UNIT_WIDTH / 2 ? quotient + 1 : quotient);
+        return scaledGrid.findNearestGridY(mouseY);
     }
 
     int getActualX(int gridX) {
-        return Math.round(xPosition + GRID_UNIT_WIDTH * gridX);
+        return scaledGrid.getActualX(gridX);
     }
 
     int getActualY(int gridY) {
-        return Math.round(yPosition + GRID_UNIT_WIDTH * gridY);
+        return scaledGrid.getActualY(gridY);
     }
 }

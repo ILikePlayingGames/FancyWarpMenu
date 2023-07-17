@@ -24,7 +24,6 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,17 +33,15 @@ import java.awt.*;
  * Button class with additional utility methods
  */
 public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiButtonExt> {
-    protected final ScaledResolution RES;
 
     /**
      * Constructor without coordinates for when placement is set at runtime
      */
-    public GuiButtonExt(int buttonId, String buttonText, ScaledResolution res) {
-        this(buttonId, 0, 0, buttonText, res);
+    public GuiButtonExt(int buttonId, String buttonText) {
+        this(buttonId, 0, 0, buttonText);
     }
-    public GuiButtonExt(int buttonId, int x, int y, String buttonText, ScaledResolution res) {
+    public GuiButtonExt(int buttonId, int x, int y, String buttonText) {
         super(buttonId, x, y, buttonText);
-        RES = res;
     }
 
     protected void drawBorders(float scale, int borderWidth) {
