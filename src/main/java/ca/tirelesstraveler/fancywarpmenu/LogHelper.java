@@ -47,7 +47,7 @@ public class LogHelper {
         String callingClassName = new Throwable().getStackTrace()[3].getClassName();
         Logger logger = LogManager.getLogger(callingClassName);
 
-        if (FancyWarpMenu.logger.isDebugEnabled() || Settings.isDebugModeEnabled()) {
+        if (Settings.isDebugModeEnabled()) {
             if (throwable != null && params != null && params.length > 0) {
                 throw new IllegalArgumentException("Throwable and params cannot be used together in the same call");
             }

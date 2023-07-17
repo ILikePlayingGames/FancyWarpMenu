@@ -12,7 +12,7 @@ public class EntityPlayerSPHook {
     public static void onSendChatMessage(String message, CallbackInfo ci) {
         String lowerCaseMessage = message.toLowerCase(Locale.US).trim();
 
-        if (LogHelper.DEBUG_ENABLED && message.contains("/warp")) {
+        if (message.contains("/warp")) {
             LogHelper.logDebug("Caught send message: {}" +
                     "\nMenu Enabled: {}", lowerCaseMessage, Settings.isWarpMenuEnabled());
         }
