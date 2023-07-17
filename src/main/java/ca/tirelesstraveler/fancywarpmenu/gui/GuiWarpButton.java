@@ -39,7 +39,7 @@ public class GuiWarpButton extends GuiButtonExt {
      * x and y are relative to the top left corner of the parent island button.
      */
     public GuiWarpButton(int buttonId, GuiIslandButton parent, Warp warp) {
-        super(buttonId, 0, 0, "", parent.RES);
+        super(buttonId, 0, 0, "");
         PARENT = parent;
         WARP = warp;
         xPosition = parent.getActualX(warp.getGridX());

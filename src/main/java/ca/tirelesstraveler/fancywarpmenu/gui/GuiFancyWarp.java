@@ -52,9 +52,8 @@ public class GuiFancyWarp extends GuiScreen {
     private static final Logger logger = LogManager.getLogger();
 
     private ScaledResolution res;
+    private ScaledGrid scaledGrid;
     private boolean screenDrawn;
-    private float gridUnitWidth;
-    private float gridUnitHeight;
     private long warpFailCoolDownExpiryTime;
     private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
@@ -66,8 +65,8 @@ public class GuiFancyWarp extends GuiScreen {
         }
 
         res = new ScaledResolution(mc);
-        gridUnitWidth = (float) res.getScaledWidth() / Island.GRID_UNIT_WIDTH_FACTOR;
-        gridUnitHeight = (float) res.getScaledHeight() / Island.GRID_UNIT_HEIGHT_FACTOR;
+        scaledGrid = new ScaledGrid(0, 0, (float) res.getScaledWidth() / Island.GRID_UNIT_WIDTH_FACTOR,
+                (float) res.getScaledHeight() / Island.GRID_UNIT_HEIGHT_FACTOR);
         Warp.initDefaults(res);
 
         for (Island island: FancyWarpMenu.getInstance().getIslands()) {
@@ -173,10 +172,10 @@ public class GuiFancyWarp extends GuiScreen {
 
             // Draw screen coordinate tooltips
             if (!tooltipDrawn) {
-                nearestX = findNearestGridX(mouseX);
-                nearestY = findNearestGridY(mouseY);
-                drawX = getActualX(nearestX);
-                drawY = getActualY(nearestY);
+                nearestX = scaledGrid.findNearestGridX(mouseX);
+                nearestY = scaledGrid.findNearestGridY(mouseY);
+                drawX = scaledGrid.getActualX(nearestX);
+                drawY = scaledGrid.getActualY(nearestY);
                 drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, -1);
             }
         }
@@ -232,28 +231,13 @@ public class GuiFancyWarp extends GuiScreen {
         }
     }
 
+
     int getActualX(int gridX) {
-        return Math.round(gridUnitWidth * gridX);
+        return scaledGrid.getActualX(gridX);
     }
 
     int getActualY(int gridY) {
-        return Math.round(gridUnitHeight * gridY);
-    }
-
-    private int findNearestGridX(int mouseX) {
-        float quotient = mouseX / gridUnitWidth;
-        float remainder = mouseX % gridUnitWidth;
-
-        // Truncate instead of rounding to keep the point left of the cursor
-        return (int) (remainder > gridUnitWidth / 2 ? quotient + 1 : quotient);
-    }
-
-    private int findNearestGridY(int mouseY) {
-        float quotient = mouseY / gridUnitHeight;
-        float remainder = mouseY % gridUnitHeight;
-
-        // Truncate instead of rounding to keep the point left of the cursor
-        return (int) (remainder > gridUnitHeight / 2 ? quotient + 1 : quotient);
+        return scaledGrid.getActualY(gridY);
     }
 
     private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {

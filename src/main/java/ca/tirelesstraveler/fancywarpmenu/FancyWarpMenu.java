@@ -65,7 +65,7 @@ public class FancyWarpMenu {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 4);
+        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 3);
         EnvironmentDetails.deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
