@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data;
 
+import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
@@ -108,7 +109,7 @@ public class Settings {
         prop.setRequiresWorldRestart(false);
         debugModeEnabled = prop.getBoolean(false);
 
-        if (!debugModeEnabled && Boolean.getBoolean("fancywarpmenu.debugRendering")) {
+        if (!debugModeEnabled && EnvironmentDetails.isDeobfuscatedEnvironment()) {
             prop.set(true);
         }
 

@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
@@ -51,6 +52,7 @@ public class GuiFancyWarp extends GuiScreen {
     private static final Logger logger = LogManager.getLogger();
 
     private ScaledResolution res;
+    private boolean screenDrawn;
     private float gridUnitWidth;
     private float gridUnitHeight;
     private long warpFailCoolDownExpiryTime;
@@ -59,6 +61,10 @@ public class GuiFancyWarp extends GuiScreen {
 
     @Override
     public void initGui() {
+        if (!screenDrawn && EnvironmentDetails.isPatcherInstalled()) {
+            return;
+        }
+
         res = new ScaledResolution(mc);
         gridUnitWidth = (float) res.getScaledWidth() / Island.GRID_UNIT_WIDTH_FACTOR;
         gridUnitHeight = (float) res.getScaledHeight() / Island.GRID_UNIT_HEIGHT_FACTOR;
@@ -82,6 +88,18 @@ public class GuiFancyWarp extends GuiScreen {
      */
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        /*
+        Patcher inventory scale doesn't reset inventory scale until the first draw of the screen after
+        the inventory is closed. Setting res in initGui would use Patcher's scaled resolution instead of Minecraft's
+        resolution.
+         */
+        if (!screenDrawn && EnvironmentDetails.isPatcherInstalled()) {
+            screenDrawn = true;
+            initGui();
+            this.width = res.getScaledWidth();
+            this.height = res.getScaledHeight();
+        }
+
         drawDefaultBackground();
 
         List<GuiButtonExt> hoveredButtons = new ArrayList<>();
