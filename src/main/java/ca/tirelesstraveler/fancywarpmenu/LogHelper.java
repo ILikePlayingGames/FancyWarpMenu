@@ -22,16 +22,12 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
-import net.minecraft.launchwrapper.Launch;
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.Message;
 
 public class LogHelper {
-    public static final boolean DEBUG_ENABLED = FancyWarpMenu.logger.isDebugEnabled()
-            || ((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")
-            || Boolean.getBoolean("fancywarpmenu.debug"));
-
     public static void logDebug(String message, Throwable throwable) {
         logDebug(message, throwable, new Object[0]);
     }
@@ -51,7 +47,7 @@ public class LogHelper {
         String callingClassName = new Throwable().getStackTrace()[3].getClassName();
         Logger logger = LogManager.getLogger(callingClassName);
 
-        if (DEBUG_ENABLED) {
+        if (FancyWarpMenu.logger.isDebugEnabled() || Settings.isDebugModeEnabled()) {
             if (throwable != null && params != null && params.length > 0) {
                 throw new IllegalArgumentException("Throwable and params cannot be used together in the same call");
             }

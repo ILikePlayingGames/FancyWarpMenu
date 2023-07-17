@@ -31,6 +31,7 @@ import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -65,10 +66,9 @@ public class FancyWarpMenu {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 4);
-
+        EnvironmentDetails.deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
-        bar.step("Registering Dummy Warp Command");
         bar.step("Initializing Listeners");
         warpMenuListener = new WarpMenuListener();
         MinecraftForge.EVENT_BUS.register(warpMenuListener);
@@ -107,6 +107,9 @@ public class FancyWarpMenu {
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+        if (Loader.isModLoaded("patcher")) {
+            EnvironmentDetails.patcherInstalled = true;
+        }
     }
 
     public ModContainer getModContainer() {
