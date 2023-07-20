@@ -33,11 +33,11 @@ import net.minecraft.util.EnumChatFormatting;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
-public class GuiIslandButton extends GuiButtonExt {
+public class GuiButtonIsland extends GuiButtonExt {
     private final Island island;
     private final ScaledGrid scaledGrid;
 
-    public GuiIslandButton(GuiFancyWarp parent, int buttonId, ScaledResolution res, Island island) {
+    public GuiButtonIsland(GuiFancyWarp parent, int buttonId, ScaledResolution res, Island island) {
         super(buttonId, "");
         this.island = island;
         island.init(res);
@@ -58,7 +58,7 @@ public class GuiIslandButton extends GuiButtonExt {
             if (hovered) {
                 GlStateManager.color(1F, 1F, 1F);
             } else {
-                GlStateManager.color(0.5F, 0.5F, 0.5F);
+                GlStateManager.color(0.9F, 0.9F, 0.9F);
             }
             // Blend allows the texture to be drawn with transparency intact
             GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);

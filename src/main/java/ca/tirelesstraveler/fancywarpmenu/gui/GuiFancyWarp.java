@@ -70,13 +70,15 @@ public class GuiFancyWarp extends GuiScreen {
         Warp.initDefaults(res);
 
         for (Island island: FancyWarpMenu.getInstance().getIslands()) {
-            GuiIslandButton islandButton = new GuiIslandButton(this, buttonList.size(), res, island);
+            GuiButtonIsland islandButton = new GuiButtonIsland(this, buttonList.size(), res, island);
             buttonList.add(islandButton);
 
             for (Warp warp: island.getWarps()) {
-                buttonList.add(new GuiWarpButton(buttonList.size(), islandButton, warp));
+                buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
             }
         }
+
+        buttonList.add(new GuiButtonConfig(buttonList.size()));
 
         // Sort by z level
         buttonList.sort(null);
@@ -106,8 +108,8 @@ public class GuiFancyWarp extends GuiScreen {
         // When multiple island buttons overlap, mark only the top one as hovered.
         for (GuiButton button:
              buttonList) {
-            if (button instanceof GuiIslandButton) {
-                ((GuiIslandButton) button).setHovered(mouseX >= button.xPosition && mouseY >= button.yPosition
+            if (button instanceof GuiButtonIsland) {
+                ((GuiButtonIsland) button).setHovered(mouseX >= button.xPosition && mouseY >= button.yPosition
                         && mouseX < button.xPosition + button.width && mouseY < button.yPosition + button.height);
 
                 if (button.isMouseOver()) {
@@ -156,8 +158,8 @@ public class GuiFancyWarp extends GuiScreen {
                 for (GuiButton button:
                         buttonList) {
                     // Draw island button coordinate tooltips, draw last to prevent clipping
-                    if (button instanceof GuiIslandButton && button.isMouseOver()) {
-                        GuiIslandButton islandButton = (GuiIslandButton) button;
+                    if (button instanceof GuiButtonIsland && button.isMouseOver()) {
+                        GuiButtonIsland islandButton = (GuiButtonIsland) button;
                         debugStrings.add(EnumChatFormatting.GREEN + button.displayString);
                         nearestX = islandButton.findNearestGridX(mouseX);
                         nearestY = islandButton.findNearestGridY(mouseY);
@@ -197,16 +199,18 @@ public class GuiFancyWarp extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         // Block repeat clicks if the last warp failed
         if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
-            if (button instanceof GuiWarpButton) {
-                String warpCommand = ((GuiWarpButton) button).getWarpCommand();
+            if (button instanceof GuiButtonWarp) {
+                String warpCommand = ((GuiButtonWarp) button).getWarpCommand();
                 sendWarpCommand(warpCommand);
-            } else if (button instanceof GuiIslandButton) {
-                Island island = ((GuiIslandButton) button).getIsland();
+            } else if (button instanceof GuiButtonIsland) {
+                Island island = ((GuiButtonIsland) button).getIsland();
 
                 if (island.getWarpCount() == 1) {
                     String warpCommand = island.getWarps().get(0).getWarpCommand();
                     sendWarpCommand(warpCommand);
                 }
+            } else if (button instanceof GuiButtonConfig) {
+                mc.displayGuiScreen(new FancyWarpMenuConfigScreen(this));
             }
         }
     }

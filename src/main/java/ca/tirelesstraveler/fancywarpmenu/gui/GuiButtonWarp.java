@@ -30,15 +30,15 @@ import net.minecraft.client.renderer.GlStateManager;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
-public class GuiWarpButton extends GuiButtonExt {
+public class GuiButtonWarp extends GuiButtonExt {
     /** The button of the island this warp belongs to */
-    private final GuiIslandButton PARENT;
+    private final GuiButtonIsland PARENT;
     private final Warp WARP;
 
     /**
      * x and y are relative to the top left corner of the parent island button.
      */
-    public GuiWarpButton(int buttonId, GuiIslandButton parent, Warp warp) {
+    public GuiButtonWarp(int buttonId, GuiButtonIsland parent, Warp warp) {
         super(buttonId, 0, 0, "");
         PARENT = parent;
         WARP = warp;

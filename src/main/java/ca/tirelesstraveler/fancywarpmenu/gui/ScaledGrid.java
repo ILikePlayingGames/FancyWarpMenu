@@ -47,8 +47,9 @@ public class ScaledGrid {
      * Find the nearest grid x-coordinate to the given mouse x-position in pixels
      */
     int findNearestGridX(int mouseX) {
-        float quotient = getScaledPositionF((mouseX - GRID_START_X) / GRID_UNIT_WIDTH);
-        float remainder = getScaledPositionF((mouseX - GRID_START_Y) % GRID_UNIT_WIDTH);
+        float offset = (mouseX - GRID_START_X);
+        float quotient = getScaledPositionF(offset / GRID_UNIT_WIDTH);
+        float remainder = getScaledPositionF(offset % GRID_UNIT_WIDTH);
 
         // Truncate instead of rounding to keep the point left of the cursor
         return (int) (remainder > getScaledPositionF(GRID_UNIT_WIDTH) / 2 ? quotient + 1 : quotient);
@@ -58,10 +59,11 @@ public class ScaledGrid {
      * Find the nearest grid y-coordinate to the given mouse y-position in pixels
      */
     int findNearestGridY(int mouseY) {
-        float quotient = getScaledPositionF((mouseY - GRID_START_Y) / GRID_UNIT_HEIGHT);
-        float remainder = getScaledPositionF((mouseY - GRID_START_X) % GRID_UNIT_HEIGHT);
+        float offset = (mouseY - GRID_START_Y);
+        float quotient =  getScaledPositionF(offset / GRID_UNIT_HEIGHT);
+        float remainder = getScaledPositionF(offset % GRID_UNIT_HEIGHT);
 
-        // Truncate instead of rounding to keep the point left of the cursor
+        // Truncate instead of rounding to keep the point above the cursor
         return (int) (remainder > getScaledPositionF(GRID_UNIT_HEIGHT) / 2 ? quotient + 1 : quotient);
     }
 
@@ -69,14 +71,14 @@ public class ScaledGrid {
      * Find the x-position in pixels of a given grid x-coordinate
      */
     int getActualX(int gridX) {
-        return getScaledPosition(Math.round(GRID_START_X + GRID_UNIT_WIDTH * gridX));
+        return (int) getScaledPositionF(GRID_START_X + GRID_UNIT_WIDTH * gridX);
     }
 
     /**
      * Find the y-position in pixels of a given grid y-coordinate
      */
     int getActualY(int gridY) {
-        return getScaledPosition(Math.round(GRID_START_Y + GRID_UNIT_WIDTH * gridY));
+        return (int) getScaledPositionF(GRID_START_Y + GRID_UNIT_HEIGHT * gridY);
     }
 
 
