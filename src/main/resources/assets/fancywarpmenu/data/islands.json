@@ -3,98 +3,98 @@
     {
       "name": "Hub",
       "texturePath": "textures/gui/islands/Hub.png",
-      "gridX": 19,
+      "gridX": 23,
       "gridY": 19,
       "zLevel": 0,
-      "widthPercentage": 0.4,
+      "widthPercentage": 0.35,
       "warpList": [
         {
           "displayName": "Spawn",
           "commandName": "hub",
-          "gridX": 29,
-          "gridY": 6
+          "gridX": 15,
+          "gridY": 17
         },
         {
           "displayName": "Museum",
           "commandName": "museum",
-          "gridX": 14,
+          "gridX": 23,
           "gridY": 7
         },
         {
           "displayName": "Crypts",
           "commandName": "crypts",
-          "gridX": 36,
-          "gridY": 4
+          "gridX": 24,
+          "gridY": 25
         },
         {
           "displayName": "Dungeons",
           "commandName": "dungeons",
-          "gridX": 31,
+          "gridX": 15,
           "gridY": 11
         },
         {
           "displayName": "Wizard",
           "commandName": "wizard",
-          "gridX": 21,
-          "gridY": 3
+          "gridX": 12,
+          "gridY": 5
         },
         {
           "displayName": "Sirius (DA)",
           "commandName": "da",
-          "gridX": 16,
-          "gridY": 14
+          "gridX": 5,
+          "gridY": 1
         },
         {
           "displayName": "Ruins",
           "commandName": "castle",
-          "gridX": 6,
-          "gridY": 2
+          "gridX": 34,
+          "gridY": 5
         }
       ]
     },
     {
       "name": "Crimson Isle",
       "texturePath": "textures/gui/islands/Crimson Isle.png",
-      "gridX": 32,
+      "gridX": 35,
       "gridY": 0,
       "zLevel": 0,
-      "widthPercentage": 0.25,
+      "widthPercentage": 0.3,
       "warpList": [
         {
           "displayName": "Spawn",
           "commandName": "isle",
-          "gridX": 4,
-          "gridY": 15
+          "gridX": 19,
+          "gridY": 27
         },
         {
           "displayName": "Skull",
           "commandName": "skull",
-          "gridX": 22,
-          "gridY": 4
+          "gridX": 18,
+          "gridY": 3
         },
         {
           "displayName": "Tomb",
           "commandName": "smold",
-          "gridX": 28,
-          "gridY": 8
+          "gridX": 25,
+          "gridY": 5
         },
         {
           "displayName": "Wasteland",
-          "commandName": "ruins",
+          "commandName": "wasteland",
           "gridX": 12,
-          "gridY": 8
+          "gridY": 9
         },
         {
           "displayName": "Dragontail",
           "commandName": "dragontail",
-          "gridX": 11,
-          "gridY": 2
+          "gridX": 3,
+          "gridY": 3
         },
         {
           "displayName": "Scarleton",
           "commandName": "scarleton",
-          "gridX": 28,
-          "gridY": 15
+          "gridX": 32,
+          "gridY": 12
         }
       ]
     },
@@ -116,7 +116,7 @@
           "displayName": "Top",
           "commandName": "top",
           "gridX": 31,
-          "gridY": 1
+          "gridY": 3
         },
         {
           "displayName": "Arachne",
@@ -157,7 +157,7 @@
     {
       "name": "Gold Mine",
       "texturePath": "textures/gui/islands/Gold Mine.png",
-      "gridX": 41,
+      "gridX": 45,
       "gridY": 14,
       "zLevel": 1,
       "widthPercentage": 0.10,
@@ -165,18 +165,19 @@
         {
           "displayName": "Spawn",
           "commandName": "gold",
-          "gridX": 9,
-          "gridY": 23
+          "gridX": 8,
+          "gridY": 20,
+          "hideDisplayName": true
         }
       ]
     },
     {
       "name": "Deep Caverns",
       "texturePath": "textures/gui/islands/Deep Caverns.png",
-      "gridX": 47,
-      "gridY": 4,
+      "gridX": 53,
+      "gridY": 5,
       "zLevel": 1,
-      "widthPercentage": 0.12,
+      "widthPercentage": 0.15,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -187,13 +188,13 @@
         {
           "displayName": "Dwarven\nMines",
           "commandName": "dwarves",
-          "gridX": 32,
-          "gridY": 12
+          "gridX": 28,
+          "gridY": 14
         },
         {
           "displayName": "Forge",
           "commandName": "forge",
-          "gridX": 17,
+          "gridX": 11,
           "gridY": 5
         },
         {
@@ -214,7 +215,7 @@
       "name": "Home",
       "texturePath": "textures/gui/islands/Private Island.png",
       "gridX": 23,
-      "gridY": 29,
+      "gridY": 32,
       "zLevel": 1,
       "widthPercentage": 0.05,
       "warpList": [
@@ -230,15 +231,15 @@
     {
       "name": "Garden",
       "texturePath": "textures/gui/islands/Garden.png",
-      "gridX": 8,
-      "gridY": 27,
-      "zLevel": 1,
+      "gridX": 9,
+      "gridY": 31,
+      "zLevel": 3,
       "widthPercentage": 0.2,
       "warpList": [
         {
           "displayName": "Garden",
           "commandName": "garden",
-          "gridX": 10,
+          "gridX": 18,
           "gridY": 8,
           "hideDisplayName": true
         }
@@ -247,8 +248,8 @@
     {
       "name": "The Barn",
       "texturePath": "textures/gui/islands/Barn.png",
-      "gridX": 46,
-      "gridY": 22,
+      "gridX": 45,
+      "gridY": 27,
       "zLevel": 0,
       "widthPercentage": 0.11,
       "warpList": [
@@ -256,7 +257,8 @@
           "displayName": "Spawn",
           "commandName": "barn",
           "gridX": 1,
-          "gridY": 19
+          "gridY": 19,
+          "hideDisplayName": true
         }
       ]
     },
@@ -264,15 +266,15 @@
       "name": "Mushroom Desert",
       "texturePath": "textures/gui/islands/Mushroom Desert.png",
       "gridX": 49,
-      "gridY": 14,
+      "gridY": 18,
       "zLevel": 0,
       "widthPercentage": 0.2,
       "warpList": [
         {
           "displayName": "Spawn",
           "commandName": "desert",
-          "gridX": 18,
-          "gridY": 17
+          "gridX": 12,
+          "gridY": 23
         },
         {
           "displayName": "Trapper",
@@ -285,44 +287,45 @@
     {
       "name": "The Park",
       "texturePath": "textures/gui/islands/Park.png",
-      "gridX": 16,
-      "gridY": 10,
+      "gridX": 17,
+      "gridY": 11,
       "zLevel": 1,
       "widthPercentage": 0.15,
       "warpList": [
         {
           "displayName": "Spawn",
           "commandName": "park",
-          "gridX": 30,
-          "gridY": 27
+          "gridX": 17,
+          "gridY": 26
         },
         {
           "displayName": "Cave",
           "commandName": "howl",
-          "gridX": 19,
-          "gridY": 19
+          "gridX": 22,
+          "gridY": 14
         },
         {
           "displayName": "Jungle",
           "commandName": "jungle",
-          "gridX": 19,
-          "gridY": 4
+          "gridX": 34,
+          "gridY": 1
         }
       ]
     },
     {
       "name": "Jerry's Workshop",
       "texturePath": "textures/gui/islands/Jerry's Workshop.png",
-      "gridX": 2,
-      "gridY": 16,
+      "gridX": 6,
+      "gridY": 19,
       "zLevel": 2,
       "widthPercentage": 0.25,
       "warpList": [
         {
           "displayName": "Spawn",
           "commandName": "/savethejerrys",
-          "gridX": 22,
-          "gridY": 14
+          "gridX": 35,
+          "gridY": 14,
+          "hideDisplayName": true
         }
       ]
     }
