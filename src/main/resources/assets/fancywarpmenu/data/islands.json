@@ -214,8 +214,8 @@
     {
       "name": "Home",
       "texturePath": "textures/gui/islands/Private Island.png",
-      "gridX": 23,
-      "gridY": 32,
+      "gridX": 20,
+      "gridY": 30,
       "zLevel": 1,
       "widthPercentage": 0.05,
       "warpList": [
@@ -231,8 +231,8 @@
     {
       "name": "Garden",
       "texturePath": "textures/gui/islands/Garden.png",
-      "gridX": 9,
-      "gridY": 31,
+      "gridX": 5,
+      "gridY": 29,
       "zLevel": 3,
       "widthPercentage": 0.2,
       "warpList": [
