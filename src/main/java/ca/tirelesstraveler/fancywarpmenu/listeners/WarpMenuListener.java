@@ -31,6 +31,8 @@ import io.netty.channel.ChannelOutboundHandlerAdapter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
@@ -50,7 +52,7 @@ import java.util.Map;
  * General purpose event listener
  */
 @ChannelHandler.Sharable
-public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
+public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements IResourceManagerReloadListener {
     private static final Minecraft mc;
     private static final FancyWarpMenu modInstance;
 
@@ -138,6 +140,11 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter {
         if (event.modID.equals(modInstance.getModId())) {
             Settings.syncConfig(false);
         }
+    }
+
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager) {
+        FancyWarpMenu.getInstance().reloadWarpConfig();
     }
 
     /**

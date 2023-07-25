@@ -231,10 +231,10 @@
     {
       "name": "Garden",
       "texturePath": "textures/gui/islands/Garden.png",
-      "gridX": 5,
-      "gridY": 29,
+      "gridX": 10,
+      "gridY": 31,
       "zLevel": 3,
-      "widthPercentage": 0.2,
+      "widthPercentage": 0.12,
       "warpList": [
         {
           "displayName": "Garden",
