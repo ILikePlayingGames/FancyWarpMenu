@@ -29,6 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
@@ -53,25 +54,23 @@ public class GuiButtonIsland extends GuiButtonExt {
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (this.visible) {
-            mc.getTextureManager().bindTexture(island.getTextureLocation());
-            GlStateManager.enableBlend();
-            if (hovered) {
-                GlStateManager.color(1F, 1F, 1F);
-            } else {
-                GlStateManager.color(0.9F, 0.9F, 0.9F);
-            }
-            // Blend allows the texture to be drawn with transparency intact
-            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0, 0, zLevel);
-            drawScaledCustomSizeModalRect(scaledGrid.getScaledPosition(xPosition), scaledGrid.getScaledPosition(yPosition), 0, 0, 1, 1, scaledGrid.getScaledDimension(island.getWidth()), scaledGrid.getScaledDimension(island.getHeight()), 1, 1);
-            GlStateManager.disableBlend();
-            GlStateManager.resetColor();
+            drawButtonTexture(island.getTextureLocation());
+            drawButtonForegroundLayer(mouseX, mouseY);
 
             if (Settings.shouldShowIslandLabels()) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(0, 0, zLevel);
                 drawDisplayString(scaledGrid.getScaledPosition(xPosition + width / 2 + 1), scaledGrid.getScaledPosition(yPosition + height + 1));
+                GlStateManager.popMatrix();
             }
-            GlStateManager.popMatrix();
+        }
+    }
+
+    public void drawButtonForegroundLayer(int mouseX, int mouseY) {
+        ResourceLocation hoverEffectTextureLocation = island.getHoverEffectTextureLocation();
+
+        if (hoverEffectTextureLocation != null && hovered) {
+            drawButtonTexture(hoverEffectTextureLocation);
         }
     }
 
@@ -93,5 +92,18 @@ public class GuiButtonIsland extends GuiButtonExt {
 
     int getActualY(int gridY) {
         return scaledGrid.getActualY(gridY);
+    }
+
+    private void drawButtonTexture(ResourceLocation textureLocation) {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
+        GlStateManager.enableBlend();
+        // Blend allows the texture to be drawn with transparency intact
+        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, zLevel);
+        drawScaledCustomSizeModalRect(scaledGrid.getScaledPosition(xPosition), scaledGrid.getScaledPosition(yPosition), 0, 0, 1, 1, scaledGrid.getScaledDimension(island.getWidth()), scaledGrid.getScaledDimension(island.getHeight()), 1, 1);
+        GlStateManager.disableBlend();
+        GlStateManager.resetColor();
+        GlStateManager.popMatrix();
     }
 }

@@ -78,6 +78,10 @@ public class WarpConfigLoader {
                     island.setTextureLocation();
                     islandTextureDimensions = getTextureDimensions(island.getTextureLocation());
                     island.setTextureDimensions(islandTextureDimensions.getLeft(), islandTextureDimensions.getRight());
+
+                    if (island.getHoverEffectTexturePath() != null) {
+                        island.setHoverEffectTextureLocation();
+                    }
                 }
 
                 return warpConfig;

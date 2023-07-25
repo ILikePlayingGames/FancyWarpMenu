@@ -197,8 +197,13 @@ public class GuiFancyWarp extends GuiScreen {
         // Block repeat clicks if the last warp failed
         if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
             if (button instanceof GuiButtonWarp) {
-                String warpCommand = ((GuiButtonWarp) button).getWarpCommand();
-                sendWarpCommand(warpCommand);
+                GuiButtonWarp warpButton = (GuiButtonWarp) button;
+
+                // Don't send command twice for single warp islands
+                if (warpButton.getIsland().getWarpCount() > 1) {
+                    String warpCommand = warpButton.getWarpCommand();
+                    sendWarpCommand(warpCommand);
+                }
             } else if (button instanceof GuiButtonIsland) {
                 Island island = ((GuiButtonIsland) button).getIsland();
 

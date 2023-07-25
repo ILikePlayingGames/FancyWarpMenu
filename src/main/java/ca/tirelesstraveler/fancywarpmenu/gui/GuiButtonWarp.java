@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
 import net.minecraft.client.Minecraft;
@@ -81,5 +82,9 @@ public class GuiButtonWarp extends GuiButtonExt {
 
     public String getWarpCommand() {
         return WARP.getWarpCommand();
+    }
+
+    Island getIsland() {
+        return PARENT.getIsland();
     }
 }
