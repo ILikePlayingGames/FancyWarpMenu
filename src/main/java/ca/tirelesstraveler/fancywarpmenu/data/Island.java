@@ -44,6 +44,8 @@ public class Island {
     private String name;
     /** Path to texture relative to {@code resources/assets/fancywarpmenu} */
     private String texturePath;
+    /** Path to texture relative to {@code resources/assets/fancywarpmenu}, drawn when button is hovered */
+    private String hoverEffectTexturePath;
     /** x-coordinate to draw island button at (0-64) */
     private int gridX;
     /** y-coordinate to draw island button at (0-36) */
@@ -55,6 +57,7 @@ public class Island {
     /** List of warps to draw as buttons above the island */
     private List<Warp> warpList;
     private transient ResourceLocation textureLocation;
+    private transient ResourceLocation hoverEffectTextureLocation;
     private transient int textureWidth;
     private transient int textureHeight;
     private transient int width;
@@ -69,6 +72,14 @@ public class Island {
 
     public ResourceLocation getTextureLocation() {
         return textureLocation;
+    }
+
+    public ResourceLocation getHoverEffectTextureLocation() {
+        return hoverEffectTextureLocation;
+    }
+
+    public String getHoverEffectTexturePath() {
+        return hoverEffectTexturePath;
     }
 
     public List<Warp> getWarps() {
@@ -115,6 +126,10 @@ public class Island {
         textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), texturePath);
     }
 
+    public void setHoverEffectTextureLocation() {
+        hoverEffectTextureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), hoverEffectTexturePath);
+    }
+
     public String toString() {
         return WarpConfiguration.gson.toJson(this);
     }
@@ -139,6 +154,15 @@ public class Island {
             Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
         } catch (IOException e) {
             throw new RuntimeException(String.format("Island %s texture not found at %s", name, textureLocation));
+        }
+
+        if (island.hoverEffectTextureLocation != null) {
+            textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), island.hoverEffectTexturePath);
+            try {
+                Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+            } catch (IOException e) {
+                throw new RuntimeException(String.format("Island %s hover effect texture not found at %s", name, textureLocation));
+            }
         }
 
         if (island.gridX < 0 || island.gridX > GRID_UNIT_WIDTH_FACTOR) {
