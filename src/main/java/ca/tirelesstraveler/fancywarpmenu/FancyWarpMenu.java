@@ -30,6 +30,7 @@ import ca.tirelesstraveler.fancywarpmenu.listeners.SkyBlockJoinListener;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.MinecraftForge;
@@ -72,6 +73,7 @@ public class FancyWarpMenu {
         bar.step("Initializing Listeners");
         warpMenuListener = new WarpMenuListener();
         MinecraftForge.EVENT_BUS.register(warpMenuListener);
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(warpMenuListener);
         skyblockJoinListener = new SkyBlockJoinListener();
         MinecraftForge.EVENT_BUS.register(skyblockJoinListener);
         bar.step("Loading Settings");
@@ -153,6 +155,10 @@ public class FancyWarpMenu {
 
     public void reloadResources() {
         Minecraft.getMinecraft().refreshResources();
+        reloadWarpConfig();
+    }
+
+    public void reloadWarpConfig() {
         WarpConfiguration warpConfig = WarpConfigLoader.loadIslands();
 
         // Will be null if json syntax is wrong or config is invalid

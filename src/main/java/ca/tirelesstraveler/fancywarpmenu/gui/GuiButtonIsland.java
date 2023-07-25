@@ -62,6 +62,7 @@ public class GuiButtonIsland extends GuiButtonExt {
                 GlStateManager.translate(0, 0, zLevel);
                 drawDisplayString(scaledGrid.getScaledPosition(xPosition + width / 2 + 1), scaledGrid.getScaledPosition(yPosition + height + 1));
                 GlStateManager.popMatrix();
+                GlStateManager.color(1,1,1);
             }
         }
     }
@@ -103,7 +104,6 @@ public class GuiButtonIsland extends GuiButtonExt {
         GlStateManager.translate(0, 0, zLevel);
         drawScaledCustomSizeModalRect(scaledGrid.getScaledPosition(xPosition), scaledGrid.getScaledPosition(yPosition), 0, 0, 1, 1, scaledGrid.getScaledDimension(island.getWidth()), scaledGrid.getScaledDimension(island.getHeight()), 1, 1);
         GlStateManager.disableBlend();
-        GlStateManager.resetColor();
         GlStateManager.popMatrix();
     }
 }
