@@ -35,6 +35,8 @@ public class WarpConfiguration {
     private WarpMessages warpMessages;
     private List<String> warpCommandVariants;
 
+    private WarpConfiguration(){}
+
     public List<Island> getIslandList() {
         return islandList;
     }

@@ -35,26 +35,46 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 public class Island {
-    /** Grid unit width is screenWidth / widthFactor */
+    /**
+     * Grid unit width is screenWidth / widthFactor
+     */
     public static final float GRID_UNIT_WIDTH_FACTOR = 64;
-    /** Grid unit height is screenHeight / heightFactor */
+    /**
+     * Grid unit height is screenHeight / heightFactor
+     */
     public static final float GRID_UNIT_HEIGHT_FACTOR = 36;
 
-    /** Island name to be displayed below the island button*/
+    /**
+     * Island name to be displayed below the island button
+     */
     private String name;
-    /** Path to texture relative to {@code resources/assets/fancywarpmenu} */
+    /**
+     * Path to texture relative to {@code resources/assets/fancywarpmenu}
+     */
     private String texturePath;
-    /** Path to texture relative to {@code resources/assets/fancywarpmenu}, drawn when button is hovered */
+    /**
+     * Path to texture relative to {@code resources/assets/fancywarpmenu}, drawn when button is hovered
+     */
     private String hoverEffectTexturePath;
-    /** x-coordinate to draw island button at (0-64) */
+    /**
+     * x-coordinate to draw island button at (0-64)
+     */
     private int gridX;
-    /** y-coordinate to draw island button at (0-36) */
+    /**
+     * y-coordinate to draw island button at (0-36)
+     */
     private int gridY;
-    /** z-coordinate to draw island button at (0-9) */
+    /**
+     * z-coordinate to draw island button at (0-9)
+     */
     private int zLevel;
-    /** Width to render the island texture, given as a percentage of total screen width. Texture height is set automatically. */
+    /**
+     * Width to render the island texture, given as a percentage of total screen width. Texture height is set automatically.
+     */
     private float widthPercentage;
-    /** List of warps to draw as buttons above the island */
+    /**
+     * List of warps to draw as buttons above the island
+     */
     private List<Warp> warpList;
     private transient ResourceLocation textureLocation;
     private transient ResourceLocation hoverEffectTextureLocation;
@@ -187,8 +207,7 @@ public class Island {
             throw new IllegalArgumentException(String.format("Island %s has no warps", name));
         }
 
-        for (Warp warp:
-                island.warpList) {
+        for (Warp warp : island.warpList) {
             Warp.validateWarp(warp);
         }
     }

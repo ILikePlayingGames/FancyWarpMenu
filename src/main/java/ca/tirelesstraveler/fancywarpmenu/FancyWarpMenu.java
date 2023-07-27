@@ -95,8 +95,7 @@ public class FancyWarpMenu {
         ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures", getIslands().size() + 1);
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        for (Island island:
-                getIslands()) {
+        for (Island island : getIslands()) {
             bar.step(island.getName());
             textureManager.bindTexture(island.getTextureLocation());
         }
@@ -142,7 +141,7 @@ public class FancyWarpMenu {
     }
 
     public WarpMessages getWarpMessages() {
-        return  warpConfig.getWarpMessages();
+        return warpConfig.getWarpMessages();
     }
 
     public List<String> getWarpCommandVariants() {
