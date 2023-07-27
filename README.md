@@ -1,3 +1,6 @@
+[![Build](https://github.com/ILikePlayingGames/FancyWarpMenu/actions/workflows/build.yml/badge.svg)](https://github.com/ILikePlayingGames/FancyWarpMenu/actions/workflows/build.yml)
+[![Discord](https://img.shields.io/discord/1122365627751989329?logo=discord)](https://discord.gg/tXFf9umfA9)
+
 # Fancy Warp Menu
 
 A prettier warp menu for Hypixel SkyBlock
@@ -5,6 +8,14 @@ A prettier warp menu for Hypixel SkyBlock
 -----
 
 This is a recreation of the fancy warp menu from SkyblockAddons, rewritten for better performance.
+
+# Features
+- Built for Forge for Minecraft 1.8.9
+  - Fabric 1.20.1 port planned
+- Lightweight
+  - Just the warp menu, using no external libraries
+- Supports custom layouts
+  - Learn to make one [here](https://github.com/ILikePlayingGames/FancyWarpPackTemplate)!
 
 # Screenshots
 
@@ -17,7 +28,10 @@ Normal GUI scale
 
 
 ![Fancy Warp Menu Settings](docs/Settings.png)
-Settings (access via pause > mod options > fancy warp menu > config)
+Settings (access by clicking the portal in the bottom right corner)
+
+# Support
+Please join my [Discord server](https://discord.gg/tXFf9umfA9) for support.
 
 # Credits
 
