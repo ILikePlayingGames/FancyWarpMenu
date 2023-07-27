@@ -27,12 +27,6 @@
           "gridY": 25
         },
         {
-          "displayName": "Dungeons",
-          "commandName": "dungeons",
-          "gridX": 15,
-          "gridY": 11
-        },
-        {
           "displayName": "Wizard",
           "commandName": "wizard",
           "gridX": 12,
@@ -57,7 +51,7 @@
       "texturePath": "textures/gui/islands/Crimson Isle.png",
       "gridX": 35,
       "gridY": 0,
-      "zLevel": 0,
+      "zLevel": 2,
       "widthPercentage": 0.3,
       "warpList": [
         {
@@ -82,19 +76,22 @@
           "displayName": "Wasteland",
           "commandName": "wasteland",
           "gridX": 12,
-          "gridY": 9
+          "gridY": 9,
+          "requiresSpecialGameMode": true
         },
         {
           "displayName": "Dragontail",
           "commandName": "dragontail",
           "gridX": 3,
-          "gridY": 3
+          "gridY": 3,
+          "requiresSpecialGameMode": true
         },
         {
           "displayName": "Scarleton",
           "commandName": "scarleton",
           "gridX": 32,
-          "gridY": 12
+          "gridY": 12,
+          "requiresSpecialGameMode": true
         }
       ]
     },
@@ -231,9 +228,9 @@
     {
       "name": "Garden",
       "texturePath": "textures/gui/islands/Garden.png",
-      "gridX": 10,
-      "gridY": 31,
-      "zLevel": 3,
+      "gridX": 14,
+      "gridY": 23,
+      "zLevel": 1,
       "widthPercentage": 0.12,
       "warpList": [
         {
@@ -315,10 +312,10 @@
     {
       "name": "Jerry's Workshop",
       "texturePath": "textures/gui/islands/Jerry's Workshop.png",
-      "gridX": 6,
-      "gridY": 19,
-      "zLevel": 2,
-      "widthPercentage": 0.25,
+      "gridX": 2,
+      "gridY": 5,
+      "zLevel": 0,
+      "widthPercentage": 0.2,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -326,6 +323,24 @@
           "gridX": 35,
           "gridY": 14,
           "hideDisplayName": true
+        }
+      ]
+    },
+    {
+      "name": "Dungeon Hub",
+      "texturePath": "textures/gui/Portal.png",
+      "gridX": 7,
+      "gridY": 19,
+      "zLevel": 0,
+      "widthPercentage": 0.05,
+      "warpList": [
+        {
+          "displayName": "Spawn",
+          "commandName": "dungeons",
+          "gridX": 0,
+          "gridY": 0,
+          "hideDisplayName": true,
+          "hideButton": true
         }
       ]
     }

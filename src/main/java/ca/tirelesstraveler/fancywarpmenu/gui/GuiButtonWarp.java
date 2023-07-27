@@ -49,6 +49,10 @@ public class GuiButtonWarp extends GuiButtonExt {
         width = warp.getWidth();
         height = warp.getHeight();
         displayString = warp.getDisplayName();
+
+        if (warp.shouldHideButton()) {
+            visible = false;
+        }
     }
 
     /**

@@ -49,6 +49,10 @@ public class Warp {
     private String commandName;
     /** Don't draw the display name under the warp's button */
     private boolean hideDisplayName;
+    /** Warps only usable during special game modes such as Bingo */
+    private boolean requiresSpecialGameMode;
+    /** Skips drawing the warp button, useful for islands with only one warp */
+    private boolean hideButton;
 
     private Warp() {
     }
@@ -84,6 +88,14 @@ public class Warp {
 
     public int getGridY() {
         return gridY;
+    }
+
+    public boolean requiresSpecialGameMode() {
+        return requiresSpecialGameMode;
+    }
+
+    public boolean shouldHideButton() {
+        return hideButton;
     }
 
     public String toString() {

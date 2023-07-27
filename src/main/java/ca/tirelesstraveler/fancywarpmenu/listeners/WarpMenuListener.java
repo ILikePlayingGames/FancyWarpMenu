@@ -152,7 +152,10 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
      */
     public void onWarpCommand() {
         warpScreen = new GuiFancyWarp();
-        mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
+
+        if (Settings.shouldAddWarpCommandToChatHistory()) {
+            mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
+        }
 
         // GuiChat closes itself after executing the command so wait until after it closes to open the warp menu.
         if (mc.currentScreen instanceof GuiChat) {
