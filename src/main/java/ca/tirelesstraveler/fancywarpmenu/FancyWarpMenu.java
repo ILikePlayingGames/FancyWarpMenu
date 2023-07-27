@@ -48,7 +48,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.util.List;
 
-@Mod(modid = "fancywarpmenu", clientSideOnly = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory")
+@Mod(modid = "fancywarpmenu", clientSideOnly = true, useMetadata = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory")
 public class FancyWarpMenu {
     @Mod.Instance("fancywarpmenu")
     private static FancyWarpMenu instance;

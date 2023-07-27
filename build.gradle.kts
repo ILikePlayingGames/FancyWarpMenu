@@ -5,7 +5,7 @@ plugins {
     java
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 //Constants:
@@ -66,8 +66,8 @@ dependencies {
     shadowImpl("org.spongepowered:mixin:0.7.11-SNAPSHOT") {
         isTransitive = false
     }
-    annotationProcessor("org.spongepowered:mixin:0.8.4-SNAPSHOT")
-    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+    annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
+    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.2")
 }
 
 // Tasks:
@@ -97,6 +97,7 @@ tasks.processResources {
         }
     }
 
+    inputs.property("version", project.version)
     inputs.property("mcversion", mcVersion)
     inputs.property("modid", modid)
     inputs.property("mixinGroup", mixinGroup)

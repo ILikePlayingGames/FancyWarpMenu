@@ -70,11 +70,17 @@ public class GuiFancyWarp extends GuiScreen {
         Warp.initDefaults(res);
 
         for (Island island : FancyWarpMenu.getInstance().getIslands()) {
+            if (!Settings.shouldShowJerryIsland() && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
+                continue;
+            }
+
             GuiButtonIsland islandButton = new GuiButtonIsland(this, buttonList.size(), res, island);
             buttonList.add(islandButton);
 
             for (Warp warp : island.getWarps()) {
-                buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
+                if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
+                    buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
+                }
             }
         }
 
@@ -259,8 +265,11 @@ public class GuiFancyWarp extends GuiScreen {
 
     private void sendWarpCommand(String warpCommand) {
         try {
-            mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
             mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(warpCommand));
+
+            if (Settings.shouldAddWarpCommandToChatHistory()) {
+                mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
+            }
         } catch (Exception e) {
             logger.error(String.format("Failed to send command \"%s\": %s", warpCommand, e.getMessage()), e);
         }

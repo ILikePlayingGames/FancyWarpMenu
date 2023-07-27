@@ -44,6 +44,10 @@ public class Settings {
     private static boolean showIslandLabels;
     private static boolean hideWarpLabelsUntilIslandHovered;
     private static boolean suggestWarpMenuOnWarpCommand;
+    private static boolean addWarpCommandToChatHistory;
+    private static boolean showJerryIsland;
+    private static boolean hideUnobtainableWarps;
+
     // Developer settings
     private static boolean debugModeEnabled;
     private static boolean showDebugOverlay;
@@ -68,7 +72,7 @@ public class Settings {
      */
     public static void setConfigPropertyOrder() {
         List<String> topLevelPropertyOrder = new ArrayList<>();
-        Collections.addAll(topLevelPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand");
+        Collections.addAll(topLevelPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps");
 
         List<String> debugPropertyOrder = new ArrayList<>();
         Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders", "skipSkyBlockCheck");
@@ -103,6 +107,23 @@ public class Settings {
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.suggestWarpMenuOnWarpCommand"));
         prop.setRequiresWorldRestart(false);
         suggestWarpMenuOnWarpCommand = prop.getBoolean(false);
+
+        prop = config.get(CATEGORY_GENERAL, "addWarpCommandToChatHistory", true);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.addWarpCommandToChatHistory"));
+        prop.setRequiresWorldRestart(false);
+        addWarpCommandToChatHistory = prop.getBoolean(true);
+
+        prop = config.get(CATEGORY_GENERAL, "showJerryIsland", true);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.showJerryIsland"));
+        prop.setRequiresWorldRestart(false);
+        showJerryIsland = prop.getBoolean(true);
+
+        prop = config.get(CATEGORY_GENERAL, "hideUnobtainableWarps", true);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.hideUnobtainableWarps"));
+        prop.setRequiresWorldRestart(false);
+        hideUnobtainableWarps = prop.getBoolean(true);
+
+        /* Debug settings */
 
         prop = config.get(CATEGORY_DEBUG, "debugModeEnabled", false);
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
@@ -147,6 +168,18 @@ public class Settings {
 
     public static boolean shouldSuggestWarpMenuOnWarpCommand() {
         return suggestWarpMenuOnWarpCommand;
+    }
+
+    public static boolean shouldAddWarpCommandToChatHistory() {
+        return addWarpCommandToChatHistory;
+    }
+
+    public static boolean shouldShowJerryIsland() {
+        return showJerryIsland;
+    }
+
+    public static boolean shouldHideUnobtainableWarps() {
+        return hideUnobtainableWarps;
     }
 
     public static boolean isDebugModeEnabled() {
