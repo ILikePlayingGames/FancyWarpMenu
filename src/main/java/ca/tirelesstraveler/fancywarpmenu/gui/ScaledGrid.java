@@ -27,8 +27,8 @@ public class ScaledGrid {
     public final int GRID_START_Y;
     public final float GRID_UNIT_WIDTH;
     public final float GRID_UNIT_HEIGHT;
-    private final float scale;
-    private final boolean scaled;
+    private float scale;
+    private boolean scaled;
 
     public ScaledGrid(int gridStartX, int gridStartY, float gridUnitSize) {
         this(gridStartX, gridStartY, gridUnitSize, gridUnitSize);
