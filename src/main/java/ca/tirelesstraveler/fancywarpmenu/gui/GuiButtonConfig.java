@@ -22,9 +22,14 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 @SuppressWarnings("SuspiciousNameCombination")
@@ -62,5 +67,18 @@ public class GuiButtonConfig extends GuiButtonExt {
             drawScaledCustomSizeModalRect(drawX, drawY, 0, 0, 1, 1, drawWidth, drawWidth, 1, 1);
             GlStateManager.popMatrix();
         }
+    }
+
+    @Override
+    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+        boolean clicked = super.mousePressed(mc, mouseX, mouseY);
+
+        if (clicked && !(mc.currentScreen instanceof GuiFancyWarp)) {
+            Settings.setWarpMenuEnabled(true);
+            FancyWarpMenu.getInstance().getWarpMenuListener().displayFancyWarpMenu();
+            mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+        }
+
+        return clicked;
     }
 }

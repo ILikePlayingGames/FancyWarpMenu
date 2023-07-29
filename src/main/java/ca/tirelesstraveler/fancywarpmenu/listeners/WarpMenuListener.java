@@ -25,6 +25,7 @@ package ca.tirelesstraveler.fancywarpmenu.listeners;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
@@ -94,6 +95,21 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     /**
+     * If the fancy warp menu is disabled, add a button to the regular warp menu for players to enable the fancy warp menu
+     */
+    @SubscribeEvent
+    public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post e) {
+        if (!Settings.isWarpMenuEnabled() && e.gui instanceof GuiChest) {
+            GuiChest guiChest = (GuiChest) e.gui;
+            ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
+
+            if (containerChest.getLowerChestInventory().getName().equals("Fast Travel")) {
+                e.buttonList.add(new GuiButtonConfig(e.buttonList.size()));
+            }
+        }
+    }
+
+    /**
      * Open the fancy warp menu when the player presses the open warp menu hotkey while the mod is enabled
      */
     @SubscribeEvent
@@ -101,8 +117,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         if (Settings.isWarpMenuEnabled()
                 && modInstance.isPlayerOnSkyBlock()
                 && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
-            warpScreen = new GuiFancyWarp();
-            mc.displayGuiScreen(warpScreen);
+            displayFancyWarpMenu();
         }
     }
 
@@ -122,13 +137,13 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
                 ContainerChest container = (ContainerChest) guiChest.inventorySlots;
 
                 if (container.getLowerChestInventory() != null
-                        && container.getLowerChestInventory().getDisplayName() != null
-                        && container.getLowerChestInventory().getDisplayName().getUnformattedText().equals("SkyBlock Menu")
+                        && container.getLowerChestInventory().hasCustomName()
+                        && container.getLowerChestInventory().getName().equals("SkyBlock Menu")
                         && guiChest.getSlotUnderMouse() != null
                         && guiChest.getSlotUnderMouse().getSlotIndex() == 47
                         // Rift SkyBlock Menu has a return to hub button in slot 47
                         && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
-                    mc.displayGuiScreen(new GuiFancyWarp());
+                    displayFancyWarpMenu();
                     event.setCanceled(true);
                 }
             }
@@ -161,8 +176,13 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         if (mc.currentScreen instanceof GuiChat) {
             openMenuRequested = true;
         } else {
-            mc.displayGuiScreen(warpScreen);
+            displayFancyWarpMenu();
         }
+    }
+
+    public void displayFancyWarpMenu() {
+        warpScreen = new GuiFancyWarp();
+        mc.displayGuiScreen(warpScreen);
     }
 
     /**
