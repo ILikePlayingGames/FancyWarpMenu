@@ -81,12 +81,12 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
 
             zLevel = originalZ;
 
-            if (Settings.shouldDrawBorders()) {
-                drawBorder(Color.WHITE);
-            }
-
             if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
                 drawDisplayString(mc, width / 2F, height);
+            }
+            
+            if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
+                drawBorder(Color.WHITE);
             }
         }
     }
