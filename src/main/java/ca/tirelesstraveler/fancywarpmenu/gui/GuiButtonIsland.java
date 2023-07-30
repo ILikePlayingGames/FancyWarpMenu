@@ -25,85 +25,70 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
 
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import java.awt.*;
 
-public class GuiButtonIsland extends GuiButtonExt {
-    private final Island island;
-    private final ScaledGrid scaledGrid;
+public class GuiButtonIsland extends GuiButtonScaleTransition {
+    static final float HOVERED_SCALE = 1.1F;
+    static final long SCALE_TRANSITION_DURATION = 500;
+    final Island island;
+    final ScaledGrid scaledGrid;
 
     public GuiButtonIsland(GuiFancyWarp parent, int buttonId, ScaledResolution res, Island island) {
         super(buttonId, "");
         this.island = island;
         island.init(res);
-        xPosition = parent.getActualX(island.getGridX());
-        yPosition = parent.getActualY(island.getGridY());
+        scaledXPosition = parent.getActualX(island.getGridX());
+        scaledYPosition = parent.getActualY(island.getGridY());
         zLevel = island.getzLevel();
         width = island.getWidth();
         height = island.getHeight();
-        scaledGrid = new ScaledGrid(xPosition, yPosition, width / Warp.GRID_UNIT_WIDTH_FACTOR);
+        scaledGrid = new ScaledGrid(scaledXPosition, scaledYPosition, width, height, Warp.GRID_UNIT_WIDTH_FACTOR);
         displayString = EnumChatFormatting.GREEN + island.getName();
+        backgroundTextureLocation = island.getTextureLocation();
+        foregroundTextureLocation = island.getHoverEffectTextureLocation();
+        transition = new ScaleTransition(0, 1, 1);
+
+        // Each line is drawn separately. Copy the colour code to all lines.
+        if (displayString.contains("\n")) {
+            displayString = displayString.replaceAll("\n", "\n" + EnumChatFormatting.GREEN);
+        }
     }
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-        if (this.visible) {
-            drawButtonTexture(island.getTextureLocation());
-            drawButtonForegroundLayer(mouseX, mouseY);
+        if (visible) {
+            float originalZ = zLevel;
+
+            super.drawButton(mc, mouseX, mouseY);
+            transitionStep(SCALE_TRANSITION_DURATION, HOVERED_SCALE);
+
+            scaledGrid.setScaleFactor(transition.getCurrentScale());
+            scaledXPosition = scaledGrid.getGridStartX();
+            scaledYPosition = scaledGrid.getGridStartY();
+            scaledWidth = scaledGrid.getScaledDimension(width);
+            scaledHeight = scaledGrid.getScaledDimension(height);
+
+            if (hovered) {
+                zLevel = 9;
+            }
+
+            drawButtonTexture(backgroundTextureLocation);
+            drawButtonForegroundLayer(foregroundTextureLocation);
+
+            zLevel = originalZ;
+
+            if (Settings.shouldDrawBorders()) {
+                drawBorder(Color.WHITE);
+            }
 
             if (Settings.shouldShowIslandLabels()) {
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0, 0, zLevel);
-                drawDisplayString(scaledGrid.getScaledPosition(xPosition + width / 2 + 1), scaledGrid.getScaledPosition(yPosition + height + 1));
-                GlStateManager.popMatrix();
-                GlStateManager.color(1,1,1);
+                drawDisplayString(mc, width / 2F, height);
             }
         }
-    }
-
-    public void drawButtonForegroundLayer(int mouseX, int mouseY) {
-        ResourceLocation hoverEffectTextureLocation = island.getHoverEffectTextureLocation();
-
-        if (hoverEffectTextureLocation != null && hovered) {
-            drawButtonTexture(hoverEffectTextureLocation);
-        }
-    }
-
-    public Island getIsland() {
-        return island;
-    }
-
-    int findNearestGridX(int mouseX) {
-        return scaledGrid.findNearestGridX(mouseX);
-    }
-
-    int findNearestGridY(int mouseY) {
-        return scaledGrid.findNearestGridY(mouseY);
-    }
-
-    int getActualX(int gridX) {
-        return scaledGrid.getActualX(gridX);
-    }
-
-    int getActualY(int gridY) {
-        return scaledGrid.getActualY(gridY);
-    }
-
-    private void drawButtonTexture(ResourceLocation textureLocation) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(textureLocation);
-        GlStateManager.enableBlend();
-        // Blend allows the texture to be drawn with transparency intact
-        GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0, zLevel);
-        drawScaledCustomSizeModalRect(scaledGrid.getScaledPosition(xPosition), scaledGrid.getScaledPosition(yPosition), 0, 0, 1, 1, scaledGrid.getScaledDimension(island.getWidth()), scaledGrid.getScaledDimension(island.getHeight()), 1, 1);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
     }
 }

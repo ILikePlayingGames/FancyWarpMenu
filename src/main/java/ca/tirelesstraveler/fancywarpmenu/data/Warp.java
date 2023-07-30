@@ -32,7 +32,7 @@ import net.minecraft.util.ResourceLocation;
 public class Warp {
     // Height scale is the same as width
     /** Grid unit width is islandWidth / widthFactor */
-    public static float GRID_UNIT_WIDTH_FACTOR = 40;
+    public static int GRID_UNIT_WIDTH_FACTOR = 40;
     /** Warp button texture, shared between all warp buttons */
     public static WarpIcon warpIcon;
     /** Warp button width in pixels, see {@link this#initDefaults(ScaledResolution)} */
@@ -126,7 +126,7 @@ public class Warp {
             throw new IllegalArgumentException(String.format("The following warp lacks a name: %s", warp));
         }
 
-        if (warp.commandName == null || warp.commandName.equals("")) {
+        if (warp.commandName == null || warp.commandName.isEmpty()) {
             throw new IllegalArgumentException(String.format("Warp %s is missing a command name", warp.displayName));
         }
 

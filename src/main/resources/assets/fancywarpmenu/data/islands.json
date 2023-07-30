@@ -6,7 +6,7 @@
       "gridX": 23,
       "gridY": 19,
       "zLevel": 0,
-      "widthPercentage": 0.35,
+      "widthPercentage": 0.30,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -33,7 +33,7 @@
           "gridY": 5
         },
         {
-          "displayName": "Sirius (DA)",
+          "displayName": "Sirius",
           "commandName": "da",
           "gridX": 5,
           "gridY": 1
@@ -49,10 +49,10 @@
     {
       "name": "Crimson Isle",
       "texturePath": "textures/gui/islands/Crimson Isle.png",
-      "gridX": 35,
+      "gridX": 45,
       "gridY": 0,
       "zLevel": 2,
-      "widthPercentage": 0.3,
+      "widthPercentage": 0.25,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -98,9 +98,9 @@
     {
       "name": "Spider's Den",
       "texturePath": "textures/gui/islands/Spider's Den.png",
-      "gridX": 27,
-      "gridY": 10,
-      "zLevel": 0,
+      "gridX": 34,
+      "gridY": 9,
+      "zLevel": 1,
       "widthPercentage": 0.2,
       "warpList": [
         {
@@ -126,7 +126,7 @@
     {
       "name": "The End",
       "texturePath": "textures/gui/islands/End.png",
-      "gridX": 18,
+      "gridX": 24,
       "gridY": 0,
       "zLevel": 2,
       "widthPercentage": 0.2,
@@ -154,8 +154,8 @@
     {
       "name": "Gold Mine",
       "texturePath": "textures/gui/islands/Gold Mine.png",
-      "gridX": 45,
-      "gridY": 14,
+      "gridX": 43,
+      "gridY": 20,
       "zLevel": 1,
       "widthPercentage": 0.10,
       "warpList": [
@@ -171,16 +171,16 @@
     {
       "name": "Deep Caverns",
       "texturePath": "textures/gui/islands/Deep Caverns.png",
-      "gridX": 53,
-      "gridY": 5,
-      "zLevel": 1,
+      "gridX": 51,
+      "gridY": 15,
+      "zLevel": 2,
       "widthPercentage": 0.15,
       "warpList": [
         {
           "displayName": "Spawn",
           "commandName": "deep",
-          "gridX": 5,
-          "gridY": 25
+          "gridX": 3,
+          "gridY": 19
         },
         {
           "displayName": "Dwarven\nMines",
@@ -198,22 +198,22 @@
           "displayName": "Hollows",
           "commandName": "ch",
           "gridX": 30,
-          "gridY": 35
+          "gridY": 29
         },
         {
           "displayName": "Nucleus",
           "commandName": "nucleus",
-          "gridX": 8,
-          "gridY": 40
+          "gridX": 3,
+          "gridY": 29
         }
       ]
     },
     {
       "name": "Home",
       "texturePath": "textures/gui/islands/Private Island.png",
-      "gridX": 20,
+      "gridX": 40,
       "gridY": 30,
-      "zLevel": 1,
+      "zLevel": 2,
       "widthPercentage": 0.05,
       "warpList": [
         {
@@ -228,10 +228,10 @@
     {
       "name": "Garden",
       "texturePath": "textures/gui/islands/Garden.png",
-      "gridX": 14,
-      "gridY": 23,
+      "gridX": 45,
+      "gridY": 31,
       "zLevel": 1,
-      "widthPercentage": 0.12,
+      "widthPercentage": 0.1,
       "warpList": [
         {
           "displayName": "Garden",
@@ -245,9 +245,9 @@
     {
       "name": "The Barn",
       "texturePath": "textures/gui/islands/Barn.png",
-      "gridX": 45,
+      "gridX": 14,
       "gridY": 27,
-      "zLevel": 0,
+      "zLevel": 1,
       "widthPercentage": 0.11,
       "warpList": [
         {
@@ -262,9 +262,9 @@
     {
       "name": "Mushroom Desert",
       "texturePath": "textures/gui/islands/Mushroom Desert.png",
-      "gridX": 49,
-      "gridY": 18,
-      "zLevel": 0,
+      "gridX": 1,
+      "gridY": 16,
+      "zLevel": 2,
       "widthPercentage": 0.2,
       "warpList": [
         {
@@ -284,10 +284,10 @@
     {
       "name": "The Park",
       "texturePath": "textures/gui/islands/Park.png",
-      "gridX": 17,
-      "gridY": 11,
+      "gridX": 12,
+      "gridY": 9,
       "zLevel": 1,
-      "widthPercentage": 0.15,
+      "widthPercentage": 0.2,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -312,9 +312,9 @@
     {
       "name": "Jerry's Workshop",
       "texturePath": "textures/gui/islands/Jerry's Workshop.png",
-      "gridX": 2,
-      "gridY": 5,
-      "zLevel": 0,
+      "gridX": 1,
+      "gridY": 1,
+      "zLevel": 2,
       "widthPercentage": 0.2,
       "warpList": [
         {
@@ -327,11 +327,11 @@
       ]
     },
     {
-      "name": "Dungeon Hub",
+      "name": "Dungeon\nHub",
       "texturePath": "textures/gui/Portal.png",
-      "gridX": 7,
-      "gridY": 19,
-      "zLevel": 0,
+      "gridX": 28,
+      "gridY": 12,
+      "zLevel": 1,
       "widthPercentage": 0.05,
       "warpList": [
         {

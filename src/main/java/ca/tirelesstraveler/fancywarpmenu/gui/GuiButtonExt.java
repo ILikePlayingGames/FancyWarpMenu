@@ -23,8 +23,9 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -33,6 +34,8 @@ import java.awt.*;
  * Button class with additional utility methods
  */
 public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiButtonExt> {
+    protected ResourceLocation backgroundTextureLocation;
+    protected ResourceLocation foregroundTextureLocation;
 
     /**
      * Constructor without coordinates for when placement is set at runtime
@@ -44,27 +47,12 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
         super(buttonId, x, y, buttonText);
     }
 
-    protected void drawBorders(float scale, int borderWidth) {
-        int scaledMinX = (int) (xPosition / scale);
-        int scaledMinY = (int) (yPosition / scale);
-        int scaledMaxX = (int) ((xPosition + width) / scale);
-        int scaledMaxY = (int) ((yPosition + height) / scale);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, 0, zLevel);
-        drawRect(scaledMinX, scaledMinY, scaledMaxX, scaledMinY + borderWidth, Color.white.getRGB());
-        drawRect(scaledMinX, scaledMinY, scaledMinX + borderWidth, scaledMaxY, Color.white.getRGB());
-        drawRect(scaledMinX, scaledMaxY - borderWidth, scaledMaxX, scaledMaxY, Color.white.getRGB());
-        drawRect(scaledMaxX - borderWidth, scaledMinY, scaledMaxX, scaledMaxY, Color.white.getRGB());
-        GlStateManager.popMatrix();
-    }
-
     void setHovered(boolean hovered) {
         this.hovered = hovered;
     }
 
     /**
-     * Draws this button to the screen.
+     * Calculates whether this button is hovered instead of drawing a vanilla button
      */
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
@@ -76,7 +64,7 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
     /**
      * Draw the button's display string (label).
      */
-    public void drawDisplayString(int x, int y) {
+    public void drawDisplayString(float x, float y) {
         // White
         drawDisplayString(x, y, 14737632);
     }
@@ -88,12 +76,12 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
      * @param y y-coordinate to center the string on
      * @param rgb a colour in the integer rgb format produced by {@link Color#getRGB()}
      */
-    public void drawDisplayString(int x, int y, int rgb) {
+    public void drawDisplayString(float x, float y, int rgb) {
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         String[] lines = displayString.split("\n", 3);
 
         for (int i = 0; i < lines.length; i++) {
-            drawCenteredString(Minecraft.getMinecraft().fontRendererObj, lines[i],
-                    x, y + (10 * i), rgb);
+            fontRenderer.drawStringWithShadow(displayString, x - (float) fontRenderer.getStringWidth(displayString) / 2, y + (10 * i), rgb);
         }
     }
 
