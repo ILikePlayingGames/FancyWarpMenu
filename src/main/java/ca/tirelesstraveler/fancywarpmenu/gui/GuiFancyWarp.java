@@ -69,7 +69,7 @@ public class GuiFancyWarp extends GuiScreen {
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
-        for (Island island: FancyWarpMenu.getInstance().getIslands()) {
+        for (Island island : FancyWarpMenu.getInstance().getIslands()) {
             if (!Settings.shouldShowJerryIsland() && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
                 continue;
             }
@@ -77,7 +77,7 @@ public class GuiFancyWarp extends GuiScreen {
             GuiButtonIsland islandButton = new GuiButtonIsland(this, buttonList.size(), res, island);
             buttonList.add(islandButton);
 
-            for (Warp warp: island.getWarps()) {
+            for (Warp warp : island.getWarps()) {
                 if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
                     buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
                 }
@@ -112,8 +112,7 @@ public class GuiFancyWarp extends GuiScreen {
         List<GuiButtonExt> hoveredButtons = new ArrayList<>();
 
         // When multiple island buttons overlap, mark only the top one as hovered.
-        for (GuiButton button:
-             buttonList) {
+        for (GuiButton button : buttonList) {
             if (button instanceof GuiButtonIsland) {
                 GuiButtonIsland islandButton = (GuiButtonIsland) button;
                 islandButton.setHovered(mouseX >= islandButton.getScaledXPosition() &&
@@ -154,8 +153,7 @@ public class GuiFancyWarp extends GuiScreen {
 
             // Shift to draw island grid instead of warp grid
             if (!isShiftKeyDown()) {
-                for (GuiButton button:
-                        buttonList) {
+                for (GuiButton button : buttonList) {
                     // Draw island button coordinate tooltips, draw last to prevent clipping
                     if (button instanceof GuiButtonIsland && button.isMouseOver()) {
                         GuiButtonIsland islandButton = (GuiButtonIsland) button;

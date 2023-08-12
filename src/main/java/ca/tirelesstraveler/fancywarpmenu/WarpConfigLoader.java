@@ -62,7 +62,7 @@ public class WarpConfigLoader {
             IResource islandResource = Minecraft.getMinecraft().getResourceManager().getResource(WARP_CONFIG_LOCATION);
 
             try (InputStream stream = islandResource.getInputStream();
-                 JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(stream)))){
+                JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(stream)))) {
                 WarpConfiguration warpConfig = gson.fromJson(reader, WarpConfiguration.class);
                 WarpIcon warpIcon = warpConfig.getWarpIcon();
                 warpIcon.init();
@@ -71,8 +71,7 @@ public class WarpConfigLoader {
                 Warp.setWarpIcon(warpIcon);
                 WarpConfiguration.validateWarpConfiguration(warpConfig);
 
-                for (Island island:
-                     warpConfig.getIslandList()) {
+                for (Island island : warpConfig.getIslandList()) {
                     Pair<Integer, Integer> islandTextureDimensions;
 
                     island.setTextureLocation();
