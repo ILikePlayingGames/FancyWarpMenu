@@ -25,6 +25,7 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -42,12 +43,12 @@ public class GuiButtonIsland extends GuiButtonScaleTransition {
         super(buttonId, "");
         this.island = island;
         island.init(res);
-        scaledXPosition = parent.getActualX(island.getGridX());
-        scaledYPosition = parent.getActualY(island.getGridY());
+        scaledXPosition = parent.getScaledGrid().getActualX(island.getGridX());
+        scaledYPosition = parent.getScaledGrid().getActualY(island.getGridY());
         zLevel = island.getzLevel();
         width = island.getWidth();
         height = island.getHeight();
-        scaledGrid = new ScaledGrid(scaledXPosition, scaledYPosition, width, height, Warp.GRID_UNIT_WIDTH_FACTOR);
+        scaledGrid = new ScaledGrid(scaledXPosition, scaledYPosition, width, height, Warp.GRID_UNIT_WIDTH_FACTOR, true);
         displayString = EnumChatFormatting.GREEN + island.getName();
         backgroundTextureLocation = island.getTextureLocation();
         foregroundTextureLocation = island.getHoverEffectTextureLocation();
@@ -64,7 +65,6 @@ public class GuiButtonIsland extends GuiButtonScaleTransition {
         if (visible) {
             float originalZ = zLevel;
 
-            super.drawButton(mc, mouseX, mouseY);
             transitionStep(SCALE_TRANSITION_DURATION, HOVERED_SCALE);
 
             scaledGrid.setScaleFactor(transition.getCurrentScale());
@@ -90,5 +90,21 @@ public class GuiButtonIsland extends GuiButtonScaleTransition {
                 drawBorder(Color.WHITE);
             }
         }
+    }
+
+    public float getScaledXPosition() {
+        return scaledXPosition;
+    }
+
+    public float getScaledYPosition() {
+        return scaledYPosition;
+    }
+
+    public float getScaledWidth() {
+        return scaledWidth;
+    }
+
+    public float getScaledHeight() {
+        return scaledHeight;
     }
 }

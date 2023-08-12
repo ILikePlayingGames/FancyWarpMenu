@@ -23,33 +23,43 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
+import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
-@SuppressWarnings("SuspiciousNameCombination")
-public class GuiButtonConfig extends GuiButtonExt {
+import java.awt.*;
+
+@SuppressWarnings("FieldCanBeLocal")
+public class GuiButtonConfig extends GuiButtonScaleTransition {
     private static final float HOVERED_SCALE = 1.2F;
-    private static ResourceLocation buttonTextureLocation;
+    private static final long SCALE_TRANSITION_DURATION = 500;
 
-    public GuiButtonConfig(int buttonId) {
+    /** This button uses its own grid instead of the grid of the GuiScreen it belongs to since it's also attached to vanilla screens, which don't have grids */
+    private final ScaledGrid scaledGrid;
+    // Far right edge
+    private final int GRID_X = 60;
+    // Bottom edge
+    private final int GRID_Y = 32;
+
+    public GuiButtonConfig(int buttonId, ScaledResolution res) {
         super(buttonId, I18n.format("fancywarpmenu.ui.buttons.config"));
-        if (buttonTextureLocation == null) {
-            String buttonTexturePath = "fancywarpmenu:textures/gui/Logo.png";
-            buttonTextureLocation = new ResourceLocation(buttonTexturePath);
-        }
-
-        width = height = (int) (Minecraft.getMinecraft().currentScreen.width * 0.05);
-        xPosition = (int) (Minecraft.getMinecraft().currentScreen.width - width * 1.3);
-        yPosition = (int) (Minecraft.getMinecraft().currentScreen.height - height * 1.3);
-
+        scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
+        width = height = (int) (res.getScaledWidth() * 0.05);
         // Above islands and warps
         zLevel = 20;
+        buttonRectangle = new GridRectangle(scaledGrid, GRID_X, GRID_Y, width, height, false, true);
+        scaledGrid.addRectangle("configButton", buttonRectangle);
+        backgroundTextureLocation = new ResourceLocation("fancywarpmenu:textures/gui/Logo.png");
+        transition = new ScaleTransition(0, 1, 1);
     }
 
     @Override
@@ -57,15 +67,20 @@ public class GuiButtonConfig extends GuiButtonExt {
         super.drawButton(mc, mouseX, mouseY);
 
         if (this.visible) {
-            int drawWidth = hovered ? (int) (width * HOVERED_SCALE) : width;
-            int drawX = hovered ? xPosition - (drawWidth - width) : xPosition;
-            int drawY = hovered ? yPosition - (drawWidth - height) : yPosition;
+            super.drawButton(mc, mouseX, mouseY);
+            transitionStep(SCALE_TRANSITION_DURATION, HOVERED_SCALE);
 
-            mc.getTextureManager().bindTexture(buttonTextureLocation);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0, 0, zLevel);
-            drawScaledCustomSizeModalRect(drawX, drawY, 0, 0, 1, 1, drawWidth, drawWidth, 1, 1);
-            GlStateManager.popMatrix();
+            scaledGrid.setScaleFactor(transition.getCurrentScale());
+            scaledXPosition = buttonRectangle.getXPosition();
+            scaledYPosition = buttonRectangle.getYPosition();
+            scaledWidth = buttonRectangle.getWidth();
+            scaledHeight = buttonRectangle.getHeight();
+
+            drawButtonTexture(backgroundTextureLocation);
+
+            if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
+                drawBorder(Color.WHITE);
+            }
         }
     }
 

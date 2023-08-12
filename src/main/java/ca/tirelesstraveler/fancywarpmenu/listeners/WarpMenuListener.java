@@ -31,6 +31,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
@@ -104,7 +105,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
             ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
 
             if (containerChest.getLowerChestInventory().getName().equals("Fast Travel")) {
-                e.buttonList.add(new GuiButtonConfig(e.buttonList.size()));
+                e.buttonList.add(new GuiButtonConfig(e.buttonList.size(), new ScaledResolution(mc)));
             }
         }
     }

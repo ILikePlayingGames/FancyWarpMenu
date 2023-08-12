@@ -328,7 +328,7 @@
     },
     {
       "name": "Dungeon\nHub",
-      "texturePath": "textures/gui/Portal.png",
+      "texturePath": "textures/gui/islands/Dungeon Hub.png",
       "gridX": 28,
       "gridY": 12,
       "zLevel": 1,

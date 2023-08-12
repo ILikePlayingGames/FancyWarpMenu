@@ -25,6 +25,7 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
 
@@ -39,14 +40,12 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
      * x and y are relative to the top left corner of the parent island button.
      */
     public GuiButtonWarp(int buttonId, GuiButtonIsland parent, Warp warp) {
-        super(buttonId, 0, 0, "");
+        super(buttonId, "");
         PARENT = parent;
         WARP = warp;
-        scaledXPosition = parent.scaledGrid.getActualX(warp.getGridX());
-        scaledYPosition = parent.scaledGrid.getActualY(warp.getGridY());
+        buttonRectangle = new GridRectangle(parent.scaledGrid, warp.getGridX(), warp.getGridY(), warp.getWidth(), warp.getHeight(), true, false);
+        parent.scaledGrid.addRectangle(warp.getDisplayName(), buttonRectangle);
         zLevel = 10;
-        width = warp.getWidth();
-        height = warp.getHeight();
         displayString = warp.getDisplayName();
         backgroundTextureLocation = WARP.getWarpTextureLocation();
         transition = new ScaleTransition(0, 0, 0);
@@ -64,13 +63,13 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         if (visible) {
             float originalZ = zLevel;
 
-            super.drawButton(mc, mouseX, mouseY);
+            hovered = PARENT.isMouseOver();
             transition.setCurrentScale(PARENT.scaledGrid.getScaleFactor());
 
-            scaledXPosition = PARENT.scaledGrid.getActualX(WARP.getGridX());
-            scaledYPosition = PARENT.scaledGrid.getActualY(WARP.getGridY());
-            scaledWidth = PARENT.scaledGrid.getScaledDimension(width);
-            scaledHeight = PARENT.scaledGrid.getScaledDimension(height);
+            scaledXPosition = buttonRectangle.getXPosition();
+            scaledYPosition = buttonRectangle.getYPosition();
+            scaledWidth = buttonRectangle.getWidth();
+            scaledHeight = buttonRectangle.getHeight();
 
             if (hovered) {
                 zLevel = 19;
@@ -82,7 +81,7 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
             zLevel = originalZ;
 
             if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
-                drawDisplayString(mc, width / 2F, height);
+                drawDisplayString(mc, buttonRectangle.getWidth() / 2F, buttonRectangle.getHeight());
             }
             
             if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {

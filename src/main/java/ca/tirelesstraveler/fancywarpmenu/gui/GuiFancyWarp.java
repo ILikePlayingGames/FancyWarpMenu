@@ -27,6 +27,7 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -65,7 +66,7 @@ public class GuiFancyWarp extends GuiScreen {
         }
 
         res = new ScaledResolution(mc);
-        scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR);
+        scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
         for (Island island: FancyWarpMenu.getInstance().getIslands()) {
@@ -83,7 +84,7 @@ public class GuiFancyWarp extends GuiScreen {
             }
         }
 
-        buttonList.add(new GuiButtonConfig(buttonList.size()));
+        buttonList.add(new GuiButtonConfig(buttonList.size(), res));
 
         // Sort by z level
         buttonList.sort(null);
@@ -114,8 +115,11 @@ public class GuiFancyWarp extends GuiScreen {
         for (GuiButton button:
              buttonList) {
             if (button instanceof GuiButtonIsland) {
-                ((GuiButtonIsland) button).setHovered(mouseX >= button.xPosition && mouseY >= button.yPosition
-                        && mouseX < button.xPosition + button.width && mouseY < button.yPosition + button.height);
+                GuiButtonIsland islandButton = (GuiButtonIsland) button;
+                islandButton.setHovered(mouseX >= islandButton.getScaledXPosition() &&
+                        mouseY >= islandButton.getScaledYPosition() &&
+                        mouseX <= islandButton.getScaledXPosition() + islandButton.getScaledWidth() &&
+                        mouseY <= ((GuiButtonIsland) button).getScaledYPosition() + islandButton.getScaledHeight());
 
                 if (button.isMouseOver()) {
                     hoveredButtons.add((GuiButtonExt) button);
@@ -235,13 +239,8 @@ public class GuiFancyWarp extends GuiScreen {
         }
     }
 
-
-    float getActualX(int gridX) {
-        return scaledGrid.getActualX(gridX);
-    }
-
-    float getActualY(int gridY) {
-        return scaledGrid.getActualY(gridY);
+    ScaledGrid getScaledGrid() {
+        return scaledGrid;
     }
 
     private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {

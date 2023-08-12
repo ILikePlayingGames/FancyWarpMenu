@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -39,6 +40,8 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
     private static final float HOVERED_BRIGHTNESS = 1F;
     private static final float UN_HOVERED_BRIGHTNESS = 0.9F;
 
+    /** This rectangle determines the button's placement on its {@code GuiScreen}'s {@code ScaledGrid} */
+    protected GridRectangle buttonRectangle;
     protected ScaleTransition transition;
     protected float scaledXPosition;
     protected float scaledYPosition;
@@ -59,10 +62,13 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
      * @param color color of the border
      */
     public void drawBorder(Color color) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, zLevel);
         drawHorizontalLine((int) scaledXPosition, (int) (scaledXPosition + scaledWidth), (int) scaledYPosition, color.getRGB());
         drawVerticalLine((int) scaledXPosition, (int) scaledYPosition, (int) (scaledYPosition + scaledHeight), color.getRGB());
         drawHorizontalLine((int) scaledXPosition, (int) (scaledXPosition + scaledWidth), (int) (scaledYPosition + scaledHeight), color.getRGB());
         drawVerticalLine((int) (scaledXPosition + scaledWidth), (int) scaledYPosition, (int) (scaledYPosition + scaledHeight), color.getRGB());
+        GlStateManager.popMatrix();
     }
 
     /**
