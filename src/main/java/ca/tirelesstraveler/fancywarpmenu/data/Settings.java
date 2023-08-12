@@ -207,4 +207,9 @@ public class Settings {
         config.get(CATEGORY_DEBUG, "drawBorders", true).set(drawBorders);
         syncConfig(false);
     }
+
+    public static void setWarpMenuEnabled(boolean warpMenuEnabled) {
+        config.get(CATEGORY_GENERAL, "warpMenuEnabled", true).set(warpMenuEnabled);
+        syncConfig(false);
+    }
 }

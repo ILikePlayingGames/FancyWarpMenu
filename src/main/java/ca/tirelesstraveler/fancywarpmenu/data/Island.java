@@ -38,11 +38,11 @@ public class Island {
     /**
      * Grid unit width is screenWidth / widthFactor
      */
-    public static final float GRID_UNIT_WIDTH_FACTOR = 64;
+    public static final int GRID_UNIT_WIDTH_FACTOR = 64;
     /**
      * Grid unit height is screenHeight / heightFactor
      */
-    public static final float GRID_UNIT_HEIGHT_FACTOR = 36;
+    public static final int GRID_UNIT_HEIGHT_FACTOR = 36;
 
     /**
      * Island name to be displayed below the island button

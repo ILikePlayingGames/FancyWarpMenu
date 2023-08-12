@@ -25,13 +25,13 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
+import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import java.awt.*;
 
-public class GuiButtonWarp extends GuiButtonExt {
+public class GuiButtonWarp extends GuiButtonScaleTransition {
     /** The button of the island this warp belongs to */
     private final GuiButtonIsland PARENT;
     private final Warp WARP;
@@ -40,15 +40,15 @@ public class GuiButtonWarp extends GuiButtonExt {
      * x and y are relative to the top left corner of the parent island button.
      */
     public GuiButtonWarp(int buttonId, GuiButtonIsland parent, Warp warp) {
-        super(buttonId, 0, 0, "");
+        super(buttonId, "");
         PARENT = parent;
         WARP = warp;
-        xPosition = parent.getActualX(warp.getGridX());
-        yPosition = parent.getActualY(warp.getGridY());
+        buttonRectangle = new GridRectangle(parent.scaledGrid, warp.getGridX(), warp.getGridY(), warp.getWidth(), warp.getHeight(), true, false);
+        parent.scaledGrid.addRectangle(warp.getDisplayName(), buttonRectangle);
         zLevel = 10;
-        width = warp.getWidth();
-        height = warp.getHeight();
         displayString = warp.getDisplayName();
+        backgroundTextureLocation = WARP.getWarpTextureLocation();
+        transition = new ScaleTransition(0, 0, 0);
 
         if (warp.shouldHideButton()) {
             visible = false;
@@ -60,27 +60,33 @@ public class GuiButtonWarp extends GuiButtonExt {
      */
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-        super.drawButton(mc, mouseX, mouseY);
-        if (this.visible) {
-            mc.getTextureManager().bindTexture(WARP.getWarpTextureLocation());
-            GlStateManager.enableBlend();
-            if (PARENT.isMouseOver()) {
-                GlStateManager.color(1, 1, 1, 1);
-            } else {
-                GlStateManager.color(0.8F, 0.8F, 0.8F, 0.5F);
+        if (visible) {
+            float originalZ = zLevel;
+
+            hovered = PARENT.isMouseOver();
+            transition.setCurrentScale(PARENT.scaledGrid.getScaleFactor());
+
+            scaledXPosition = buttonRectangle.getXPosition();
+            scaledYPosition = buttonRectangle.getYPosition();
+            scaledWidth = buttonRectangle.getWidth();
+            scaledHeight = buttonRectangle.getHeight();
+
+            if (hovered) {
+                zLevel = 19;
             }
-            // Blend allows the texture to be drawn with transparency intact
-            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0, 0, zLevel);
-            drawScaledCustomSizeModalRect(xPosition, yPosition, 0, 0, 1, 1, WARP.getWidth(), WARP.getHeight(), 1, 1);
-            GlStateManager.disableBlend();
-            GlStateManager.resetColor();
+
+            drawButtonTexture(backgroundTextureLocation);
+            drawButtonForegroundLayer(foregroundTextureLocation);
+
+            zLevel = originalZ;
 
             if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
-                drawDisplayString(xPosition + width / 2 + 1, yPosition + height);
+                drawDisplayString(mc, buttonRectangle.getWidth() / 2F, buttonRectangle.getHeight());
             }
-            GlStateManager.popMatrix();
+            
+            if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
+                drawBorder(Color.WHITE);
+            }
         }
     }
 
@@ -89,6 +95,6 @@ public class GuiButtonWarp extends GuiButtonExt {
     }
 
     Island getIsland() {
-        return PARENT.getIsland();
+        return PARENT.island;
     }
 }

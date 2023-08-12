@@ -32,6 +32,7 @@ fancywarpmenu.key.openMenu=Open Warp Menu
 fancywarpmenu.key.categories.fancyWarpMenu=Fancy Warp Menu
 
 fancywarpmenu.messages.useWarpMenuInsteadOfCommand=Reminder to use Fancy Warp Menu instead!
+fancywarpmenu.messages.fancyWarpMenuEnabled=Fancy Warp Menu Enabled
 
 fancywarpmenu.errors.notUnlocked=Not Unlocked
 fancywarpmenu.errors.unknownDestination=Unknown Destination

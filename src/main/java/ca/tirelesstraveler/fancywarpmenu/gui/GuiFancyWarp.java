@@ -27,6 +27,7 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -65,8 +66,7 @@ public class GuiFancyWarp extends GuiScreen {
         }
 
         res = new ScaledResolution(mc);
-        scaledGrid = new ScaledGrid(0, 0, (float) res.getScaledWidth() / Island.GRID_UNIT_WIDTH_FACTOR,
-                (float) res.getScaledHeight() / Island.GRID_UNIT_HEIGHT_FACTOR);
+        scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
         for (Island island : FancyWarpMenu.getInstance().getIslands()) {
@@ -84,7 +84,7 @@ public class GuiFancyWarp extends GuiScreen {
             }
         }
 
-        buttonList.add(new GuiButtonConfig(buttonList.size()));
+        buttonList.add(new GuiButtonConfig(buttonList.size(), res));
 
         // Sort by z level
         buttonList.sort(null);
@@ -114,8 +114,11 @@ public class GuiFancyWarp extends GuiScreen {
         // When multiple island buttons overlap, mark only the top one as hovered.
         for (GuiButton button : buttonList) {
             if (button instanceof GuiButtonIsland) {
-                ((GuiButtonIsland) button).setHovered(mouseX >= button.xPosition && mouseY >= button.yPosition
-                        && mouseX < button.xPosition + button.width && mouseY < button.yPosition + button.height);
+                GuiButtonIsland islandButton = (GuiButtonIsland) button;
+                islandButton.setHovered(mouseX >= islandButton.getScaledXPosition() &&
+                        mouseY >= islandButton.getScaledYPosition() &&
+                        mouseX <= islandButton.getScaledXPosition() + islandButton.getScaledWidth() &&
+                        mouseY <= ((GuiButtonIsland) button).getScaledYPosition() + islandButton.getScaledHeight());
 
                 if (button.isMouseOver()) {
                     hoveredButtons.add((GuiButtonExt) button);
@@ -148,15 +151,6 @@ public class GuiFancyWarp extends GuiScreen {
             String modVersion = FancyWarpMenu.getInstance().getModContainer().getVersion();
             drawCenteredString(mc.fontRendererObj, modName + " " + modVersion, width / 2, height - 10, 14737632);
 
-            if (Settings.shouldDrawBorders()) {
-                for (GuiButton button : buttonList) {
-                    //Draw borders
-                    if (button instanceof GuiButtonExt) {
-                        ((GuiButtonExt) button).drawBorders(1, 1);
-                    }
-                }
-            }
-
             // Shift to draw island grid instead of warp grid
             if (!isShiftKeyDown()) {
                 for (GuiButton button : buttonList) {
@@ -164,10 +158,10 @@ public class GuiFancyWarp extends GuiScreen {
                     if (button instanceof GuiButtonIsland && button.isMouseOver()) {
                         GuiButtonIsland islandButton = (GuiButtonIsland) button;
                         debugStrings.add(EnumChatFormatting.GREEN + button.displayString);
-                        nearestX = islandButton.findNearestGridX(mouseX);
-                        nearestY = islandButton.findNearestGridY(mouseY);
-                        drawX = islandButton.getActualX(nearestX);
-                        drawY = islandButton.getActualY(nearestY);
+                        nearestX = islandButton.scaledGrid.findNearestGridX(mouseX);
+                        nearestY = islandButton.scaledGrid.findNearestGridY(mouseY);
+                        drawX = (int) islandButton.scaledGrid.getActualX(nearestX);
+                        drawY = (int) islandButton.scaledGrid.getActualY(nearestY);
                         drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, islandButton.getZLevel());
                         tooltipDrawn = true;
                         break;
@@ -179,8 +173,8 @@ public class GuiFancyWarp extends GuiScreen {
             if (!tooltipDrawn) {
                 nearestX = scaledGrid.findNearestGridX(mouseX);
                 nearestY = scaledGrid.findNearestGridY(mouseY);
-                drawX = scaledGrid.getActualX(nearestX);
-                drawY = scaledGrid.getActualY(nearestY);
+                drawX = (int) scaledGrid.getActualX(nearestX);
+                drawY = (int) scaledGrid.getActualY(nearestY);
                 drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, -1);
             }
         }
@@ -211,7 +205,7 @@ public class GuiFancyWarp extends GuiScreen {
                     sendWarpCommand(warpCommand);
                 }
             } else if (button instanceof GuiButtonIsland) {
-                Island island = ((GuiButtonIsland) button).getIsland();
+                Island island = ((GuiButtonIsland) button).island;
 
                 if (island.getWarpCount() == 1) {
                     String warpCommand = island.getWarps().get(0).getWarpCommand();
@@ -243,13 +237,8 @@ public class GuiFancyWarp extends GuiScreen {
         }
     }
 
-
-    int getActualX(int gridX) {
-        return scaledGrid.getActualX(gridX);
-    }
-
-    int getActualY(int gridY) {
-        return scaledGrid.getActualY(gridY);
+    ScaledGrid getScaledGrid() {
+        return scaledGrid;
     }
 
     private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {
@@ -260,7 +249,7 @@ public class GuiFancyWarp extends GuiScreen {
             debugStrings.add("zLevel: " + zLevel);
         }
         drawHoveringText(debugStrings, drawX, drawY);
-        drawRect(drawX - 1, drawY - 1, drawX + 1, drawY + 1, Color.RED.getRGB());
+        drawRect(drawX - 2, drawY - 2, drawX + 2, drawY + 2, Color.RED.getRGB());
     }
 
     private void sendWarpCommand(String warpCommand) {
