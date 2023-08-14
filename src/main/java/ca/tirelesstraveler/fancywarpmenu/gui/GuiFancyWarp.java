@@ -69,7 +69,7 @@ public class GuiFancyWarp extends GuiScreen {
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
-        for (Island island : FancyWarpMenu.getInstance().getIslands()) {
+        for (Island island : FancyWarpMenu.getLayout().getIslandList()) {
             if (!Settings.shouldShowJerryIsland() && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
                 continue;
             }

@@ -27,15 +27,16 @@ import com.google.gson.Gson;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class WarpConfiguration {
+public class Layout {
     static Gson gson = new Gson();
 
     private List<Island> islandList;
     private WarpIcon warpIcon;
+    private ConfigButton configButton;
     private WarpMessages warpMessages;
     private List<String> warpCommandVariants;
 
-    private WarpConfiguration(){}
+    private Layout(){}
 
     public List<Island> getIslandList() {
         return islandList;
@@ -43,6 +44,10 @@ public class WarpConfiguration {
 
     public WarpIcon getWarpIcon() {
         return warpIcon;
+    }
+
+    public ConfigButton getConfigButton() {
+        return configButton;
     }
 
     public WarpMessages getWarpMessages() {
@@ -53,35 +58,41 @@ public class WarpConfiguration {
         return warpCommandVariants;
     }
 
-    public static void validateWarpConfiguration(WarpConfiguration warpConfiguration) throws IllegalArgumentException, NullPointerException {
-        if (warpConfiguration == null) {
+    public static void validateLayout(Layout layout) throws IllegalArgumentException, NullPointerException {
+        if (layout == null) {
             throw new NullPointerException("Warp configuration cannot be null");
         }
 
-        if (warpConfiguration.islandList == null || warpConfiguration.islandList.isEmpty()) {
+        if (layout.islandList == null || layout.islandList.isEmpty()) {
             throw new IllegalArgumentException("Island list cannot be empty");
         }
 
-        for (Island island : warpConfiguration.getIslandList()) {
+        for (Island island : layout.getIslandList()) {
             Island.validateIsland(island);
         }
 
-        WarpIcon.validateWarpIcon(warpConfiguration.getWarpIcon());
-        WarpMessages.validateWarpMessages(warpConfiguration.getWarpMessages());
+        WarpIcon.validateWarpIcon(layout.getWarpIcon());
+        ConfigButton.validateConfigButtonIcon(layout.getConfigButton());
+        WarpMessages.validateWarpMessages(layout.getWarpMessages());
 
-        if (warpConfiguration.warpCommandVariants == null || warpConfiguration.warpCommandVariants.isEmpty()) {
+        if (layout.warpCommandVariants == null || layout.warpCommandVariants.isEmpty()) {
             throw new NullPointerException("Warp command variant list cannot be empty");
         }
 
-        for (String warpCommandVariant : warpConfiguration.warpCommandVariants) {
-            if (warpCommandVariant.equals("")) {
+        for (String warpCommandVariant : layout.warpCommandVariants) {
+            if (warpCommandVariant.isEmpty()) {
                 throw new IllegalArgumentException(String.format("Warp command variant at index %d is an empty string",
-                        warpConfiguration.warpCommandVariants.indexOf(warpCommandVariant)));
+                        layout.warpCommandVariants.indexOf(warpCommandVariant)));
             } else if (warpCommandVariant.contains("/") || warpCommandVariant.contains(" ")) {
                 throw new IllegalArgumentException(String.format("Warp command variant at index %d has slashes or spaces. " +
                         "Include only the command name without slashes or spaces.",
-                        warpConfiguration.warpCommandVariants.indexOf(warpCommandVariant)));
+                        layout.warpCommandVariants.indexOf(warpCommandVariant)));
             }
         }
+    }
+
+    @Override
+    public String toString() {
+        return gson.toJson(this);
     }
 }

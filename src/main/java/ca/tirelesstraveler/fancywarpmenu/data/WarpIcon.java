@@ -38,11 +38,12 @@ public class WarpIcon {
 
     /** Width to render the warp icon texture at as a percentage of the screen width. Texture height is set automatically. */
     private float widthPercentage;
-    private int height;
     private transient ResourceLocation textureLocation;
+    /** Width of the warp icon texture, used to set the hit box of the warp button */
     private transient int textureWidth;
+    /** Height of the warp icon texture, used to set the hit box of the warp button */
     private transient int textureHeight;
-    /** {@link this#textureHeight} as a percentage of {@link this#textureWidth}*/
+    /** {@link this#textureHeight} as a percentage of {@link this#textureWidth}, used to validate that the warp is not outside the island */
     private transient int heightPercentage;
 
     private WarpIcon(){}
@@ -77,7 +78,7 @@ public class WarpIcon {
         heightPercentage = textureHeight / textureWidth;
     }
     public String toString() {
-        return WarpConfiguration.gson.toJson(this);
+        return Layout.gson.toJson(this);
     }
 
     public static void validateWarpIcon(WarpIcon warpIcon) throws IllegalArgumentException, NullPointerException {

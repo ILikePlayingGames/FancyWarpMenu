@@ -151,7 +151,7 @@ public class Island {
     }
 
     public String toString() {
-        return WarpConfiguration.gson.toJson(this);
+        return Layout.gson.toJson(this);
     }
 
     public static void validateIsland(Island island) throws IllegalArgumentException, NullPointerException {

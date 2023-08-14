@@ -22,10 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
-import ca.tirelesstraveler.fancywarpmenu.data.Island;
-import ca.tirelesstraveler.fancywarpmenu.data.Warp;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpIcon;
+import ca.tirelesstraveler.fancywarpmenu.data.*;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
@@ -44,34 +41,46 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class WarpConfigLoader {
+public class LayoutLoader {
     private static final ResourceLocation WARP_CONFIG_LOCATION = new ResourceLocation("fancywarpmenu",
-            "data/islands.json");
+            "data/layout.json");
     private static final Gson gson = new Gson();
     private static final Logger logger = LogManager.getLogger();
 
-    public static WarpConfiguration loadIslands() {
+    public static Layout loadLayout() {
         boolean modLoadingComplete = Loader.instance().isInState(LoaderState.AVAILABLE);
 
         try {
             IResource islandResource = Minecraft.getMinecraft().getResourceManager().getResource(WARP_CONFIG_LOCATION);
 
             try (InputStream stream = islandResource.getInputStream();
-                JsonReader reader = new JsonReader(new BufferedReader(new InputStreamReader(stream)))) {
-                WarpConfiguration warpConfig = gson.fromJson(reader, WarpConfiguration.class);
-                WarpIcon warpIcon = warpConfig.getWarpIcon();
+                JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
+                Layout layout = gson.fromJson(reader, Layout.class);
+                WarpIcon warpIcon = layout.getWarpIcon();
+                if (warpIcon == null) {
+                    throw new NullPointerException("Missing warp icon settings");
+                }
+
                 warpIcon.init();
                 Pair<Integer, Integer> warpIconDimensions = getTextureDimensions(warpIcon.getTextureLocation());
                 warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
                 Warp.setWarpIcon(warpIcon);
-                WarpConfiguration.validateWarpConfiguration(warpConfig);
 
-                for (Island island : warpConfig.getIslandList()) {
+                ConfigButton configButton = layout.getConfigButton();
+
+                if (configButton == null) {
+                    throw new NullPointerException("Missing config button settings");
+                }
+
+                Pair<Integer, Integer> configButtonIconDimensions = getTextureDimensions(configButton.getTextureLocation());
+                configButton.setTextureDimensions(configButtonIconDimensions.getLeft(), configButtonIconDimensions.getRight());
+                Layout.validateLayout(layout);
+
+                for (Island island : layout.getIslandList()) {
                     Pair<Integer, Integer> islandTextureDimensions;
 
                     island.setTextureLocation();
@@ -83,7 +92,7 @@ public class WarpConfigLoader {
                     }
                 }
 
-                return warpConfig;
+                return layout;
             } catch (RuntimeException e) {
                 if (modLoadingComplete) {
                     logger.error(String.format("Warp config loading failed: %s", e.getMessage()), e);

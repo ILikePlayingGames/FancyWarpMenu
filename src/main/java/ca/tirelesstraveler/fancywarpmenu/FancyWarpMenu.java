@@ -23,9 +23,8 @@
 package ca.tirelesstraveler.fancywarpmenu;
 
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
+import ca.tirelesstraveler.fancywarpmenu.data.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpConfiguration;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.listeners.SkyBlockJoinListener;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
@@ -46,8 +45,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
-import java.util.List;
-
 @Mod(modid = "fancywarpmenu", clientSideOnly = true, useMetadata = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory")
 public class FancyWarpMenu {
     @Mod.Instance("fancywarpmenu")
@@ -55,7 +52,7 @@ public class FancyWarpMenu {
     private static ModContainer modContainer;
     private static String modId;
     static Logger logger;
-    private static WarpConfiguration warpConfig;
+    private static Layout layout;
     private static SkyBlockJoinListener skyblockJoinListener;
     private static WarpMenuListener warpMenuListener;
     private static KeyBinding keyBindingOpenWarpMenu;
@@ -83,7 +80,7 @@ public class FancyWarpMenu {
         logger = event.getModLog();
         event.getModMetadata().version = modContainer.getVersion();
         bar.step("Loading Warp Configuration");
-        warpConfig = WarpConfigLoader.loadIslands();
+        layout = LayoutLoader.loadLayout();
         ProgressManager.pop(bar);
     }
 
@@ -92,16 +89,16 @@ public class FancyWarpMenu {
         keyBindingOpenWarpMenu = new KeyBinding("fancywarpmenu.key.openMenu", Keyboard.KEY_C, "fancywarpmenu.key.categories.fancyWarpMenu");
         ClientRegistry.registerKeyBinding(keyBindingOpenWarpMenu);
 
-        ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures", getIslands().size() + 1);
+        ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures", layout.getIslandList().size() + 1);
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        for (Island island : getIslands()) {
+        for (Island island : layout.getIslandList()) {
             bar.step(island.getName());
             textureManager.bindTexture(island.getTextureLocation());
         }
 
         bar.step("Warp Icon");
-        textureManager.bindTexture(warpConfig.getWarpIcon().getTextureLocation());
+        textureManager.bindTexture(layout.getWarpIcon().getTextureLocation());
 
         ProgressManager.pop(bar);
     }
@@ -132,37 +129,29 @@ public class FancyWarpMenu {
         return warpMenuListener;
     }
 
-    public List<Island> getIslands() {
-        return warpConfig.getIslandList();
-    }
-
-    public static KeyBinding getKeyBindingOpenWarpMenu() {
-        return keyBindingOpenWarpMenu;
-    }
-
-    public WarpMessages getWarpMessages() {
-        return warpConfig.getWarpMessages();
-    }
-
-    public List<String> getWarpCommandVariants() {
-        return warpConfig.getWarpCommandVariants();
-    }
-
     public boolean isPlayerOnSkyBlock() {
         return skyblockJoinListener.isOnSkyBlock();
     }
 
     public void reloadResources() {
         Minecraft.getMinecraft().refreshResources();
-        reloadWarpConfig();
+        reloadLayout();
     }
 
-    public void reloadWarpConfig() {
-        WarpConfiguration warpConfig = WarpConfigLoader.loadIslands();
+    public void reloadLayout() {
+        Layout loadedLayout = LayoutLoader.loadLayout();
 
         // Will be null if json syntax is wrong or config is invalid
-        if (warpConfig != null) {
-            FancyWarpMenu.warpConfig = warpConfig;
+        if (loadedLayout != null) {
+            FancyWarpMenu.layout = loadedLayout;
         }
+    }
+
+    public static KeyBinding getKeyBindingOpenWarpMenu() {
+        return keyBindingOpenWarpMenu;
+    }
+
+    public static Layout getLayout() {
+        return layout;
     }
 }

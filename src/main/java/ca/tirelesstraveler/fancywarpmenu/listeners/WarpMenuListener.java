@@ -72,10 +72,10 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         if (mc.currentScreen == warpScreen && event.type == 0) {
             String unformattedText = event.message.getUnformattedText();
 
-            if (modInstance.getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
+            if (FancyWarpMenu.getLayout().getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
                 mc.displayGuiScreen(null);
-            } else if (modInstance.getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
-                WarpMessages warpMessages = modInstance.getWarpMessages();
+            } else if (FancyWarpMenu.getLayout().getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
+                WarpMessages warpMessages = FancyWarpMenu.getLayout().getWarpMessages();
                 Map<String, String> warpFailMessages = warpMessages.getWarpFailMessages();
                 String failMessageKey = warpFailMessages.get(unformattedText);
                 warpScreen.onWarpFail(failMessageKey);
@@ -160,7 +160,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
-        FancyWarpMenu.getInstance().reloadWarpConfig();
+        FancyWarpMenu.getInstance().reloadLayout();
     }
 
     /**
@@ -193,7 +193,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
      */
     public static boolean isWarpCommand(String commandName) {
         String baseCommand = commandName.substring(1).split(" ")[0];
-        return modInstance.getWarpCommandVariants().contains(baseCommand);
+        return FancyWarpMenu.getLayout().getWarpCommandVariants().contains(baseCommand);
     }
 
     public static void sendReminderToUseWarpScreen() {

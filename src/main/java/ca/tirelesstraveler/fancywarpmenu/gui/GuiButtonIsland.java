@@ -35,7 +35,7 @@ import java.awt.*;
 
 public class GuiButtonIsland extends GuiButtonScaleTransition {
     static final float HOVERED_SCALE = 1.1F;
-    static final long SCALE_TRANSITION_DURATION = 500;
+    static final long SCALE_TRANSITION_DURATION = 400;
     final Island island;
     final ScaledGrid scaledGrid;
 

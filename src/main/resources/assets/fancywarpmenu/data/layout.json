@@ -50,7 +50,7 @@
       "name": "Crimson Isle",
       "texturePath": "textures/gui/islands/Crimson Isle.png",
       "gridX": 45,
-      "gridY": 0,
+      "gridY": 1,
       "zLevel": 2,
       "widthPercentage": 0.25,
       "warpList": [
@@ -98,7 +98,7 @@
     {
       "name": "Spider's Den",
       "texturePath": "textures/gui/islands/Spider's Den.png",
-      "gridX": 34,
+      "gridX": 35,
       "gridY": 9,
       "zLevel": 1,
       "widthPercentage": 0.2,
@@ -127,7 +127,7 @@
       "name": "The End",
       "texturePath": "textures/gui/islands/End.png",
       "gridX": 24,
-      "gridY": 0,
+      "gridY": 1,
       "zLevel": 2,
       "widthPercentage": 0.2,
       "warpList": [
@@ -138,7 +138,7 @@
           "gridY": 15
         },
         {
-          "displayName": "Den",
+          "displayName": "Nest",
           "commandName": "drag",
           "gridX": 14,
           "gridY": 22
@@ -327,12 +327,12 @@
       ]
     },
     {
-      "name": "Dungeon\nHub",
+      "name": "Dungeon Hub",
       "texturePath": "textures/gui/islands/Dungeon Hub.png",
-      "gridX": 28,
-      "gridY": 12,
+      "gridX": 29,
+      "gridY": 13,
       "zLevel": 1,
-      "widthPercentage": 0.05,
+      "widthPercentage": 0.03,
       "warpList": [
         {
           "displayName": "Spawn",
@@ -360,6 +360,11 @@
     "texturePath": "textures/gui/Portal.png",
     "widthPercentage": 0.02,
     "heightPercentage": 1.2
+  },
+  "configButton": {
+    "gridX": 60,
+    "gridY": 32,
+    "widthPercentage": 0.05
   },
   "warpCommandVariants": [
     "warp",

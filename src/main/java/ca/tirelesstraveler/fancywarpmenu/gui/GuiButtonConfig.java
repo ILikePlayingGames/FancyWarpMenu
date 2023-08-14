@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.ConfigButton;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
@@ -46,14 +47,19 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
     /** This button uses its own grid instead of the grid of the GuiScreen it belongs to since it's also attached to vanilla screens, which don't have grids */
     private final ScaledGrid scaledGrid;
     // Far right edge
-    private final int GRID_X = 60;
+    private final int GRID_X;
     // Bottom edge
-    private final int GRID_Y = 32;
+    private final int GRID_Y;
 
     public GuiButtonConfig(int buttonId, ScaledResolution res) {
         super(buttonId, I18n.format("fancywarpmenu.ui.buttons.config"));
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
-        width = height = (int) (res.getScaledWidth() * 0.05);
+        ConfigButton configButtonSettings = FancyWarpMenu.getLayout().getConfigButton();
+        configButtonSettings.init(res);
+        GRID_X = configButtonSettings.getGridX();
+        GRID_Y = configButtonSettings.getGridY();
+        width = configButtonSettings.getWidth();
+        height = configButtonSettings.getHeight();
         // Above islands and warps
         zLevel = 20;
         buttonRectangle = new GridRectangle(scaledGrid, GRID_X, GRID_Y, width, height, false, true);

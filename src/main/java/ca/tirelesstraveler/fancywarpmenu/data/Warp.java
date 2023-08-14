@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 
@@ -99,11 +100,12 @@ public class Warp {
     }
 
     public String toString() {
-        return WarpConfiguration.gson.toJson(this);
+        return Layout.gson.toJson(this);
     }
 
     /**
-     * Initializes width and height for all warp buttons
+     * Initializes width and height for all warp buttons.
+     * This should be called in {@link GuiScreen#initGui()}.
      */
     public static void initDefaults(ScaledResolution res) {
         float scaleFactor;
