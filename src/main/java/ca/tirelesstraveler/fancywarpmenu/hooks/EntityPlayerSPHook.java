@@ -12,13 +12,13 @@ public class EntityPlayerSPHook {
     public static void onSendChatMessage(String message, CallbackInfo ci) {
         String lowerCaseMessage = message.toLowerCase(Locale.US).trim();
 
-        if (message.contains("/warp")) {
+        if (message.contains("/warp") || message.contains("/travel")) {
             LogHelper.logDebug("Caught send message: {}" +
                     "\nMenu Enabled: {}", lowerCaseMessage, Settings.isWarpMenuEnabled());
         }
 
         if (Settings.isWarpMenuEnabled() && FancyWarpMenu.getInstance().isPlayerOnSkyBlock() && lowerCaseMessage.startsWith("/")) {
-            if (lowerCaseMessage.equals("/warp")) {
+            if (lowerCaseMessage.equals("/warp") || lowerCaseMessage.equals("/travel")) {
                 FancyWarpMenu.getInstance().getWarpMenuListener().onWarpCommand();
                 ci.cancel();
             } else if (Settings.shouldSuggestWarpMenuOnWarpCommand() &&
