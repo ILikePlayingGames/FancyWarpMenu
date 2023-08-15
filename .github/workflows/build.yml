@@ -16,17 +16,17 @@ on:
   workflow_dispatch:
     inputs:
       upload_artifact:
-        description: 'Upload artifact to this run? [yes | no]'
+        description: 'Upload artifact to this run? [y | n]'
         required: false
-        default: 'no'
+        default: 'n'
+      send_notification:
+        description: 'Send a notification to Discord after this run finishes successfully? [y | n]'
+        required: false
+        default: 'n'
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    env:
-      ORG_GRADLE_PROJECT_buildNumber: ${{ github.run_number }}
-      ORG_GRADLE_PROJECT_runAttempt: ${{ github.run_attempt }}
-      ORG_GRADLE_PROJECT_runningOnCi: ${{ true }}
     timeout-minutes: 15
 
     steps:
@@ -44,13 +44,13 @@ jobs:
       run: ./gradlew build --no-daemon
     - name: Read Project Version
       id: read_project_version
-      if: ${{ github.ref_name == 'main' || contains(github.event.inputs.upload_artifact, 'yes') }}
+      if: ${{ github.ref_name == 'main' || contains(github.event.inputs.upload_artifact, 'y') }}
       uses: christian-draeger/read-properties@1.1.1
       with:
         path: gradle.properties
         properties: version
     - name: Upload Artifact
-      if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.upload_artifact, 'yes') }}
+      if: ${{ github.event_name == 'push' || github.event_name == 'pull_request' || contains(github.event.inputs.upload_artifact, 'y') }}
       uses: actions/upload-artifact@v3
       with:
         name: Fancy Warp Menu
@@ -70,9 +70,9 @@ jobs:
         echo "$(git show -s --format=format:"%B")" >> "$GITHUB_ENV"
         echo "$EOF" >> "$GITHUB_ENV"
     - name: Post Build Information to Discord
-      if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' && contains(github.event.inputs.upload_artifact, 'yes') }}
+      if: ${{ (github.event_name == 'push' && github.ref_name == 'main') || github.event_name == 'workflow_dispatch' && contains(github.event.inputs.send_notification, 'y') }}
       env:
-        jarPath: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}.${{ github.run_number }}.jar
+        jarPath: build/libs/FancyWarpMenu-${{ steps.read_project_version.outputs.version }}+${{ github.run_number }}.jar
       uses: tsickert/discord-webhook@v5.3.0
       with:
         webhook-url: ${{ secrets.BUILD_WEBHOOK_URL }}
