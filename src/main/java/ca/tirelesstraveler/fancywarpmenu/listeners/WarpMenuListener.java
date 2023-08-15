@@ -24,6 +24,7 @@ package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
@@ -48,6 +49,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Mouse;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -69,7 +71,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     @SubscribeEvent
     public void onChatMessageReceived(ClientChatReceivedEvent event) {
         // type 0 is a standard chat message
-        if (mc.currentScreen == warpScreen && event.type == 0) {
+        if (event.type == 0 && warpScreen != null && mc.currentScreen == warpScreen) {
             String unformattedText = event.message.getUnformattedText();
 
             if (FancyWarpMenu.getLayout().getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
@@ -187,13 +189,23 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     /**
-     * Checks if the command name of the command the player sent is the name of the warp command or any of its variants
+     * Checks if a given command is the warp command or any of its variants and returns the corresponding
+     * {@code WarpCommandVariant} object if one is found.
      *
-     * @param commandName name of the command the player sent, excluding the slash and any arguments
+     * @param command the command the player sent
+     * @return a {@link WarpCommandVariant} if one with the same command is found, or {@code null} otherwise
      */
-    public static boolean isWarpCommand(String commandName) {
-        String baseCommand = commandName.substring(1).split(" ")[0];
-        return FancyWarpMenu.getLayout().getWarpCommandVariants().contains(baseCommand);
+    public static WarpCommandVariant getWarpCommandVariant(String command) {
+        // Trim off the slash and all arguments
+        String baseCommand = command.toLowerCase(Locale.US).substring(1).split(" ")[0];
+
+        for (WarpCommandVariant commandVariant : FancyWarpMenu.getLayout().getWarpCommandVariants()) {
+            if (commandVariant.getCommand().equals(baseCommand)) {
+                return commandVariant;
+            }
+        }
+
+        return null;
     }
 
     public static void sendReminderToUseWarpScreen() {

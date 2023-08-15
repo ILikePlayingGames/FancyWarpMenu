@@ -367,10 +367,29 @@
     "widthPercentage": 0.05
   },
   "warpCommandVariants": [
-    "warp",
-    "is",
-    "hub",
-    "warpforge",
-    "savethejerrys"
+    {
+      "command": "warp",
+      "type": "ALIAS"
+    },
+    {
+      "command": "travel",
+      "type": "ALIAS"
+    },
+    {
+      "command": "is",
+      "type": "WARP"
+    },
+    {
+      "command": "hub",
+      "type": "WARP"
+    },
+    {
+      "command": "warpforge",
+      "type": "WARP"
+    },
+    {
+      "command": "savethejerrys",
+      "type": "WARP"
+    }
   ]
 }

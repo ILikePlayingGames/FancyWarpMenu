@@ -34,7 +34,7 @@ public class Layout {
     private WarpIcon warpIcon;
     private ConfigButton configButton;
     private WarpMessages warpMessages;
-    private List<String> warpCommandVariants;
+    private List<WarpCommandVariant> warpCommandVariants;
 
     private Layout(){}
 
@@ -54,7 +54,7 @@ public class Layout {
         return warpMessages;
     }
 
-    public List<String> getWarpCommandVariants() {
+    public List<WarpCommandVariant> getWarpCommandVariants() {
         return warpCommandVariants;
     }
 
@@ -79,15 +79,8 @@ public class Layout {
             throw new NullPointerException("Warp command variant list cannot be empty");
         }
 
-        for (String warpCommandVariant : layout.warpCommandVariants) {
-            if (warpCommandVariant.isEmpty()) {
-                throw new IllegalArgumentException(String.format("Warp command variant at index %d is an empty string",
-                        layout.warpCommandVariants.indexOf(warpCommandVariant)));
-            } else if (warpCommandVariant.contains("/") || warpCommandVariant.contains(" ")) {
-                throw new IllegalArgumentException(String.format("Warp command variant at index %d has slashes or spaces. " +
-                        "Include only the command name without slashes or spaces.",
-                        layout.warpCommandVariants.indexOf(warpCommandVariant)));
-            }
+        for (WarpCommandVariant warpCommandVariant : layout.warpCommandVariants) {
+            WarpCommandVariant.validateWarpCommandVariant(warpCommandVariant);
         }
     }
 

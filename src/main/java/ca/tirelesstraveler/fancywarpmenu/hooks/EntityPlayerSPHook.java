@@ -3,6 +3,7 @@ package ca.tirelesstraveler.fancywarpmenu.hooks;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.LogHelper;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -10,20 +11,19 @@ import java.util.Locale;
 
 public class EntityPlayerSPHook {
     public static void onSendChatMessage(String message, CallbackInfo ci) {
-        String lowerCaseMessage = message.toLowerCase(Locale.US).trim();
+        if (Settings.isWarpMenuEnabled() && FancyWarpMenu.getInstance().isPlayerOnSkyBlock() && message.startsWith("/")) {
+            WarpCommandVariant warpCommandVariant = WarpMenuListener.getWarpCommandVariant(message);
 
-        if (message.contains("/warp")) {
-            LogHelper.logDebug("Caught send message: {}" +
-                    "\nMenu Enabled: {}", lowerCaseMessage, Settings.isWarpMenuEnabled());
-        }
+            LogHelper.logDebug("Caught sent command: {}", message);
 
-        if (Settings.isWarpMenuEnabled() && FancyWarpMenu.getInstance().isPlayerOnSkyBlock() && lowerCaseMessage.startsWith("/")) {
-            if (lowerCaseMessage.equals("/warp")) {
-                FancyWarpMenu.getInstance().getWarpMenuListener().onWarpCommand();
-                ci.cancel();
-            } else if (Settings.shouldSuggestWarpMenuOnWarpCommand() &&
-                    WarpMenuListener.isWarpCommand(lowerCaseMessage)) {
-                WarpMenuListener.sendReminderToUseWarpScreen();
+            if (warpCommandVariant != null) {
+                // Check if the command is a warp command alias without any arguments
+                if (warpCommandVariant.getType() == WarpCommandVariant.WarpCommandType.ALIAS && message.trim().toLowerCase(Locale.US).equals("/" + warpCommandVariant.getCommand())) {
+                    FancyWarpMenu.getInstance().getWarpMenuListener().onWarpCommand();
+                    ci.cancel();
+                } else if (Settings.shouldSuggestWarpMenuOnWarpCommand()) {
+                    WarpMenuListener.sendReminderToUseWarpScreen();
+                }
             }
         }
     }
