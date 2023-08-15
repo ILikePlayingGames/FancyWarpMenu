@@ -42,7 +42,7 @@ loom {
 }
 
 sourceSets.main {
-    output.setResourcesDir(file("$buildDir/classes/java/main"))
+    output.resourcesDir = file("$buildDir/classes/java/main")
 }
 
 // Dependencies:
@@ -88,11 +88,11 @@ tasks.withType(Jar::class) {
 }
 
 tasks.processResources {
-    if (project.hasProperty("runningOnCi")) {
-        if (project.hasProperty("buildNumber")) {
-            project.version = "${project.version}.${project.properties["buildNumber"]}"
+    if (System.getenv("CI") != null) {
+        if (System.getenv("GITHUB_RUN_NUMBER") != null) {
+            project.version = "${project.version}+${System.getenv("GITHUB_RUN_NUMBER")}"
         } else {
-            throw RuntimeException("Property project.buildNumber missing on CI build")
+            throw RuntimeException("Environment variable GITHUB_RUN_NUMBER missing on CI build")
         }
     }
 
@@ -106,10 +106,6 @@ tasks.processResources {
     }
 
     rename("(.+_at.cfg)", "META-INF/$1")
-
-    filesMatching("version.properties") {
-        expand(mapOf("version" to project.version))
-    }
 }
 
 
