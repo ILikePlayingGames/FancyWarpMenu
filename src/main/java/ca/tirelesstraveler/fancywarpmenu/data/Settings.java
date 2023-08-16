@@ -41,7 +41,7 @@ import java.util.List;
 public class Settings {
     private static final String CATEGORY_GENERAL = "general";
     private static final String CATEGORY_DEBUG = "debug";
-    private static final String CATEGORY_UPDATE_AVAILABLE = "downloadUpdate";
+    private static final String CATEGORY_UPDATE_AVAILABLE = "updateAvailable";
 
     private static Configuration config;
     // General settings
@@ -107,7 +107,7 @@ public class Settings {
      */
     public static void setConfigPropertyOrder() {
         List<String> generalPropertyOrder = new ArrayList<>();
-        Collections.addAll(generalPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps", "enableUpdateNotifications");
+        Collections.addAll(generalPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps", "enableUpdateNotification");
 
         List<String> debugPropertyOrder = new ArrayList<>();
         Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders", "skipSkyBlockCheck");
