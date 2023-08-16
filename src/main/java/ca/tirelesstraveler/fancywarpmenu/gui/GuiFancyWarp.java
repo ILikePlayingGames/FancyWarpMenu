@@ -24,6 +24,7 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.data.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.Warp;
@@ -70,7 +71,7 @@ public class GuiFancyWarp extends GuiScreen {
         Warp.initDefaults(res);
 
         for (Island island : FancyWarpMenu.getLayout().getIslandList()) {
-            if (!Settings.shouldShowJerryIsland() && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
+            if ((!Settings.shouldShowJerryIsland() || !GameState.isLateWinter()) && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
                 continue;
             }
 

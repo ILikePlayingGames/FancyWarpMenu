@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
@@ -37,6 +38,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.inventory.ContainerChest;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -47,6 +49,8 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
 
 import java.util.Locale;
@@ -59,6 +63,7 @@ import java.util.Map;
 public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements IResourceManagerReloadListener {
     private static final Minecraft mc;
     private static final FancyWarpMenu modInstance;
+    private static final Logger logger;
 
     private static GuiFancyWarp warpScreen;
     private static boolean openMenuRequested;
@@ -66,6 +71,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     static {
         mc = Minecraft.getMinecraft();
         modInstance = FancyWarpMenu.getInstance();
+        logger = LogManager.getLogger();
     }
 
     @SubscribeEvent
@@ -184,8 +190,22 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     public void displayFancyWarpMenu() {
+        checkLateWinter();
         warpScreen = new GuiFancyWarp();
         mc.displayGuiScreen(warpScreen);
+    }
+
+    /**
+     * Checks if the SkyBlock season is Late Winter, used for hiding Jerry's Workshop when it's closed
+     */
+    private void checkLateWinter() {
+        try {
+            Scoreboard sb = mc.theWorld.getScoreboard();
+            String date = sb.getTeam(GameState.DATE_TEAM_INDEX).formatString("").trim();
+            GameState.setLateWinter(date.startsWith("Late Winter"));
+        } catch (RuntimeException e) {
+            logger.warn("Failed to check scoreboard season for late winter");
+        }
     }
 
     /**

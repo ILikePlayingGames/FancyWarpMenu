@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -47,7 +48,6 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     private static final Logger logger = LogManager.getLogger();
     private boolean serverBrandChecked;
     private boolean onHypixel;
-    private boolean onSkyBlock;
 
     public SkyBlockJoinListener() {
         super(false);
@@ -65,14 +65,14 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
         if (onHypixel) {
             serverBrandChecked = false;
             onHypixel = false;
-            onSkyBlock = false;
+            GameState.setOnSkyBlock(false);
             logger.info("Disconnected from Hypixel.");
         }
     }
 
     /**
      * This method listens for {@link S3DPacketDisplayScoreboard} packets. These are sent once per world join/switch
-     * and contain the name of the game mode, thus making them excellent for checking whether the player is on Skyblock.
+     * and contain the name of the game mode, thus making them excellent for checking whether the player is on SkyBlock.
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, S3DPacketDisplayScoreboard packet) {
@@ -98,13 +98,13 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
                         String objectiveName = packet.func_149370_d();
                         boolean newSkyBlockState = objectiveName.equals("SBScoreboard");
 
-                        if (newSkyBlockState && !onSkyBlock) {
+                        if (newSkyBlockState && !GameState.isOnSkyBlock()) {
                             logger.info("Player joined SkyBlock.");
-                        } else if (!newSkyBlockState && onSkyBlock) {
+                        } else if (!newSkyBlockState && GameState.isOnSkyBlock()) {
                             logger.info("Player left SkyBlock.");
                         }
 
-                        onSkyBlock = newSkyBlockState;
+                        GameState.setOnSkyBlock(newSkyBlockState);
                     }
                 }
             } catch (RuntimeException e) {
@@ -120,6 +120,6 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
     }
 
     public boolean isOnSkyBlock() {
-        return (Settings.isDebugModeEnabled() && Settings.shouldSkipSkyBlockCheck()) || onSkyBlock;
+        return (Settings.isDebugModeEnabled() && Settings.shouldSkipSkyBlockCheck()) || GameState.isOnSkyBlock();
     }
 }
