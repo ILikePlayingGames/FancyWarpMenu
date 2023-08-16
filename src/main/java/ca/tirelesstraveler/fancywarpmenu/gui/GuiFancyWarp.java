@@ -226,7 +226,12 @@ public class GuiFancyWarp extends GuiScreen {
             if (keyCode == mc.gameSettings.keyBindInventory.getKeyCode()) {
                 mc.displayGuiScreen(null);
             } else if (keyCode == Keyboard.KEY_R) {
-                mod.reloadResources();
+                if (isShiftKeyDown()) {
+                    mod.reloadResources();
+                } else {
+                    mod.reloadLayout();
+                }
+
                 buttonList.clear();
                 initGui();
             } else if (keyCode == Keyboard.KEY_TAB) {
