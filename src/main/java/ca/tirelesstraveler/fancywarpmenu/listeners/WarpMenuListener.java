@@ -204,7 +204,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
             String date = sb.getTeam(GameState.DATE_TEAM_INDEX).formatString("").trim();
             GameState.setLateWinter(date.startsWith("Late Winter"));
         } catch (RuntimeException e) {
-            logger.warn("Failed to check scoreboard season for late winter");
+            logger.warn("Failed to check scoreboard season for late winter", e);
         }
     }
 
