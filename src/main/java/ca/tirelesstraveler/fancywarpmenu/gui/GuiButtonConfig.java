@@ -36,6 +36,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeVersion;
 
 import java.awt.*;
 
@@ -83,6 +84,9 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
             scaledHeight = buttonRectangle.getHeight();
 
             drawButtonTexture(backgroundTextureLocation);
+            if (Settings.isUpdateNotificationEnabled() && FancyWarpMenu.getUpdateCheckResult() != null && FancyWarpMenu.getUpdateCheckResult().status == ForgeVersion.Status.OUTDATED) {
+                drawButtonForegroundLayer(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
+            }
 
             if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
                 drawBorder(Color.WHITE);

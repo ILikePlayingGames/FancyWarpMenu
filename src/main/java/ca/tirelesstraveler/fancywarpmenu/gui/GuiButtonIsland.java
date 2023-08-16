@@ -78,7 +78,9 @@ public class GuiButtonIsland extends GuiButtonScaleTransition {
             }
 
             drawButtonTexture(backgroundTextureLocation);
-            drawButtonForegroundLayer(foregroundTextureLocation);
+            if (hovered) {
+                drawButtonForegroundLayer(foregroundTextureLocation);
+            }
 
             zLevel = originalZ;
 

@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -45,13 +46,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
-@Mod(modid = "fancywarpmenu", clientSideOnly = true, useMetadata = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory")
+@Mod(modid = "fancywarpmenu", clientSideOnly = true, useMetadata = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory", updateJSON = "https://cdn.jsdelivr.net/gh/ILikePlayingGames/FancyWarpMenuResourcePacks@main/update.json")
 public class FancyWarpMenu {
     @Mod.Instance("fancywarpmenu")
     private static FancyWarpMenu instance;
     private static ModContainer modContainer;
     private static String modId;
     static Logger logger;
+    private static ForgeVersion.CheckResult updateCheckResult;
     private static Layout layout;
     private static SkyBlockJoinListener skyblockJoinListener;
     private static WarpMenuListener warpMenuListener;
@@ -86,6 +88,7 @@ public class FancyWarpMenu {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
+        updateCheckResult = ForgeVersion.getResult(modContainer);
         keyBindingOpenWarpMenu = new KeyBinding("fancywarpmenu.key.openMenu", Keyboard.KEY_C, "fancywarpmenu.key.categories.fancyWarpMenu");
         ClientRegistry.registerKeyBinding(keyBindingOpenWarpMenu);
 
@@ -116,6 +119,10 @@ public class FancyWarpMenu {
 
     public String getModId() {
         return modId;
+    }
+
+    public static ForgeVersion.CheckResult getUpdateCheckResult() {
+        return updateCheckResult;
     }
 
     /**

@@ -23,9 +23,10 @@
 package ca.tirelesstraveler.fancywarpmenu;
 
 /**
- * Information about the local environment at runtime, for compatibility with other mods
+ * Information about the local environment at runtime, for constants and compatibility with other mods
  */
 public class EnvironmentDetails {
+    public static String SUPPORT_LINK = "https://discord.gg/tXFf9umfA9";
     static boolean deobfuscatedEnvironment;
     static boolean patcherInstalled;
 

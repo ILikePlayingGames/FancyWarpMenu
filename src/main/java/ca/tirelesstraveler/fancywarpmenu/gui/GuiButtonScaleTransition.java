@@ -85,7 +85,7 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
     }
 
     public void drawButtonForegroundLayer(ResourceLocation foregroundTextureLocation) {
-        if (foregroundTextureLocation != null && hovered) {
+        if (foregroundTextureLocation != null) {
             drawButtonTexture(foregroundTextureLocation);
         }
     }

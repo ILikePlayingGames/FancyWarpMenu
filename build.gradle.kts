@@ -14,6 +14,7 @@ val baseGroup: String by project
 val mcVersion: String by project
 val modid: String by project
 val version: String by project
+val updateUrl: String by project
 val mixinGroup = "$baseGroup.$modid.mixin"
 
 // Toolchains:
@@ -100,6 +101,7 @@ tasks.processResources {
     inputs.property("mcversion", mcVersion)
     inputs.property("modid", modid)
     inputs.property("mixinGroup", mixinGroup)
+    inputs.property("updateUrl", updateUrl)
 
     filesMatching(listOf("mcmod.info", "mixins.$modid.json")) {
         expand(inputs.properties)

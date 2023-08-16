@@ -1,7 +1,14 @@
+fancywarpmenu.config.categories.general=General
+fancywarpmenu.config.categories.general.tooltip=Settings that customize the functionality of the Fancy Warp Menu
 fancywarpmenu.config.categories.developerSettings=Developer Settings
 fancywarpmenu.config.categories.developerSettings.tooltip=Settings for features used by pack developers to create custom textures and layouts for the warp menu
+fancywarpmenu.config.categories.support=Support
+fancywarpmenu.config.categories.support.tooltip=Click to join the Fancy Warp Menu Discord server
+fancywarpmenu.config.categories.updateAvailable=Update Available
+fancywarpmenu.config.categories.updateAvailable.tooltip=There is a new version of Fancy Warp Menu available. Click for options.
 
 fancywarpmenu.config.title=Fancy Warp Menu Settings
+fancywarpmenu.config.subtitle=Categories
 fancywarpmenu.config.warpMenuEnabled=Enable Fancy Warp Menu
 fancywarpmenu.config.warpMenuEnabled.tooltip=Replace the default warp menu with the Fancy Warp Menu
 fancywarpmenu.config.showIslandLabels=Show Island Names
@@ -16,6 +23,8 @@ fancywarpmenu.config.showJerryIsland=Show Jerry's Workshop
 fancywarpmenu.config.showJerryIsland.tooltip=Show the Jerry's Workshop island on the warp menu
 fancywarpmenu.config.hideUnobtainableWarps=Hide Unobtainable Warps
 fancywarpmenu.config.hideUnobtainableWarps.tooltip=Hide warps only obtainable during special game modes such as Bingo
+fancywarpmenu.config.enableUpdateNotification=Enable Update Notification
+fancywarpmenu.config.enableUpdateNotification.tooltip=Show a notification on the settings button and in the settings menu when a new version of Fancy Warp Menu is available
 
 fancywarpmenu.config.developerModeEnabled=Enable Developer Mode
 fancywarpmenu.config.developerModeEnabled.tooltip=Enable all developer features
@@ -26,6 +35,9 @@ fancywarpmenu.config.drawBorders.tooltip=Show borders around island and warp but
 fancywarpmenu.config.skipSkyBlockCheck=Skip SkyBlock Check
 fancywarpmenu.config.skipSkyBlockCheck.tooltip=Skip checking for whether the player is on SkyBlock
 
+fancywarpmenu.config.currentVersion=Current Version
+fancywarpmenu.config.newVersion=New Version
+fancywarpmenu.config.downloadUpdate=Download Update
 
 fancywarpmenu.key.openMenu=Open Warp Menu
 

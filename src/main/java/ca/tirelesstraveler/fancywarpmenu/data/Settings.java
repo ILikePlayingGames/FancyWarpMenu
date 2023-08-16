@@ -24,9 +24,13 @@ package ca.tirelesstraveler.fancywarpmenu.data;
 
 import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.config.ConfigGuiType;
 import net.minecraftforge.fml.client.config.DummyConfigElement;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
@@ -37,6 +41,7 @@ import java.util.List;
 public class Settings {
     private static final String CATEGORY_GENERAL = "general";
     private static final String CATEGORY_DEBUG = "debug";
+    private static final String CATEGORY_UPDATE_AVAILABLE = "downloadUpdate";
 
     private static Configuration config;
     // General settings
@@ -47,6 +52,7 @@ public class Settings {
     private static boolean addWarpCommandToChatHistory;
     private static boolean showJerryIsland;
     private static boolean hideUnobtainableWarps;
+    private static boolean enableUpdateNotification;
 
     // Developer settings
     private static boolean debugModeEnabled;
@@ -55,10 +61,39 @@ public class Settings {
     private static boolean skipSkyBlockCheck;
 
     public static List<IConfigElement> getConfigElements() {
-        List<IConfigElement> topLevelElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
+        List<IConfigElement> topLevelElements = new ArrayList<>();
+        List<IConfigElement> generalElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
         List<IConfigElement> debugElements = new ConfigElement(config.getCategory(CATEGORY_DEBUG)).getChildElements();
 
+        DummyConfigElement supportLinkElement = new DummyConfigElement("supportLink", EnvironmentDetails.SUPPORT_LINK, ConfigGuiType.STRING, "fancywarpmenu.config.categories.support");
+        supportLinkElement.setConfigEntryClass(FancyWarpMenuConfigScreen.OpenLinkEntry.class);
+
+        topLevelElements.add(new DummyConfigElement.DummyCategoryElement(CATEGORY_GENERAL, "fancywarpmenu.config.categories.general", generalElements));
         topLevelElements.add(new DummyConfigElement.DummyCategoryElement(CATEGORY_DEBUG, "fancywarpmenu.config.categories.developerSettings", debugElements));
+        topLevelElements.add(supportLinkElement);
+
+        ForgeVersion.CheckResult updateCheckResult = FancyWarpMenu.getUpdateCheckResult();
+
+        if (Settings.isUpdateNotificationEnabled() && updateCheckResult != null && updateCheckResult.status == ForgeVersion.Status.OUTDATED) {
+            List<IConfigElement> updateAvailableElements = new ArrayList<>();
+
+            DummyConfigElement currentVersionElement = new DummyConfigElement("currentVersion", FancyWarpMenu.getInstance().getModContainer().getVersion(), ConfigGuiType.STRING, "fancywarpmenu.config.currentVersion");
+            DummyConfigElement newVersionElement = new DummyConfigElement("newVersion", updateCheckResult.target.toString(), ConfigGuiType.STRING, "fancywarpmenu.config.newVersion");
+            DummyConfigElement downloadUpdateElement = new DummyConfigElement("downloadUpdate", EnvironmentDetails.SUPPORT_LINK, ConfigGuiType.STRING, "fancywarpmenu.config.downloadUpdate");
+            DummyConfigElement updateAvailableCategory = new DummyConfigElement.DummyCategoryElement(CATEGORY_UPDATE_AVAILABLE, "fancywarpmenu.config.categories.updateAvailable", updateAvailableElements);
+
+            currentVersionElement.setConfigEntryClass(FancyWarpMenuConfigScreen.UnmodifiableStringEntry.class);
+            newVersionElement.setConfigEntryClass(FancyWarpMenuConfigScreen.UnmodifiableStringEntry.class);
+            downloadUpdateElement.setConfigEntryClass(FancyWarpMenuConfigScreen.OpenLinkEntry.class);
+            updateAvailableCategory.set(EnumChatFormatting.GREEN);
+            updateAvailableCategory.setConfigEntryClass(FancyWarpMenuConfigScreen.ColoredCategoryEntry.class);
+
+            updateAvailableElements.add(currentVersionElement);
+            updateAvailableElements.add(newVersionElement);
+            updateAvailableElements.add(downloadUpdateElement);
+
+            topLevelElements.add(updateAvailableCategory);
+        }
 
         return topLevelElements;
     }
@@ -71,13 +106,13 @@ public class Settings {
      * Sets the order in which config properties are displayed on the settings menu
      */
     public static void setConfigPropertyOrder() {
-        List<String> topLevelPropertyOrder = new ArrayList<>();
-        Collections.addAll(topLevelPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps");
+        List<String> generalPropertyOrder = new ArrayList<>();
+        Collections.addAll(generalPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps", "enableUpdateNotifications");
 
         List<String> debugPropertyOrder = new ArrayList<>();
         Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders", "skipSkyBlockCheck");
 
-        config.setCategoryPropertyOrder(CATEGORY_GENERAL, topLevelPropertyOrder);
+        config.setCategoryPropertyOrder(CATEGORY_GENERAL, generalPropertyOrder);
         config.setCategoryPropertyOrder(CATEGORY_DEBUG, debugPropertyOrder);
     }
 
@@ -122,6 +157,12 @@ public class Settings {
         prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.hideUnobtainableWarps"));
         prop.setRequiresWorldRestart(false);
         hideUnobtainableWarps = prop.getBoolean(true);
+
+        prop = config.get(CATEGORY_GENERAL, "enableUpdateNotification", true);
+        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.enableUpdateNotification"));
+        prop.setRequiresWorldRestart(false);
+        prop.getBoolean(true);
+        enableUpdateNotification = prop.getBoolean(true);
 
         /* Debug settings */
 
@@ -180,6 +221,10 @@ public class Settings {
 
     public static boolean shouldHideUnobtainableWarps() {
         return hideUnobtainableWarps;
+    }
+
+    public static boolean isUpdateNotificationEnabled() {
+        return enableUpdateNotification;
     }
 
     public static boolean isDebugModeEnabled() {

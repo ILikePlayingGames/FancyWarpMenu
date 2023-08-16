@@ -36,6 +36,8 @@ import java.io.IOException;
 @SuppressWarnings("unused")
 public class ConfigButton {
     public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), "textures/gui/Logo.png");
+    /** Overlay texture rendered when mod is outdated */
+    public static final ResourceLocation NOTIFICATION_TEXTURE_LOCATION = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), "textures/gui/Notification.png");
 
     /** x-coordinate on {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp} to draw the config button at (0-{@link Island#GRID_UNIT_WIDTH_FACTOR}) */
     private int gridX;
@@ -106,7 +108,13 @@ public class ConfigButton {
         try {
             Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.TEXTURE_LOCATION);
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Warp icon texture not found at %s", ConfigButton.TEXTURE_LOCATION));
+            throw new RuntimeException(String.format("Config button texture not found at %s", ConfigButton.TEXTURE_LOCATION));
+        }
+
+        try {
+            Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
+        } catch (IOException e) {
+            throw new RuntimeException(String.format("Config button notification texture not found at %s", ConfigButton.NOTIFICATION_TEXTURE_LOCATION));
         }
 
         if (configButton.gridX < 0 || configButton.gridX > Island.GRID_UNIT_WIDTH_FACTOR) {
