@@ -26,7 +26,9 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
@@ -106,13 +108,15 @@ public class ConfigButton {
         }
 
         try {
-            Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.TEXTURE_LOCATION);
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.TEXTURE_LOCATION);
+            IOUtils.closeQuietly(resource.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(String.format("Config button texture not found at %s", ConfigButton.TEXTURE_LOCATION));
         }
 
         try {
-            Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
+            IOUtils.closeQuietly(resource.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(String.format("Config button notification texture not found at %s", ConfigButton.NOTIFICATION_TEXTURE_LOCATION));
         }

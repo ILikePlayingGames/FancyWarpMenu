@@ -24,7 +24,9 @@ package ca.tirelesstraveler.fancywarpmenu.data;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
@@ -92,7 +94,8 @@ public class WarpIcon {
 
         ResourceLocation textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), warpIcon.texturePath);
         try {
-            Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+            IOUtils.closeQuietly(resource.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(String.format("Warp icon texture not found at %s", textureLocation));
         }

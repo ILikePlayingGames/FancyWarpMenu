@@ -25,7 +25,9 @@ package ca.tirelesstraveler.fancywarpmenu.data;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -171,7 +173,8 @@ public class Island {
 
         ResourceLocation textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), island.texturePath);
         try {
-            Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+            IOUtils.closeQuietly(resource.getInputStream());
         } catch (IOException e) {
             throw new RuntimeException(String.format("Island %s texture not found at %s", name, textureLocation));
         }
@@ -179,7 +182,8 @@ public class Island {
         if (island.hoverEffectTextureLocation != null) {
             textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), island.hoverEffectTexturePath);
             try {
-                Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+                IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(textureLocation);
+                IOUtils.closeQuietly(resource.getInputStream());
             } catch (IOException e) {
                 throw new RuntimeException(String.format("Island %s hover effect texture not found at %s", name, textureLocation));
             }
