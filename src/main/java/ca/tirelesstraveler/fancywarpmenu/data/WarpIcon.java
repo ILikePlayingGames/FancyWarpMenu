@@ -37,10 +37,13 @@ import java.io.IOException;
 public class WarpIcon {
     /** Path to the warp button texture relative to {@code resources/assets/fancywarpmenu} */
     private String texturePath;
+    /** Path to the texture to be drawn on top of the button texture when the button is hovered, relative to {@code resources/assets/fancywarpmenu} */
+    private String hoverEffectTexturePath;
 
     /** Width to render the warp icon texture at as a percentage of the screen width. Texture height is set automatically. */
     private float widthPercentage;
     private transient ResourceLocation textureLocation;
+    private transient ResourceLocation hoverEffectTextureLocation;
     /** Width of the warp icon texture, used to set the hit box of the warp button */
     private transient int textureWidth;
     /** Height of the warp icon texture, used to set the hit box of the warp button */
@@ -52,10 +55,18 @@ public class WarpIcon {
 
     public void init() {
         textureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), texturePath);
+
+        if (hoverEffectTexturePath != null) {
+            hoverEffectTextureLocation = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), hoverEffectTexturePath);
+        }
     }
 
     public ResourceLocation getTextureLocation() {
         return textureLocation;
+    }
+
+    public ResourceLocation getHoverEffectTextureLocation() {
+        return hoverEffectTextureLocation;
     }
 
     public float getWidthPercentage() {

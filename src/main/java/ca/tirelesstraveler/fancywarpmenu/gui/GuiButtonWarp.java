@@ -48,6 +48,7 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         zLevel = 10;
         displayString = warp.getDisplayName();
         backgroundTextureLocation = WARP.getWarpTextureLocation();
+        foregroundTextureLocation = WARP.getWarpHoverEffectTextureLocation();
         transition = new ScaleTransition(0, 0, 0);
 
         if (warp.shouldHideButton()) {
@@ -63,7 +64,7 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         if (visible) {
             float originalZ = zLevel;
 
-            hovered = PARENT.isMouseOver();
+            super.drawButton(mc, mouseX, mouseY);
             transition.setCurrentScale(PARENT.scaledGrid.getScaleFactor());
 
             scaledXPosition = buttonRectangle.getXPosition();
@@ -76,7 +77,10 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
             }
 
             drawButtonTexture(backgroundTextureLocation);
-            drawButtonForegroundLayer(foregroundTextureLocation);
+
+            if (hovered) {
+                drawButtonForegroundLayer(foregroundTextureLocation);
+            }
 
             zLevel = originalZ;
 

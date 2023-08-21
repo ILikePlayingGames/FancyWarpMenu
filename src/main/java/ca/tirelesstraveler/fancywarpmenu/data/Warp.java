@@ -66,6 +66,10 @@ public class Warp {
         return warpIcon.getTextureLocation();
     }
 
+    public ResourceLocation getWarpHoverEffectTextureLocation() {
+        return warpIcon.getHoverEffectTextureLocation();
+    }
+
     /**
      * Returns the command the player has to send to use this warp.
      * If the {@code commandName} doesn't start with a '/', "/warp " is prepended.

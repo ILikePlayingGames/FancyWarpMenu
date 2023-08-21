@@ -101,7 +101,7 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
         // Blend allows the texture to be drawn with transparency intact
         GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         if (hovered) {
-            GlStateManager.color( HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS);
+            GlStateManager.color(HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS);
         } else {
             GlStateManager.color(UN_HOVERED_BRIGHTNESS, UN_HOVERED_BRIGHTNESS, UN_HOVERED_BRIGHTNESS);
         }
@@ -129,7 +129,7 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
         String[] lines = displayString.split("\n");
 
         if (hovered) {
-            GlStateManager.color( HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS);
+            GlStateManager.color(HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS, HOVERED_BRIGHTNESS);
         } else {
             GlStateManager.color(UN_HOVERED_BRIGHTNESS, UN_HOVERED_BRIGHTNESS, UN_HOVERED_BRIGHTNESS);
         }
