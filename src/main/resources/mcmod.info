@@ -5,7 +5,7 @@
 		"description": "A recreation of the fancy warp menu from SkyblockAddons\nLicenses: https://github.com/ILikePlayingGames/FancyWarpMenu/wiki/Licenses",
 		"version": "${version}",
 		"mcversion": "${mcversion}",
-		"url": "https://github.com/ILikePlayingGames/SkyblockWarpMenu",
+		"url": "https://github.com/ILikePlayingGames/FancyWarpMenu",
 		"updateJSON": "${updateUrl}",
 		"authorList": [
 			"TirelessTraveler"

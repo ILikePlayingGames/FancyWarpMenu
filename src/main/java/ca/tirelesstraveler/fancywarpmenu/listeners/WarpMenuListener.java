@@ -199,12 +199,15 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
      * Checks if the SkyBlock season is Late Winter, used for hiding Jerry's Workshop when it's closed
      */
     private void checkLateWinter() {
-        try {
-            Scoreboard sb = mc.theWorld.getScoreboard();
-            String date = sb.getTeam(GameState.DATE_TEAM_INDEX).formatString("").trim();
-            GameState.setLateWinter(date.startsWith("Late Winter"));
-        } catch (RuntimeException e) {
-            logger.warn("Failed to check scoreboard season for late winter", e);
+        // Don't run outside of SB to prevent exceptions
+        if (!Settings.shouldSkipSkyBlockCheck()) {
+            try {
+                Scoreboard sb = mc.theWorld.getScoreboard();
+                String date = sb.getTeam(GameState.DATE_TEAM_INDEX).formatString("").trim();
+                GameState.setLateWinter(date.startsWith("Late Winter"));
+            } catch (RuntimeException e) {
+                logger.warn("Failed to check scoreboard season for late winter", e);
+            }
         }
     }
 

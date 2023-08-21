@@ -33,6 +33,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.EnumChatFormatting;
@@ -145,6 +146,8 @@ public class GuiFancyWarp extends GuiScreen {
             int nearestX;
             int nearestY;
             boolean tooltipDrawn = false;
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, 0, 20);
             // Draw screen resolution
             drawCenteredString(mc.fontRendererObj, String.format("%d x %d (%d)", res.getScaledWidth(), res.getScaledHeight(), res.getScaleFactor()), width / 2, height - 20, 14737632);
             // Draw version number
@@ -178,6 +181,8 @@ public class GuiFancyWarp extends GuiScreen {
                 drawY = (int) scaledGrid.getActualY(nearestY);
                 drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, -1);
             }
+
+            GlStateManager.popMatrix();
         }
     }
 
