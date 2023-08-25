@@ -38,6 +38,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.inventory.ContainerChest;
+import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
@@ -53,6 +54,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -203,8 +205,21 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         if (!Settings.shouldSkipSkyBlockCheck()) {
             try {
                 Scoreboard sb = mc.theWorld.getScoreboard();
-                String date = sb.getTeam(GameState.DATE_TEAM_INDEX).formatString("").trim();
-                GameState.setLateWinter(date.startsWith("Late Winter"));
+                // SkyBlock sidebar objective
+                ArrayList<Score> scores = (ArrayList<Score>) sb.getSortedScores(sb.getObjective("SBScoreboard"));
+
+                // The date is always near the top (highest score) so we iterate backwards.
+                for (int i = scores.size(); i > 0; i--) {
+                    Score score = scores.get(i - 1);
+                    String playerNameDisplayFormat = sb.getPlayersTeam(score.getPlayerName()).formatString("");
+
+                    if (playerNameDisplayFormat.trim().startsWith("Late Winter")) {
+                        GameState.setLateWinter(true);
+                        return;
+                    }
+                }
+
+                GameState.setLateWinter(false);
             } catch (RuntimeException e) {
                 logger.warn("Failed to check scoreboard season for late winter", e);
             }
