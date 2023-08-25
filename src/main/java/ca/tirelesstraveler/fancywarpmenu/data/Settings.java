@@ -41,7 +41,6 @@ import java.util.List;
 public class Settings {
     private static final String CATEGORY_GENERAL = "general";
     private static final String CATEGORY_DEBUG = "debug";
-    private static final String CATEGORY_UPDATE_AVAILABLE = "updateAvailable";
 
     private static Configuration config;
     // General settings
@@ -65,7 +64,7 @@ public class Settings {
         List<IConfigElement> generalElements = new ConfigElement(config.getCategory(CATEGORY_GENERAL)).getChildElements();
         List<IConfigElement> debugElements = new ConfigElement(config.getCategory(CATEGORY_DEBUG)).getChildElements();
 
-        DummyConfigElement supportLinkElement = new DummyConfigElement("supportLink", EnvironmentDetails.SUPPORT_LINK, ConfigGuiType.STRING, "fancywarpmenu.config.categories.support");
+        DummyConfigElement supportLinkElement = new DummyConfigElement("supportLink", EnvironmentDetails.SUPPORT_LINK, ConfigGuiType.CONFIG_CATEGORY, "fancywarpmenu.config.categories.support");
         supportLinkElement.setConfigEntryClass(FancyWarpMenuConfigScreen.OpenLinkEntry.class);
 
         topLevelElements.add(new DummyConfigElement.DummyCategoryElement(CATEGORY_GENERAL, "fancywarpmenu.config.categories.general", generalElements));
@@ -74,24 +73,11 @@ public class Settings {
 
         ForgeVersion.CheckResult updateCheckResult = FancyWarpMenu.getUpdateCheckResult();
 
-        if (Settings.isUpdateNotificationEnabled() && updateCheckResult != null && updateCheckResult.status == ForgeVersion.Status.OUTDATED) {
-            List<IConfigElement> updateAvailableElements = new ArrayList<>();
-
-            DummyConfigElement currentVersionElement = new DummyConfigElement("currentVersion", FancyWarpMenu.getInstance().getModContainer().getVersion(), ConfigGuiType.STRING, "fancywarpmenu.config.currentVersion");
-            DummyConfigElement newVersionElement = new DummyConfigElement("newVersion", updateCheckResult.target.toString(), ConfigGuiType.STRING, "fancywarpmenu.config.newVersion");
-            DummyConfigElement downloadUpdateElement = new DummyConfigElement("downloadUpdate", EnvironmentDetails.SUPPORT_LINK, ConfigGuiType.STRING, "fancywarpmenu.config.downloadUpdate");
-            DummyConfigElement updateAvailableCategory = new DummyConfigElement.DummyCategoryElement(CATEGORY_UPDATE_AVAILABLE, "fancywarpmenu.config.categories.updateAvailable", updateAvailableElements);
-
-            currentVersionElement.setConfigEntryClass(FancyWarpMenuConfigScreen.UnmodifiableStringEntry.class);
-            newVersionElement.setConfigEntryClass(FancyWarpMenuConfigScreen.UnmodifiableStringEntry.class);
-            downloadUpdateElement.setConfigEntryClass(FancyWarpMenuConfigScreen.OpenLinkEntry.class);
-            updateAvailableCategory.set(EnumChatFormatting.GREEN);
-            updateAvailableCategory.setConfigEntryClass(FancyWarpMenuConfigScreen.ColoredCategoryEntry.class);
-
-            updateAvailableElements.add(currentVersionElement);
-            updateAvailableElements.add(newVersionElement);
-            updateAvailableElements.add(downloadUpdateElement);
-
+        if (Settings.isUpdateNotificationEnabled() && updateCheckResult != null && (updateCheckResult.status == ForgeVersion.Status.OUTDATED || updateCheckResult.status == ForgeVersion.Status.BETA_OUTDATED)) {
+            DummyConfigElement updateAvailableCategory = new DummyConfigElement("updateAvailable", null, ConfigGuiType.CONFIG_CATEGORY, "fancywarpmenu.config.categories.updateAvailable");
+            Object[] options = {updateCheckResult.url, EnumChatFormatting.GREEN};
+            updateAvailableCategory.set(options);
+            updateAvailableCategory.setConfigEntryClass(FancyWarpMenuConfigScreen.ColoredOpenLinkEntry.class);
             topLevelElements.add(updateAvailableCategory);
         }
 

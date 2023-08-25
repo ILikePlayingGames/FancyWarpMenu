@@ -25,14 +25,15 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.crash.CrashReport;
+import net.minecraft.event.ClickEvent;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ReportedException;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -42,6 +43,11 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
     public FancyWarpMenuConfigScreen(GuiScreen parent)
     {
         super(parent, Settings.getConfigElements(), "fancywarpmenu", "main", false, false, I18n.format("fancywarpmenu.config.title"), I18n.format("fancywarpmenu.config.subtitle"));
+    }
+
+    void openLink(URI link) {
+        IChatComponent chatComponent = new ChatComponentText(null).setChatStyle(new ChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, link.toString())));
+        handleComponentClick(chatComponent);
     }
 
     /**
@@ -75,22 +81,16 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
      */
     public static class OpenLinkEntry extends GuiConfigEntries.CategoryEntry
     {
-        private final URI link;
+        private URI link;
 
         public OpenLinkEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop) {
             super(owningScreen, owningEntryList, prop);
 
-            Object linkObject = configElement.getDefault();
-
-            if (linkObject instanceof String) {
-                try {
-                    link = new URL((String) linkObject).toURI();
-                    toolTip.add(link.toString());
-                } catch (URISyntaxException | IOException e) {
-                    throw new ReportedException(new CrashReport(linkObject + " is not a valid URL", e));
-                }
+            // Subclasses may use the array to add additional options in addition to the link.
+            if (getConfigElement().getDefaults() != null) {
+                setLink(getConfigElement().getDefaults()[0]);
             } else {
-                throw new RuntimeException(linkObject + " is not a string");
+                setLink(getConfigElement().getDefault());
             }
         }
 
@@ -104,10 +104,8 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
             if (btnSelectCategory.mousePressed(this.mc, x, y)) {
                 btnSelectCategory.playPressSound(mc.getSoundHandler());
 
-                try {
-                    Desktop.getDesktop().browse(link);
-                } catch (IOException e) {
-                    throw new ReportedException(new CrashReport("Could not open link " + link, e));
+                if (owningScreen instanceof FancyWarpMenuConfigScreen) {
+                    ((FancyWarpMenuConfigScreen) owningScreen).openLink(link);
                 }
 
                 return true;
@@ -115,16 +113,47 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
                 return false;
             }
         }
+
+        protected void setLink(Object linkObject) {
+            if (linkObject instanceof String) {
+                try {
+                    link = new URL((String) linkObject).toURI();
+                } catch (URISyntaxException | IOException e) {
+                    throw new RuntimeException(linkObject + " is not a valid URL", e);
+                }
+            } else {
+                throw new RuntimeException(linkObject + " is not a string");
+            }
+        }
     }
 
-    public static class UnmodifiableStringEntry extends GuiConfigEntries.StringEntry {
-        public UnmodifiableStringEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement configElement) {
-            super(owningScreen, owningEntryList, configElement);
+    /**
+     * A {@link GuiConfigEntries.CategoryEntry} implementation that has a colored label and opens a link when clicked.
+     */
+    public static class ColoredOpenLinkEntry extends OpenLinkEntry
+    {
+        /**
+         * Creates a new instance of {@code ColoredOpenLinkEntry}.
+         * Set the value of prop to an {@code Object} array with the link at index 0 and an instance of {@code EnumChatFormatting} at index 1 for the color.
+         *
+         * @param owningScreen parent screen
+         * @param owningEntryList parent config entry list
+         * @param prop property containing the link to open and the color for the label
+         */
+        public ColoredOpenLinkEntry(GuiConfig owningScreen, GuiConfigEntries owningEntryList, IConfigElement prop) {
+            super(owningScreen, owningEntryList, prop);
+            setColor(getConfigElement().getDefaults()[1]);
         }
 
-        @Override
-        public boolean enabled() {
-            return false;
+        private void setColor(Object colorCodeObject) {
+            if (colorCodeObject != null) {
+                if (colorCodeObject instanceof EnumChatFormatting) {
+                    String colorCode = colorCodeObject.toString();
+                    btnSelectCategory.displayString = colorCode + btnSelectCategory.displayString;
+                } else {
+                    throw new RuntimeException(colorCodeObject + " is not an instance of EnumChatFormatting");
+                }
+            }
         }
     }
 }

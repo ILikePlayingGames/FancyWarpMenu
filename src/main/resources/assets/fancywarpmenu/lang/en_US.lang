@@ -5,7 +5,7 @@ fancywarpmenu.config.categories.developerSettings.tooltip=Settings for features 
 fancywarpmenu.config.categories.support=Support
 fancywarpmenu.config.categories.support.tooltip=Click to join the Fancy Warp Menu Discord server
 fancywarpmenu.config.categories.updateAvailable=Update Available
-fancywarpmenu.config.categories.updateAvailable.tooltip=There is a new version of Fancy Warp Menu available. Click for options.
+fancywarpmenu.config.categories.updateAvailable.tooltip=There is a new version of Fancy Warp Menu available. Click for more details.
 
 fancywarpmenu.config.title=Fancy Warp Menu Settings
 fancywarpmenu.config.subtitle=Categories
@@ -34,10 +34,6 @@ fancywarpmenu.config.drawBorders=Draw Button Borders
 fancywarpmenu.config.drawBorders.tooltip=Show borders around island and warp buttons. Press B while the warp menu is open to toggle.
 fancywarpmenu.config.skipSkyBlockCheck=Skip SkyBlock Check
 fancywarpmenu.config.skipSkyBlockCheck.tooltip=Skip checking for whether the player is on SkyBlock
-
-fancywarpmenu.config.currentVersion=Current Version
-fancywarpmenu.config.newVersion=New Version
-fancywarpmenu.config.downloadUpdate=Download Update
 
 fancywarpmenu.key.openMenu=Open Warp Menu
 

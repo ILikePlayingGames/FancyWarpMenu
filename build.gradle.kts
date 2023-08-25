@@ -6,6 +6,7 @@ plugins {
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("net.kyori.blossom") version "1.3.1"
 }
 
 //Constants:
@@ -40,6 +41,17 @@ loom {
     mixin {
         defaultRefmapName.set("mixins.$modid.refmap.json")
     }
+}
+
+// Blossom:
+blossom {
+    val replacement: String = if (System.getenv("CI") !== null) {
+        updateUrl
+    } else {
+        projectDir.resolve("version/update.json").toURI().toString()
+    }
+
+    replaceToken("@UPDATE_URL@", replacement, "src/main/java/ca/tirelesstraveler/fancywarpmenu/FancyWarpMenu.java")
 }
 
 sourceSets.main {
