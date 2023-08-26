@@ -24,9 +24,11 @@ package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.GameState;
+import ca.tirelesstraveler.fancywarpmenu.OpenConfigCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
+import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import io.netty.channel.ChannelHandler;
@@ -69,6 +71,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
 
     private static GuiFancyWarp warpScreen;
     private static boolean openMenuRequested;
+    private static boolean openConfigMenuRequested;
 
     static {
         mc = Minecraft.getMinecraft();
@@ -94,14 +97,20 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     /**
-     * If the player requested the warp menu to open by executing the warp command, switch to the warp menu instead
-     * of closing the chat window.
+     * Minecraft closes the current screen after executing a command,
+     * meaning any {@code GuiScreen} opened by the command is closed.
+     * This method interrupts the closing of the current screen to get around this behavior.
      */
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
-        if (event.gui == null && openMenuRequested) {
-            event.gui = warpScreen;
-            openMenuRequested = false;
+        if (event.gui == null) {
+            if (openMenuRequested) {
+                event.gui = warpScreen;
+                openMenuRequested = false;
+            } else if (openConfigMenuRequested) {
+                event.gui = new FancyWarpMenuConfigScreen(null);
+                openConfigMenuRequested = false;
+            }
         }
     }
 
@@ -191,6 +200,13 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         }
     }
 
+    /**
+     * Called when {@link OpenConfigCommand} is run
+     */
+    public void onOpenConfigMenuCommand() {
+        openConfigMenuRequested = true;
+    }
+
     public void displayFancyWarpMenu() {
         checkLateWinter();
         warpScreen = new GuiFancyWarp();
@@ -247,7 +263,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     public static void sendReminderToUseWarpScreen() {
-        mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu.getInstance()
+        mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu
                 .getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
                 .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }

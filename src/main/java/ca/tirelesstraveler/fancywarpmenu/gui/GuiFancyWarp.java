@@ -72,8 +72,13 @@ public class GuiFancyWarp extends GuiScreen {
         Warp.initDefaults(res);
 
         for (Island island : FancyWarpMenu.getLayout().getIslandList()) {
-            if ((!Settings.shouldShowJerryIsland() || !GameState.isLateWinter()) && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
-                continue;
+            // Conditions for hiding Jerry's Workshop from the warp menu
+            if (!Settings.isDebugModeEnabled() || !Settings.shouldAlwaysShowJerryIsland() || Settings.shouldSkipSkyBlockCheck()) {
+                if ((!Settings.shouldShowJerryIsland()
+                        || !GameState.isLateWinter())
+                        && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
+                    continue;
+                }
             }
 
             GuiButtonIsland islandButton = new GuiButtonIsland(this, buttonList.size(), res, island);

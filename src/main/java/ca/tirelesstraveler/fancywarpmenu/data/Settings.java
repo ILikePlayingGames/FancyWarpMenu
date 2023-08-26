@@ -58,6 +58,7 @@ public class Settings {
     private static boolean showDebugOverlay;
     private static boolean drawBorders;
     private static boolean skipSkyBlockCheck;
+    private static boolean alwaysShowJerryIsland;
 
     public static List<IConfigElement> getConfigElements() {
         List<IConfigElement> topLevelElements = new ArrayList<>();
@@ -109,52 +110,44 @@ public class Settings {
 
         Property prop;
 
+        /* General settings */
         prop = config.get(CATEGORY_GENERAL, "warpMenuEnabled", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.warpMenuEnabled"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.warpMenuEnabled"));
         warpMenuEnabled = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_GENERAL, "showIslandLabels", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.showIslandLabels"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.showIslandLabels"));
         showIslandLabels = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_GENERAL, "hideWarpLabelsUntilIslandHovered", false);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.hideWarpLabelsUntilIslandHovered"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.hideWarpLabelsUntilIslandHovered"));
         hideWarpLabelsUntilIslandHovered = prop.getBoolean(false);
 
         prop = config.get(CATEGORY_GENERAL, "suggestWarpMenuOnWarpCommand", false);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.suggestWarpMenuOnWarpCommand"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.suggestWarpMenuOnWarpCommand"));
         suggestWarpMenuOnWarpCommand = prop.getBoolean(false);
 
         prop = config.get(CATEGORY_GENERAL, "addWarpCommandToChatHistory", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.addWarpCommandToChatHistory"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.addWarpCommandToChatHistory"));
         addWarpCommandToChatHistory = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_GENERAL, "showJerryIsland", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.showJerryIsland"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.showJerryIsland"));
         showJerryIsland = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_GENERAL, "hideUnobtainableWarps", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.hideUnobtainableWarps"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.hideUnobtainableWarps"));
         hideUnobtainableWarps = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_GENERAL, "enableUpdateNotification", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.enableUpdateNotification"));
-        prop.setRequiresWorldRestart(false);
-        prop.getBoolean(true);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.enableUpdateNotification"));
         enableUpdateNotification = prop.getBoolean(true);
 
-        /* Debug settings */
+        config.setCategoryRequiresWorldRestart(CATEGORY_GENERAL, false);
 
+        /* Debug settings */
         prop = config.get(CATEGORY_DEBUG, "debugModeEnabled", false);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.developerModeEnabled"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.developerModeEnabled"));
         debugModeEnabled = prop.getBoolean(false);
 
         if (!debugModeEnabled && EnvironmentDetails.isDeobfuscatedEnvironment()) {
@@ -162,19 +155,22 @@ public class Settings {
         }
 
         prop = config.get(CATEGORY_DEBUG, "showDebugOverlay", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.showDebugOverlay"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.showDebugOverlay"));
         showDebugOverlay = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_DEBUG, "drawBorders", true);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.drawBorders"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.drawBorders"));
         drawBorders = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_DEBUG, "skipSkyBlockCheck", false);
-        prop.setLanguageKey(FancyWarpMenu.getInstance().getFullLanguageKey("config.skipSkyBlockCheck"));
-        prop.setRequiresWorldRestart(false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.skipSkyBlockCheck"));
         skipSkyBlockCheck = prop.getBoolean(false);
+
+        prop = config.get(CATEGORY_DEBUG, "alwaysShowJerryIsland", true);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.alwaysShowJerryIsland"));
+        alwaysShowJerryIsland = prop.getBoolean(true);
+
+        config.setCategoryRequiresWorldRestart(CATEGORY_DEBUG, false);
 
         if (config.hasChanged()) {
             config.save();
@@ -227,6 +223,10 @@ public class Settings {
 
     public static boolean shouldSkipSkyBlockCheck() {
         return skipSkyBlockCheck;
+    }
+
+    public static boolean shouldAlwaysShowJerryIsland() {
+        return alwaysShowJerryIsland;
     }
 
     public static void setShowDebugOverlay(boolean showDebugOverlay) {

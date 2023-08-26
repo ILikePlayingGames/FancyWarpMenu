@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -91,6 +92,7 @@ public class FancyWarpMenu {
         updateCheckResult = ForgeVersion.getResult(modContainer);
         keyBindingOpenWarpMenu = new KeyBinding("fancywarpmenu.key.openMenu", Keyboard.KEY_C, "fancywarpmenu.key.categories.fancyWarpMenu");
         ClientRegistry.registerKeyBinding(keyBindingOpenWarpMenu);
+        ClientCommandHandler.instance.registerCommand(new OpenConfigCommand());
 
         ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures", layout.getIslandList().size() + 1);
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
@@ -125,13 +127,6 @@ public class FancyWarpMenu {
         return updateCheckResult;
     }
 
-    /**
-     * Returns the given language key path with the mod ID prepended
-     */
-    public String getFullLanguageKey(String path) {
-        return modId + "." + path;
-    }
-
     public WarpMenuListener getWarpMenuListener() {
         return warpMenuListener;
     }
@@ -152,6 +147,13 @@ public class FancyWarpMenu {
         if (loadedLayout != null) {
             FancyWarpMenu.layout = loadedLayout;
         }
+    }
+
+    /**
+     * Returns the given language key path with the mod ID prepended
+     */
+    public static String getFullLanguageKey(String path) {
+        return modId + "." + path;
     }
 
     public static KeyBinding getKeyBindingOpenWarpMenu() {

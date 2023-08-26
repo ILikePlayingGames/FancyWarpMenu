@@ -22,29 +22,32 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
-/**
- * This class stores the state of the SkyBlock server the player is on. This information is used for the conditional hiding of warps.
- */
-public class GameState {
-    private static boolean onSkyBlock;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
+
+public class OpenConfigCommand extends CommandBase {
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
+
+    @Override
+    public String getCommandName() {
+        return "fancywarpmenuconfig";
+    }
+
+    @Override
+    public String getCommandUsage(ICommandSender sender) {
+        // Is not shown in a server-side help menu
+        return "";
+    }
+
     /**
-     * Whether the current SkyBlock season is Late Winter
+     * The chat GUI closes the current screen after executing the command.
+     * The {@link net.minecraftforge.event.CommandEvent} is intercepted instead to prevent the screen from being closed.
      */
-    private static boolean lateWinter;
-
-    public static boolean isOnSkyBlock() {
-        return onSkyBlock;
-    }
-
-    public static void setOnSkyBlock(boolean onSkyBlock) {
-        GameState.onSkyBlock = onSkyBlock;
-    }
-
-    public static boolean isLateWinter() {
-        return lateWinter;
-    }
-
-    public static void setLateWinter(boolean lateWinter) {
-        GameState.lateWinter = lateWinter;
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) {
+        FancyWarpMenu.getInstance().getWarpMenuListener().onOpenConfigMenuCommand();
     }
 }

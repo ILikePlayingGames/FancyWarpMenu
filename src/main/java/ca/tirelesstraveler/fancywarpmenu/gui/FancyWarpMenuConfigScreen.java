@@ -67,7 +67,7 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
             if (colorCodeObject != null) {
                 if (colorCodeObject instanceof EnumChatFormatting) {
                     String colorCode = colorCodeObject.toString();
-                    btnSelectCategory.displayString = colorCode + btnSelectCategory.displayString;
+                    btnSelectCategory.displayString = colorCode + btnSelectCategory.displayString + EnumChatFormatting.RESET;
                 }
             }
         }
@@ -149,7 +149,7 @@ public class FancyWarpMenuConfigScreen extends GuiConfig {
             if (colorCodeObject != null) {
                 if (colorCodeObject instanceof EnumChatFormatting) {
                     String colorCode = colorCodeObject.toString();
-                    btnSelectCategory.displayString = colorCode + btnSelectCategory.displayString;
+                    btnSelectCategory.displayString = colorCode + btnSelectCategory.displayString + EnumChatFormatting.RESET;
                 } else {
                     throw new RuntimeException(colorCodeObject + " is not an instance of EnumChatFormatting");
                 }
