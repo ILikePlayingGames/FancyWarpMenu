@@ -140,7 +140,7 @@ public class Warp {
             throw new IllegalArgumentException(String.format("Warp %s gridX is outside island", name));
         }
 
-        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR * Warp.warpIcon.getHeightPercentage()) {
+        if (warp.gridY < 0 || warp.gridY > GRID_UNIT_WIDTH_FACTOR) {
             throw new IllegalArgumentException(String.format("Warp %s gridY is outside island", name));
         }
     }

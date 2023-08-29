@@ -46,6 +46,10 @@ public class ConfigButton extends Button {
     }
 
     public static void validateConfigButtonIcon(ConfigButton configButton) throws IllegalArgumentException, NullPointerException {
+        if (configButton == null) {
+            throw new NullPointerException("Config button settings cannot be null");
+        }
+
         Button.validateButtonIcon(configButton);
 
         try {

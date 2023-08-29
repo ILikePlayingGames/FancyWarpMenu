@@ -29,13 +29,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,39 +52,25 @@ public class LayoutLoader {
     private static final Logger logger = LogManager.getLogger();
 
     public static Layout loadLayout() {
-        boolean modLoadingComplete = Loader.instance().isInState(LoaderState.AVAILABLE);
-
         try {
-            IResource islandResource = Minecraft.getMinecraft().getResourceManager().getResource(WARP_CONFIG_LOCATION);
+            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(WARP_CONFIG_LOCATION);
 
-            try (InputStream stream = islandResource.getInputStream();
-                JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
+            try (InputStream stream = layoutResource.getInputStream();
+                 JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
                 Layout layout = gson.fromJson(reader, Layout.class);
+                WarpIcon warpIcon = layout.getWarpIcon();
+                Warp.setWarpIcon(warpIcon);
+                Layout.validateLayout(layout);
 
                 // Warp icon
-                WarpIcon warpIcon = layout.getWarpIcon();
-                if (warpIcon == null) {
-                    throw new NullPointerException("Missing warp icon settings");
-                }
-
                 warpIcon.init();
                 Pair<Integer, Integer> warpIconDimensions = getTextureDimensions(warpIcon.getTextureLocation());
                 warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
                 Warp.setWarpIcon(warpIcon);
 
-                Layout.validateLayout(layout);
-
                 // Config and regular warp menu button icon dimensions
                 ConfigButton configButton = layout.getConfigButton();
                 RegularWarpMenuButton regularWarpMenuButton = layout.getRegularWarpMenuButton();
-
-                if (configButton == null) {
-                    throw new NullPointerException("Missing config button settings");
-                }
-
-                if (regularWarpMenuButton == null) {
-                    throw new NullPointerException("Missing regular warp menu button settings");
-                }
 
                 Pair<Integer, Integer> configButtonIconDimensions = getTextureDimensions(configButton.getTextureLocation());
                 configButton.setTextureDimensions(configButtonIconDimensions.getLeft(), configButtonIconDimensions.getRight());
@@ -106,16 +92,49 @@ public class LayoutLoader {
 
                 return layout;
             } catch (RuntimeException e) {
-                if (modLoadingComplete) {
-                    logger.error(String.format("Warp config loading failed: %s", e.getMessage()), e);
+                ResourcePackRepository.Entry resourcePackEntry = Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries().stream().filter(
+                        entry -> entry.getResourcePackName().equals(layoutResource.getResourcePackName())).findFirst().orElse(null);
+                String resourcePackName;
+                String resourcePackDescription;
+
+                if (resourcePackEntry != null) {
+                    resourcePackName = layoutResource.getResourcePackName();
+                    resourcePackDescription = resourcePackEntry.getTexturePackDescription();
+                } else {
+                    resourcePackName = FancyWarpMenu.getInstance().getModContainer().getName() + " " + FancyWarpMenu.getInstance().getModContainer().getVersion();
+                    resourcePackDescription = "Built-in resource pack";
+                }
+
+                if (FancyWarpMenu.getLayout() != null) {
+                    StringBuilder stringBuilder = new StringBuilder("Your Fancy Warp Menu resource pack may be outdated.");
+                    stringBuilder.append("\n").append(String.format("Layout loading failed: %s", e.getMessage()));
+                    stringBuilder.append("\n").append("Resource Pack Details:");
+                    stringBuilder.append("\n").append("Name: ").append(resourcePackName);
+                    stringBuilder.append("\n").append("Description: ").append(resourcePackDescription);
+
+                    if (resourcePackEntry != null) {
+                        stringBuilder.append("\n").append("File: ").append(resourcePackEntry);
+                    }
+
+                    logger.error(stringBuilder, e);
 
                     if (Minecraft.getMinecraft().ingameGUI != null) {
-                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + e.getMessage()));
+                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + stringBuilder.toString()));
                     }
 
                     return null;
                 } else {
-                    throw new ReportedException(new CrashReport(String.format("Warp config loading failed: %s", e.getMessage()), e));
+                    CrashReport crashReport = new CrashReport("Your Fancy Warp Menu resource pack may be outdated", e);
+                    CrashReportCategory resourcePackDetails = crashReport.makeCategory("Resource Pack");
+
+                    resourcePackDetails.addCrashSection("Name", resourcePackName);
+                    resourcePackDetails.addCrashSection("Description", resourcePackDescription);
+
+                    if (resourcePackEntry != null) {
+                        resourcePackDetails.addCrashSection("File", resourcePackEntry.toString());
+                    }
+
+                    throw new ReportedException(crashReport);
                 }
             }
         } catch (IOException e) {

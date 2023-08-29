@@ -93,10 +93,6 @@ public abstract class Button {
     }
 
     public static void validateButtonIcon(Button button) throws IllegalArgumentException, NullPointerException {
-        if (button == null) {
-            throw new NullPointerException("Button cannot be null");
-        }
-
         if (button.gridX < 0 || button.gridX > Island.GRID_UNIT_WIDTH_FACTOR) {
             throw new IllegalArgumentException("Button gridX must be between 0 and " + Island.GRID_UNIT_WIDTH_FACTOR + " inclusive");
         }

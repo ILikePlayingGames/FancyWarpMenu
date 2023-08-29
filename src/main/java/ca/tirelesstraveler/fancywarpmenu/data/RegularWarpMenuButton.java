@@ -44,6 +44,10 @@ public class RegularWarpMenuButton extends Button {
     }
 
     public static void validateRegularMenuButtonIcon(RegularWarpMenuButton regularWarpMenuButton) throws IllegalArgumentException, NullPointerException {
+        if (regularWarpMenuButton == null) {
+            throw new NullPointerException("Regular warp menu button settings cannot be null");
+        }
+
         Button.validateButtonIcon(regularWarpMenuButton);
 
         try {
