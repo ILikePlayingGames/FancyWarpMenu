@@ -62,7 +62,7 @@ public class GridRectangle {
         this.centerPositionWhenScaled = centerPositionWhenScaled;
     }
 
-    void scale(float scaleFactor) {
+    public void scale(float scaleFactor) {
         scaledWidth = width * scaleFactor;
         scaledHeight = height * scaleFactor;
 

@@ -73,7 +73,7 @@ public class GuiFancyWarp extends GuiScreen {
 
         for (Island island : FancyWarpMenu.getLayout().getIslandList()) {
             // Conditions for hiding Jerry's Workshop from the warp menu
-            if (!Settings.isDebugModeEnabled() || !Settings.shouldAlwaysShowJerryIsland() || Settings.shouldSkipSkyBlockCheck()) {
+            if (!Settings.isDebugModeEnabled() || !Settings.shouldAlwaysShowJerryIsland()) {
                 if ((!Settings.shouldShowJerryIsland()
                         || !GameState.isLateWinter())
                         && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
@@ -92,6 +92,7 @@ public class GuiFancyWarp extends GuiScreen {
         }
 
         buttonList.add(new GuiButtonConfig(buttonList.size(), res));
+        buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
 
         // Sort by z level
         buttonList.sort(null);
@@ -213,17 +214,19 @@ public class GuiFancyWarp extends GuiScreen {
                 // Don't send command twice for single warp islands
                 if (warpButton.getIsland().getWarpCount() > 1) {
                     String warpCommand = warpButton.getWarpCommand();
-                    sendWarpCommand(warpCommand);
+                    sendCommand(warpCommand);
                 }
             } else if (button instanceof GuiButtonIsland) {
                 Island island = ((GuiButtonIsland) button).island;
 
                 if (island.getWarpCount() == 1) {
                     String warpCommand = island.getWarps().get(0).getWarpCommand();
-                    sendWarpCommand(warpCommand);
+                    sendCommand(warpCommand);
                 }
             } else if (button instanceof GuiButtonConfig) {
                 mc.displayGuiScreen(new FancyWarpMenuConfigScreen(this));
+            } else if (button instanceof GuiButtonRegularWarpMenu) {
+                sendCommand("/warp");
             }
         }
     }
@@ -268,15 +271,16 @@ public class GuiFancyWarp extends GuiScreen {
         drawRect(drawX - 2, drawY - 2, drawX + 2, drawY + 2, Color.RED.getRGB());
     }
 
-    private void sendWarpCommand(String warpCommand) {
+    private void sendCommand(String command) {
         try {
-            mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(warpCommand));
+            // Packets are used to bypass EntityPlayerSPHook
+            mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(command));
 
             if (Settings.shouldAddWarpCommandToChatHistory()) {
-                mc.ingameGUI.getChatGUI().addToSentMessages(warpCommand);
+                mc.ingameGUI.getChatGUI().addToSentMessages(command);
             }
         } catch (Exception e) {
-            logger.error(String.format("Failed to send command \"%s\": %s", warpCommand, e.getMessage()), e);
+            logger.error(String.format("Failed to send command \"%s\": %s", command, e.getMessage()), e);
         }
     }
 }

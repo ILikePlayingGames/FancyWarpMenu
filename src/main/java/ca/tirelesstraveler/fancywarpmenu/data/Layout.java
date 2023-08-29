@@ -33,6 +33,7 @@ public class Layout {
     private List<Island> islandList;
     private WarpIcon warpIcon;
     private ConfigButton configButton;
+    private RegularWarpMenuButton regularWarpMenuButton;
     private WarpMessages warpMessages;
     private List<WarpCommandVariant> warpCommandVariants;
 
@@ -48,6 +49,10 @@ public class Layout {
 
     public ConfigButton getConfigButton() {
         return configButton;
+    }
+
+    public RegularWarpMenuButton getRegularWarpMenuButton() {
+        return regularWarpMenuButton;
     }
 
     public WarpMessages getWarpMessages() {
@@ -73,6 +78,7 @@ public class Layout {
 
         WarpIcon.validateWarpIcon(layout.getWarpIcon());
         ConfigButton.validateConfigButtonIcon(layout.getConfigButton());
+        RegularWarpMenuButton.validateRegularMenuButtonIcon(layout.getRegularWarpMenuButton());
         WarpMessages.validateWarpMessages(layout.getWarpMessages());
 
         if (layout.warpCommandVariants == null || layout.warpCommandVariants.isEmpty()) {

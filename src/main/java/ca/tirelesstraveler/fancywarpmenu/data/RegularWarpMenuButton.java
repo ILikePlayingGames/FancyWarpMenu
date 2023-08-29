@@ -31,35 +31,26 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 
 /**
- * Class that holds the settings for drawing the config button that opens the mod's settings
+ * Class that holds the settings for drawing the button that opens the regular warp menu
  */
 @SuppressWarnings("unused")
-public class ConfigButton extends Button {
-    public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), "textures/gui/Logo.png");
-    /** Overlay texture rendered when mod is outdated */
-    public static final ResourceLocation NOTIFICATION_TEXTURE_LOCATION = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), "textures/gui/Notification.png");
+public class RegularWarpMenuButton extends Button {
+    public static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(FancyWarpMenu.getInstance().getModId(), "textures/gui/Regular Warp Menu.png");
 
-    private ConfigButton(){}
+    private RegularWarpMenuButton(){}
 
     public ResourceLocation getTextureLocation() {
         return TEXTURE_LOCATION;
     }
 
-    public static void validateConfigButtonIcon(ConfigButton configButton) throws IllegalArgumentException, NullPointerException {
-        Button.validateButtonIcon(configButton);
+    public static void validateRegularMenuButtonIcon(RegularWarpMenuButton regularWarpMenuButton) throws IllegalArgumentException, NullPointerException {
+        Button.validateButtonIcon(regularWarpMenuButton);
 
         try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.TEXTURE_LOCATION);
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(RegularWarpMenuButton.TEXTURE_LOCATION);
             IOUtils.closeQuietly(resource.getInputStream());
         } catch (IOException e) {
-            throw new RuntimeException(String.format("Config button texture not found at %s", ConfigButton.TEXTURE_LOCATION));
-        }
-
-        try {
-            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
-            IOUtils.closeQuietly(resource.getInputStream());
-        } catch (IOException e) {
-            throw new RuntimeException(String.format("Config button notification texture not found at %s", ConfigButton.NOTIFICATION_TEXTURE_LOCATION));
+            throw new RuntimeException(String.format("Config button texture not found at %s", RegularWarpMenuButton.TEXTURE_LOCATION));
         }
     }
 }

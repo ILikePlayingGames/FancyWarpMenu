@@ -60,6 +60,8 @@ public class LayoutLoader {
             try (InputStream stream = islandResource.getInputStream();
                 JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
                 Layout layout = gson.fromJson(reader, Layout.class);
+
+                // Warp icon
                 WarpIcon warpIcon = layout.getWarpIcon();
                 if (warpIcon == null) {
                     throw new NullPointerException("Missing warp icon settings");
@@ -70,16 +72,26 @@ public class LayoutLoader {
                 warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
                 Warp.setWarpIcon(warpIcon);
 
+                Layout.validateLayout(layout);
+
+                // Config and regular warp menu button icon dimensions
                 ConfigButton configButton = layout.getConfigButton();
+                RegularWarpMenuButton regularWarpMenuButton = layout.getRegularWarpMenuButton();
 
                 if (configButton == null) {
                     throw new NullPointerException("Missing config button settings");
                 }
 
+                if (regularWarpMenuButton == null) {
+                    throw new NullPointerException("Missing regular warp menu button settings");
+                }
+
                 Pair<Integer, Integer> configButtonIconDimensions = getTextureDimensions(configButton.getTextureLocation());
                 configButton.setTextureDimensions(configButtonIconDimensions.getLeft(), configButtonIconDimensions.getRight());
-                Layout.validateLayout(layout);
+                Pair<Integer, Integer> regularWarpMenuButtonIconDimensions = getTextureDimensions(regularWarpMenuButton.getTextureLocation());
+                regularWarpMenuButton.setTextureDimensions(regularWarpMenuButtonIconDimensions.getLeft(), regularWarpMenuButtonIconDimensions.getRight());
 
+                // Island texture dimensions and hover effect texture
                 for (Island island : layout.getIslandList()) {
                     Pair<Integer, Integer> islandTextureDimensions;
 

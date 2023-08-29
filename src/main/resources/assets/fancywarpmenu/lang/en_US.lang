@@ -37,6 +37,9 @@ fancywarpmenu.config.skipSkyBlockCheck.tooltip=Skip checking for whether the pla
 fancywarpmenu.config.alwaysShowJerryIsland=Always Show Jerry's Workshop
 fancywarpmenu.config.alwaysShowJerryIsland.tooltip=Always show Jerry's Workshop on the warp menu regardless of the value of the general > showJerryIsland setting and the in-game season
 
+fancywarpmenu.gui.buttons.config=Config
+fancywarpmenu.gui.buttons.regularWarpMenu=Regular Warp Menu
+
 fancywarpmenu.key.openMenu=Open Warp Menu
 
 fancywarpmenu.key.categories.fancyWarpMenu=Fancy Warp Menu

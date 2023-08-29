@@ -82,15 +82,15 @@ public class GuiButtonIsland extends GuiButtonScaleTransition {
                 drawButtonForegroundLayer(foregroundTextureLocation);
             }
 
-            zLevel = originalZ;
-
             if (Settings.shouldShowIslandLabels()) {
-                drawDisplayString(mc, width / 2F, height);
+                drawDisplayString(mc, scaledWidth / 2F, scaledHeight);
             }
-            
+
             if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
                 drawBorder(Color.WHITE);
             }
+
+            zLevel = originalZ;
         }
     }
 

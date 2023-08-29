@@ -29,8 +29,6 @@ import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
 
-import java.awt.*;
-
 public class GuiButtonWarp extends GuiButtonScaleTransition {
     /** The button of the island this warp belongs to */
     private final GuiButtonIsland PARENT;
@@ -64,33 +62,24 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         if (visible) {
             float originalZ = zLevel;
 
-            super.drawButton(mc, mouseX, mouseY);
+            calculateHoverState(mouseX, mouseY);
             transition.setCurrentScale(PARENT.scaledGrid.getScaleFactor());
-
-            scaledXPosition = buttonRectangle.getXPosition();
-            scaledYPosition = buttonRectangle.getYPosition();
-            scaledWidth = buttonRectangle.getWidth();
-            scaledHeight = buttonRectangle.getHeight();
 
             if (hovered) {
                 zLevel = 19;
             }
 
-            drawButtonTexture(backgroundTextureLocation);
+            super.drawButton(mc, mouseX, mouseY);
 
             if (hovered) {
                 drawButtonForegroundLayer(foregroundTextureLocation);
             }
 
-            zLevel = originalZ;
-
             if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
                 drawDisplayString(mc, buttonRectangle.getWidth() / 2F, buttonRectangle.getHeight());
             }
-            
-            if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
-                drawBorder(Color.WHITE);
-            }
+
+            zLevel = originalZ;
         }
     }
 

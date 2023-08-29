@@ -23,47 +23,39 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.data.ConfigButton;
-import ca.tirelesstraveler.fancywarpmenu.data.Island;
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.RegularWarpMenuButton;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.ForgeVersion;
 
 @SuppressWarnings("FieldCanBeLocal")
-public class GuiButtonConfig extends GuiButtonScaleTransition {
+public class GuiButtonRegularWarpMenu extends GuiButtonScaleTransition {
     private static final float HOVERED_SCALE = 1.2F;
     private static final long SCALE_TRANSITION_DURATION = 500;
-
-    /** This button uses its own grid instead of the grid of the GuiScreen it belongs to since it's also attached to vanilla screens, which don't have grids */
-    private final ScaledGrid scaledGrid;
     // Far right edge
     private final int GRID_X;
     // Bottom edge
     private final int GRID_Y;
 
-    public GuiButtonConfig(int buttonId, ScaledResolution res) {
-        super(buttonId, EnumChatFormatting.GREEN + I18n.format(FancyWarpMenu.getFullLanguageKey("gui.buttons.config")));
-        scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
-        ConfigButton configButtonSettings = FancyWarpMenu.getLayout().getConfigButton();
-        configButtonSettings.init(res);
-        GRID_X = configButtonSettings.getGridX();
-        GRID_Y = configButtonSettings.getGridY();
-        width = configButtonSettings.getWidth();
-        height = configButtonSettings.getHeight();
+    public GuiButtonRegularWarpMenu(int buttonId, ScaledResolution res, ScaledGrid scaledGrid) {
+        super(buttonId, EnumChatFormatting.GREEN + I18n.format(FancyWarpMenu.getFullLanguageKey("gui.buttons.regularWarpMenu")));
+        RegularWarpMenuButton regularWarpMenuButtonSettings = FancyWarpMenu.getLayout().getRegularWarpMenuButton();
+        regularWarpMenuButtonSettings.init(res);
+        GRID_X = regularWarpMenuButtonSettings.getGridX();
+        GRID_Y = regularWarpMenuButtonSettings.getGridY();
+        width = regularWarpMenuButtonSettings.getWidth();
+        height = regularWarpMenuButtonSettings.getHeight();
         // Above islands and warps
         zLevel = 20;
         buttonRectangle = new GridRectangle(scaledGrid, GRID_X, GRID_Y, width, height, false, true);
-        scaledGrid.addRectangle("configButton", buttonRectangle);
-        backgroundTextureLocation = configButtonSettings.getTextureLocation();
+        scaledGrid.addRectangle("regularWarpMenuButton", buttonRectangle);
+        backgroundTextureLocation = regularWarpMenuButtonSettings.getTextureLocation();
         transition = new ScaleTransition(0, 1, 1);
+        displayString = String.join("\n", Minecraft.getMinecraft().fontRendererObj.listFormattedStringToWidth(displayString, width * 3));
     }
 
     @Override
@@ -73,23 +65,6 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
             transitionStep(SCALE_TRANSITION_DURATION, HOVERED_SCALE);
 
             super.drawButton(mc, mouseX, mouseY);
-
-            if (Settings.isUpdateNotificationEnabled() && FancyWarpMenu.getUpdateCheckResult() != null && FancyWarpMenu.getUpdateCheckResult().status == ForgeVersion.Status.OUTDATED) {
-                drawButtonForegroundLayer(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
-            }
         }
-    }
-
-    @Override
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-        boolean clicked = super.mousePressed(mc, mouseX, mouseY);
-
-        if (clicked && !(mc.currentScreen instanceof GuiFancyWarp)) {
-            Settings.setWarpMenuEnabled(true);
-            FancyWarpMenu.getInstance().getWarpMenuListener().displayFancyWarpMenu();
-            mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
-        }
-
-        return clicked;
     }
 }

@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
@@ -52,8 +53,11 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
         super(buttonId, buttonText);
     }
 
-    public GuiButtonScaleTransition(int buttonId, int x, int y, String buttonText) {
-        super(buttonId, x, y, buttonText);
+    /**
+     * Button hover calculations adapted for float values instead of int
+     */
+    public void calculateHoverState(int mouseX, int mouseY) {
+        hovered = mouseX >= scaledXPosition && mouseY >= scaledYPosition && mouseX <= scaledXPosition + scaledWidth && mouseY <= this.scaledYPosition + scaledHeight;
     }
 
     /**
@@ -72,11 +76,27 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
     }
 
     /**
-     * Button hover calculations adapted for float values instead of int
+     * Draw the button background texture and the button border (if enabled) to the screen
+     *
+     * @param mc the Minecraft instance
+     * @param mouseX cursor X position
+     * @param mouseY cursor Y position
      */
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-        hovered = mouseX >= scaledXPosition && mouseY >= scaledYPosition && mouseX <= scaledXPosition + scaledWidth && mouseY <= this.scaledYPosition + scaledHeight;
+        if (visible) {
+            buttonRectangle.scale(transition.getCurrentScale());
+            scaledXPosition = buttonRectangle.getXPosition();
+            scaledYPosition = buttonRectangle.getYPosition();
+            scaledWidth = buttonRectangle.getWidth();
+            scaledHeight = buttonRectangle.getHeight();
+
+            drawButtonTexture(backgroundTextureLocation);
+
+            if (Settings.isDebugModeEnabled() && Settings.shouldDrawBorders()) {
+                drawBorder(Color.WHITE);
+            }
+        }
     }
 
     @Override
@@ -118,8 +138,9 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
     }
 
     /**
-     * Draws the display string for this button relative to its top-left corner.
-     * Offsets should not be pre-scaled. This method scales before rendering.
+     * Draws the display string for this button aligned to centre. The centre of the string is given by {@code xOffset}
+     * and {@code yOffset} relative to its top-left corner. The offsets should be pre-scaled. This method does not scale
+     * the offsets.
      *
      * @param mc Minecraft
      * @param xOffset x-offset from button left
@@ -134,10 +155,10 @@ public abstract class GuiButtonScaleTransition extends GuiButtonExt {
             GlStateManager.color(UN_HOVERED_BRIGHTNESS, UN_HOVERED_BRIGHTNESS, UN_HOVERED_BRIGHTNESS);
         }
         GlStateManager.pushMatrix();
+        GlStateManager.translate(scaledXPosition + xOffset, scaledYPosition + yOffset, zLevel + 1);
         GlStateManager.scale(transition.getCurrentScale(), transition.getCurrentScale(), 1);
-        GlStateManager.translate(scaledXPosition / transition.getCurrentScale(), scaledYPosition / transition.getCurrentScale(), zLevel);
         for (int i = 0; i < lines.length; i++) {
-            mc.fontRendererObj.drawStringWithShadow(lines[i], xOffset - mc.fontRendererObj.getStringWidth(lines[i]) / 2F, yOffset + (mc.fontRendererObj.FONT_HEIGHT + 1) * i, Color.WHITE.getRGB());
+            drawCenteredString(mc.fontRendererObj, lines[i], 0, mc.fontRendererObj.FONT_HEIGHT * i, Color.WHITE.getRGB());
         }
         GlStateManager.popMatrix();
         GlStateManager.color(1,1,1);

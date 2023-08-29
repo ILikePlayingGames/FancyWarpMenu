@@ -361,8 +361,13 @@
     "heightPercentage": 1.2
   },
   "configButton": {
-    "gridX": 60,
-    "gridY": 32,
+    "gridX": 59,
+    "gridY": 31,
+    "widthPercentage": 0.05
+  },
+  "regularWarpMenuButton": {
+    "gridX": 3,
+    "gridY": 31,
     "widthPercentage": 0.05
   },
   "warpCommandVariants": [
