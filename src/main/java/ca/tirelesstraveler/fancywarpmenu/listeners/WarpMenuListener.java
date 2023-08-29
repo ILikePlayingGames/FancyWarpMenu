@@ -115,11 +115,11 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     /**
-     * If the fancy warp menu is disabled, add a button to the regular warp menu for players to enable the fancy warp menu
+     * Add a button to the regular warp menu for players to enable the fancy warp menu or switch to it.
      */
     @SubscribeEvent
     public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post e) {
-        if (!Settings.isWarpMenuEnabled() && e.gui instanceof GuiChest) {
+        if (e.gui instanceof GuiChest) {
             GuiChest guiChest = (GuiChest) e.gui;
             ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
 

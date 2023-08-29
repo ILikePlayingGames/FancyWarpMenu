@@ -25,6 +25,8 @@ fancywarpmenu.config.hideUnobtainableWarps=Hide Unobtainable Warps
 fancywarpmenu.config.hideUnobtainableWarps.tooltip=Hide warps only obtainable during special game modes such as Bingo
 fancywarpmenu.config.enableUpdateNotification=Enable Update Notification
 fancywarpmenu.config.enableUpdateNotification.tooltip=Show a notification on the settings button and in the settings menu when a new version of Fancy Warp Menu is available
+fancywarpmenu.config.showRegularWarpMenuButton=Show Regular Warp Menu Button
+fancywarpmenu.config.showRegularWarpMenuButton.tooltip=Show the button to access the regular warp menu
 
 fancywarpmenu.config.developerModeEnabled=Enable Developer Mode
 fancywarpmenu.config.developerModeEnabled.tooltip=Enable all developer features

@@ -85,9 +85,12 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
         boolean clicked = super.mousePressed(mc, mouseX, mouseY);
 
         if (clicked && !(mc.currentScreen instanceof GuiFancyWarp)) {
-            Settings.setWarpMenuEnabled(true);
+            if (!Settings.isWarpMenuEnabled()) {
+                Settings.setWarpMenuEnabled(true);
+                mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+            }
+
             FancyWarpMenu.getInstance().getWarpMenuListener().displayFancyWarpMenu();
-            mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
         }
 
         return clicked;

@@ -52,6 +52,7 @@ public class Settings {
     private static boolean showJerryIsland;
     private static boolean hideUnobtainableWarps;
     private static boolean enableUpdateNotification;
+    private static boolean showRegularWarpMenuButton;
 
     // Developer settings
     private static boolean debugModeEnabled;
@@ -143,6 +144,10 @@ public class Settings {
         prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.enableUpdateNotification"));
         enableUpdateNotification = prop.getBoolean(true);
 
+        prop = config.get(CATEGORY_GENERAL, "showRegularWarpMenuButton", false);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.showRegularWarpMenuButton"));
+        showRegularWarpMenuButton = prop.getBoolean(true);
+
         config.setCategoryRequiresWorldRestart(CATEGORY_GENERAL, false);
 
         /* Debug settings */
@@ -207,6 +212,10 @@ public class Settings {
 
     public static boolean isUpdateNotificationEnabled() {
         return enableUpdateNotification;
+    }
+
+    public static boolean shouldShowRegularWarpMenuButton() {
+        return showRegularWarpMenuButton;
     }
 
     public static boolean isDebugModeEnabled() {

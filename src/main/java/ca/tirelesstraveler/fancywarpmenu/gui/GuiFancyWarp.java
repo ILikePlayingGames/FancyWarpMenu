@@ -92,7 +92,10 @@ public class GuiFancyWarp extends GuiScreen {
         }
 
         buttonList.add(new GuiButtonConfig(buttonList.size(), res));
-        buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
+
+        if (Settings.shouldShowRegularWarpMenuButton()) {
+            buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
+        }
 
         // Sort by z level
         buttonList.sort(null);
