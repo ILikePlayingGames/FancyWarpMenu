@@ -23,8 +23,8 @@
         {
           "displayName": "Crypts",
           "commandName": "crypts",
-          "gridX": 11,
-          "gridY": 7
+          "gridX": 3,
+          "gridY": 15
         },
         {
           "displayName": "Wizard",
@@ -41,8 +41,8 @@
         {
           "displayName": "Ruins",
           "commandName": "castle",
-          "gridX": 5,
-          "gridY": 24
+          "gridX": 1,
+          "gridY": 22
         }
       ]
     },
@@ -106,7 +106,7 @@
         {
           "displayName": "Spawn",
           "commandName": "spider",
-          "gridX": 21,
+          "gridX": 23,
           "gridY": 23
         },
         {
@@ -118,8 +118,8 @@
         {
           "displayName": "Arachne",
           "commandName": "arachne",
-          "gridX": 8,
-          "gridY": 17
+          "gridX": 6,
+          "gridY": 16
         }
       ]
     },
@@ -163,8 +163,7 @@
           "displayName": "Spawn",
           "commandName": "gold",
           "gridX": 8,
-          "gridY": 20,
-          "hideDisplayName": true
+          "gridY": 20
         }
       ]
     },
@@ -252,8 +251,7 @@
           "displayName": "Spawn",
           "commandName": "barn",
           "gridX": 1,
-          "gridY": 19,
-          "hideDisplayName": true
+          "gridY": 19
         }
       ]
     },
@@ -319,8 +317,7 @@
           "displayName": "Spawn",
           "commandName": "/savethejerrys",
           "gridX": 22,
-          "gridY": 16,
-          "hideDisplayName": true
+          "gridY": 16
         }
       ]
     },
@@ -336,8 +333,7 @@
           "displayName": "Spawn",
           "commandName": "dungeons",
           "gridX": 6,
-          "gridY": 15,
-          "hideDisplayName": true
+          "gridY": 15
         }
       ]
     }

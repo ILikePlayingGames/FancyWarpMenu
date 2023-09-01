@@ -47,6 +47,7 @@ public class Settings {
     private static boolean warpMenuEnabled;
     private static boolean showIslandLabels;
     private static boolean hideWarpLabelsUntilIslandHovered;
+    private static boolean hideWarpLabelForIslandsWithOneWarp;
     private static boolean suggestWarpMenuOnWarpCommand;
     private static boolean addWarpCommandToChatHistory;
     private static boolean showJerryIsland;
@@ -95,10 +96,10 @@ public class Settings {
      */
     public static void setConfigPropertyOrder() {
         List<String> generalPropertyOrder = new ArrayList<>();
-        Collections.addAll(generalPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps", "enableUpdateNotification");
+        Collections.addAll(generalPropertyOrder, "warpMenuEnabled", "showIslandLabels", "hideWarpLabelsUntilIslandHovered", "hideWarpLabelForIslandsWithOneWarp", "suggestWarpMenuOnWarpCommand", "addWarpCommandToChatHistory", "showJerryIsland", "hideUnobtainableWarps", "enableUpdateNotification", "showRegularWarpMenuButton");
 
         List<String> debugPropertyOrder = new ArrayList<>();
-        Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders", "skipSkyBlockCheck");
+        Collections.addAll(debugPropertyOrder, "debugModeEnabled", "showDebugOverlay", "drawBorders", "skipSkyBlockCheck", "alwaysShowJerryIsland");
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, generalPropertyOrder);
         config.setCategoryPropertyOrder(CATEGORY_DEBUG, debugPropertyOrder);
@@ -123,6 +124,10 @@ public class Settings {
         prop = config.get(CATEGORY_GENERAL, "hideWarpLabelsUntilIslandHovered", false);
         prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.hideWarpLabelsUntilIslandHovered"));
         hideWarpLabelsUntilIslandHovered = prop.getBoolean(false);
+
+        prop = config.get(CATEGORY_GENERAL, "hideWarpLabelForIslandsWithOneWarp", true);
+        prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.hideWarpLabelForIslandsWithOneWarp"));
+        hideWarpLabelForIslandsWithOneWarp = prop.getBoolean(true);
 
         prop = config.get(CATEGORY_GENERAL, "suggestWarpMenuOnWarpCommand", false);
         prop.setLanguageKey(FancyWarpMenu.getFullLanguageKey("config.suggestWarpMenuOnWarpCommand"));
@@ -192,6 +197,10 @@ public class Settings {
 
     public static boolean shouldHideWarpLabelsUntilIslandHovered() {
         return hideWarpLabelsUntilIslandHovered;
+    }
+
+    public static boolean shouldHideWarpLabelForIslandsWithOneWarp() {
+        return hideWarpLabelForIslandsWithOneWarp;
     }
 
     public static boolean shouldSuggestWarpMenuOnWarpCommand() {

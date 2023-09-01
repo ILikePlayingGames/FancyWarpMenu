@@ -118,6 +118,10 @@ public class Warp {
         height = (int) (warpIcon.getTextureHeight() * scaleFactor);
     }
 
+    public void setHideDisplayName(boolean hideDisplayName) {
+        this.hideDisplayName = hideDisplayName;
+    }
+
     public static void setWarpIcon(WarpIcon warpIcon) {
         Warp.warpIcon = warpIcon;
     }

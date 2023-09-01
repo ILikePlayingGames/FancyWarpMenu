@@ -85,6 +85,10 @@ public class GuiFancyWarp extends GuiScreen {
             buttonList.add(islandButton);
 
             for (Warp warp : island.getWarps()) {
+                if (Settings.shouldHideWarpLabelForIslandsWithOneWarp() && island.getWarpCount() == 1) {
+                    warp.setHideDisplayName(true);
+                }
+
                 if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
                     buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
                 }
