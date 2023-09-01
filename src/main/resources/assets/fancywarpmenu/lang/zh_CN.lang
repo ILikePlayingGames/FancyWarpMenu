@@ -1,0 +1,57 @@
+fancywarpmenu.config.categories.general=常规设定
+fancywarpmenu.config.categories.general.tooltip=Fancy Warp Menu 的常规设定
+fancywarpmenu.config.categories.developerSettings=开发者选项
+fancywarpmenu.config.categories.developerSettings.tooltip=为资源包作者创建传送菜单的自定义纹理与布局所提供的选项
+fancywarpmenu.config.categories.support=支持与反馈
+fancywarpmenu.config.categories.support.tooltip=点击此处以加入 Discord
+fancywarpmenu.config.categories.updateAvailable=更新可用
+fancywarpmenu.config.categories.updateAvailable.tooltip=Fancy Warp Menu 的新版本现已发布, 点击此处以了解更多信息.
+
+fancywarpmenu.config.title=Fancy Warp Menu 设置
+fancywarpmenu.config.subtitle=设置选项
+fancywarpmenu.config.warpMenuEnabled=启用更精致的传送菜单
+fancywarpmenu.config.warpMenuEnabled.tooltip=将默认传送菜单替换为更精致的传送菜单
+fancywarpmenu.config.showIslandLabels=显示岛屿名
+fancywarpmenu.config.showIslandLabels.tooltip=在各岛屿下显示其名称
+fancywarpmenu.config.hideWarpLabelsUntilIslandHovered=仅在鼠标悬停在传送点时显示名称
+fancywarpmenu.config.hideWarpLabelsUntilIslandHovered.tooltip=在鼠标指针没有悬停在传送点上时隐藏传送点的名称
+fancywarpmenu.config.hideWarpLabelForIslandsWithOneWarp=隐藏单独传送点岛屿的传送点标签
+fancywarpmenu.config.hideWarpLabelForIslandsWithOneWarp.tooltip=当岛屿仅有一个传送点时隐藏该传送点的标签
+fancywarpmenu.config.suggestWarpMenuOnWarpCommand=传送菜单提示
+fancywarpmenu.config.suggestWarpMenuOnWarpCommand.tooltip=在玩家直接使用warp命令传送时提示玩家使用传送菜单
+fancywarpmenu.config.addWarpCommandToChatHistory=将传送点指令保存到聊天历史记录
+fancywarpmenu.config.addWarpCommandToChatHistory.tooltip=将传送菜单所执行的传送指令保存到已发送的聊天历史记录之中
+fancywarpmenu.config.showJerryIsland=显示Jerry工坊
+fancywarpmenu.config.showJerryIsland.tooltip=在传送菜单中显示Jerry工坊的传送点
+fancywarpmenu.config.hideUnobtainableWarps=隐藏无法获取的传送点
+fancywarpmenu.config.hideUnobtainableWarps.tooltip=隐藏仅在特殊存档模式(如Bingo)下可用的传送点
+fancywarpmenu.config.enableUpdateNotification=启用更新提示
+fancywarpmenu.config.enableUpdateNotification.tooltip=当 Fancy Warp Menu 有新版本可用时在设置中显示更新提示
+fancywarpmenu.config.showRegularWarpMenuButton=显示空岛生存默认传送菜单
+fancywarpmenu.config.showRegularWarpMenuButton.tooltip=添加一个打开空岛生存默认传送菜单的按钮
+
+fancywarpmenu.config.developerModeEnabled=启用开发者模式
+fancywarpmenu.config.developerModeEnabled.tooltip=启用开发者模式功能
+fancywarpmenu.config.showDebugOverlay=界面调试提示
+fancywarpmenu.config.showDebugOverlay.tooltip=在传送菜单内显示选中点位的相对坐标, 在传送菜单打开时按下 TAB 以切换
+fancywarpmenu.config.drawBorders=显示部件边界
+fancywarpmenu.config.drawBorders.tooltip=显示传送点与岛屿的边界, 在传送菜单打开时按下 B 以切换
+fancywarpmenu.config.skipSkyBlockCheck=跳过空岛生存检测
+fancywarpmenu.config.skipSkyBlockCheck.tooltip=无论玩家是否在空岛生存都不进行检测
+fancywarpmenu.config.alwaysShowJerryIsland=总是显示Jerry工坊
+fancywarpmenu.config.alwaysShowJerryIsland.tooltip=无论 常规设定 > 显示Jerry工坊 选项是否启用或游戏内传送点是否可用均显示Jerry工坊的传送点
+
+fancywarpmenu.gui.buttons.config=设置
+fancywarpmenu.gui.buttons.regularWarpMenu=默认传送菜单
+
+fancywarpmenu.key.openMenu=打开传送菜单
+
+fancywarpmenu.key.categories.fancyWarpMenu=Fancy Warp Menu
+
+fancywarpmenu.messages.useWarpMenuInsteadOfCommand=试一试更精致的传送菜单吧! 
+fancywarpmenu.messages.fancyWarpMenuEnabled=已启用更精致的传送菜单
+
+fancywarpmenu.errors.notUnlocked=尚未解锁
+fancywarpmenu.errors.unknownDestination=未知传送点
+fancywarpmenu.errors.noDestination=未找到该传送点
+fancywarpmenu.errors.notVisited=尚未探索
