@@ -39,7 +39,7 @@ Mod template: [Nea's Forge 1.8.9 Template](https://github.com/romangraef/Forge1.
 <br>
 Portal texture: [SkyblockAddons](https://github.com/BiscuitDevelopment/SkyblockAddons/blob/main/src/main/resources/assets/skyblockaddons/portal.png)
 <br>
-Island Renders: Rendered by Schlaumeyer using [Chunky](https://github.com/chunky-dev/chunky)
+Island Renders: Rendered by Schlaumeyer using [Blender](https://www.blender.org/)
 
 # Licenses
 
