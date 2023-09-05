@@ -1,5 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
+import ca.tirelesstraveler.DownloadTranslationsTask
+import ca.tirelesstraveler.UploadTranslationsTask
+
 plugins {
     idea
     java
@@ -52,10 +55,6 @@ blossom {
     }
 
     replaceToken("@UPDATE_URL@", replacement, "src/main/java/ca/tirelesstraveler/fancywarpmenu/FancyWarpMenu.java")
-}
-
-sourceSets.main {
-    output.resourcesDir = file("$buildDir/classes/java/main")
 }
 
 // Dependencies:
@@ -132,6 +131,7 @@ val remapJar by tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
 tasks.jar {
     archiveClassifier.set("without-deps")
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.shadowJar {
@@ -148,13 +148,32 @@ tasks.shadowJar {
     // fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
 }
 
+tasks.register<DownloadTranslationsTask>("downloadTranslations") {
+    group = "translations"
+    getTranslationsDirectory().set(buildDir.resolve("generated/resources/crowdin"))
+}
+tasks.register<UploadTranslationsTask>("uploadTranslations") {
+    group = "translations"
+}
+
+tasks.register<Copy>("copyTranslationsToClassesDirectory") {
+    group = "translations"
+    from(tasks.getByName("downloadTranslations"))
+    into(sourceSets.main.get().java.classesDirectory.get())
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 /**
  * Copy built jar into a Minecraft launcher instance for debugging in a production environment
  */
-val copyJarToMinecraftLauncher by tasks.registering(Copy::class) {
-    from(file(buildDir.resolve("libs")))
+tasks.register<Copy>("copyJarToMinecraftLauncher") {
+    from(buildDir.resolve("libs"))
     into(file(System.getenv("MC_LAUNCHER_DIR")))
 }
 
 tasks.assemble.get().dependsOn(tasks.remapJar)
 
+sourceSets.main {
+    output.resourcesDir = sourceSets.main.get().java.classesDirectory.get().asFile
+    output.dir(tasks.getByName("downloadTranslations"))
+}

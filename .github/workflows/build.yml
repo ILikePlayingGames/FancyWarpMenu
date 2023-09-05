@@ -38,10 +38,18 @@ jobs:
         distribution: 'temurin'
         java-version: '17'
         cache: 'gradle'
+    - name: Download translations from Crowdin
+      uses: crowdin/github-action@v1
+      with:
+        skip_ref_checkout: true
+        download_translations: true
+        export_only_approved: true
+        push_translations: false
+        upload_sources: false
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build --no-daemon
+      run: ./gradlew build --no-daemon -x downloadTranslations
     - name: Read Project Version
       id: read_project_version
       if: ${{ github.ref_name == 'main' || contains(github.event.inputs.upload_artifact, 'y') }}
