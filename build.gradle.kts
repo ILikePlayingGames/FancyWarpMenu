@@ -160,6 +160,6 @@ tasks.register<Copy>("copyJarToMinecraftLauncher") {
 tasks.assemble.get().dependsOn(tasks.remapJar)
 
 sourceSets.main {
-    output.resourcesDir = sourceSets.main.get().java.classesDirectory.get().asFile
+    output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
     output.dir(tasks.getByName("downloadTranslations"))
 }
