@@ -9,7 +9,6 @@ plugins {
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("net.kyori.blossom") version "1.3.1"
 }
 
 //Constants:
@@ -18,7 +17,6 @@ val baseGroup: String by project
 val mcVersion: String by project
 val modid: String by project
 val version: String by project
-val updateUrl: String by project
 val mixinGroup = "$baseGroup.$modid.mixin"
 
 // Toolchains:
@@ -44,17 +42,6 @@ loom {
     mixin {
         defaultRefmapName.set("mixins.$modid.refmap.json")
     }
-}
-
-// Blossom:
-blossom {
-    val replacement: String = if (System.getenv("CI") !== null) {
-        updateUrl
-    } else {
-        projectDir.resolve("version/update.json").toURI().toString()
-    }
-
-    replaceToken("@UPDATE_URL@", replacement, "src/main/java/ca/tirelesstraveler/fancywarpmenu/FancyWarpMenu.java")
 }
 
 // Dependencies:
@@ -112,7 +99,6 @@ tasks.processResources {
     inputs.property("mcversion", mcVersion)
     inputs.property("modid", modid)
     inputs.property("mixinGroup", mixinGroup)
-    inputs.property("updateUrl", updateUrl)
 
     filesMatching(listOf("mcmod.info", "mixins.$modid.json")) {
         expand(inputs.properties)
