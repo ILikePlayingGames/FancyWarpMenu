@@ -47,7 +47,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
-@Mod(modid = "fancywarpmenu", clientSideOnly = true, useMetadata = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory", updateJSON = "@UPDATE_URL@")
+@Mod(modid = "fancywarpmenu", clientSideOnly = true, useMetadata = true, guiFactory = "ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuGuiFactory", updateJSON = "https://cdn.jsdelivr.net/gh/ILikePlayingGames/FancyWarpMenu@main/version/update.json")
 public class FancyWarpMenu {
     @Mod.Instance("fancywarpmenu")
     private static FancyWarpMenu instance;

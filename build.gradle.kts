@@ -1,12 +1,14 @@
 @file:Suppress("UnstableApiUsage")
 
+import ca.tirelesstraveler.DownloadTranslationsTask
+import ca.tirelesstraveler.UploadTranslationsTask
+
 plugins {
     idea
     java
     id("gg.essential.loom") version "0.10.0.+"
     id("dev.architectury.architectury-pack200") version "0.1.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("net.kyori.blossom") version "1.3.1"
 }
 
 //Constants:
@@ -15,7 +17,6 @@ val baseGroup: String by project
 val mcVersion: String by project
 val modid: String by project
 val version: String by project
-val updateUrl: String by project
 val mixinGroup = "$baseGroup.$modid.mixin"
 
 // Toolchains:
@@ -41,21 +42,6 @@ loom {
     mixin {
         defaultRefmapName.set("mixins.$modid.refmap.json")
     }
-}
-
-// Blossom:
-blossom {
-    val replacement: String = if (System.getenv("CI") !== null) {
-        updateUrl
-    } else {
-        projectDir.resolve("version/update.json").toURI().toString()
-    }
-
-    replaceToken("@UPDATE_URL@", replacement, "src/main/java/ca/tirelesstraveler/fancywarpmenu/FancyWarpMenu.java")
-}
-
-sourceSets.main {
-    output.resourcesDir = file("$buildDir/classes/java/main")
 }
 
 // Dependencies:
@@ -113,7 +99,6 @@ tasks.processResources {
     inputs.property("mcversion", mcVersion)
     inputs.property("modid", modid)
     inputs.property("mixinGroup", mixinGroup)
-    inputs.property("updateUrl", updateUrl)
 
     filesMatching(listOf("mcmod.info", "mixins.$modid.json")) {
         expand(inputs.properties)
@@ -132,6 +117,7 @@ val remapJar by tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
 tasks.jar {
     archiveClassifier.set("without-deps")
     destinationDirectory.set(layout.buildDirectory.dir("badjars"))
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.shadowJar {
@@ -148,13 +134,32 @@ tasks.shadowJar {
     // fun relocate(name: String) = relocate(name, "$baseGroup.deps.$name")
 }
 
+tasks.register<DownloadTranslationsTask>("downloadTranslations") {
+    group = "translations"
+    getTranslationsDirectory().set(buildDir.resolve("generated/resources/crowdin"))
+}
+tasks.register<UploadTranslationsTask>("uploadTranslations") {
+    group = "translations"
+}
+
+tasks.register<Copy>("copyTranslationsToClassesDirectory") {
+    group = "translations"
+    from(tasks.getByName("downloadTranslations"))
+    into(sourceSets.main.get().java.classesDirectory.get())
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 /**
  * Copy built jar into a Minecraft launcher instance for debugging in a production environment
  */
-val copyJarToMinecraftLauncher by tasks.registering(Copy::class) {
-    from(file(buildDir.resolve("libs")))
+tasks.register<Copy>("copyJarToMinecraftLauncher") {
+    from(buildDir.resolve("libs"))
     into(file(System.getenv("MC_LAUNCHER_DIR")))
 }
 
 tasks.assemble.get().dependsOn(tasks.remapJar)
 
+sourceSets.main {
+    output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
+    output.dir(tasks.getByName("downloadTranslations"))
+}
