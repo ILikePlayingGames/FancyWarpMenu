@@ -91,7 +91,7 @@ abstract class DownloadTranslationsTask: DefaultTask() {
         getExecOperations().exec {
             it.workingDir = getProjectLayout().projectDirectory.asFile
             it.executable = "crowdin"
-            it.args = mutableListOf("download", "--export-only-approved", "--no-progress", "--no-colors")
+            it.args = mutableListOf("download", "--export-only-approved", "--skip-untranslated-files", "--no-progress", "--no-colors")
         }
     }
 }
