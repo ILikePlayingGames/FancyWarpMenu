@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.data.layout;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraft.client.Minecraft;
@@ -31,6 +31,8 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.util.List;
+
+import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
 
 /**
  * Island data used to create the island buttons on the GUI
@@ -153,7 +155,7 @@ public class Island {
     }
 
     public String toString() {
-        return Layout.gson.toJson(this);
+        return gson.toJson(this);
     }
 
     public static void validateIsland(Island island) throws IllegalArgumentException, NullPointerException {

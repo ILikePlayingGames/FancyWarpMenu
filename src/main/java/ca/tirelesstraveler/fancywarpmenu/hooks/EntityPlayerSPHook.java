@@ -3,7 +3,7 @@ package ca.tirelesstraveler.fancywarpmenu.hooks;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.LogHelper;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpCommandVariant;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 

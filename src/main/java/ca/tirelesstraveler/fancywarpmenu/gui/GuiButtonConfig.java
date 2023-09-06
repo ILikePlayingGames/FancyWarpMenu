@@ -23,8 +23,8 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.data.ConfigButton;
-import ca.tirelesstraveler.fancywarpmenu.data.Island;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.ConfigButton;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;

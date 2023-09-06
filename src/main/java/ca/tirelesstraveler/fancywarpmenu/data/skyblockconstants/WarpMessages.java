@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants;
 
 import java.util.List;
 import java.util.Map;

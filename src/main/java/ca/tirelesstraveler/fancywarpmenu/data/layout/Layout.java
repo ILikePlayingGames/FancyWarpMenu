@@ -20,22 +20,19 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
-
-import com.google.gson.Gson;
+package ca.tirelesstraveler.fancywarpmenu.data.layout;
 
 import java.util.List;
 
+import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
+
 @SuppressWarnings("unused")
 public class Layout {
-    static Gson gson = new Gson();
 
     private List<Island> islandList;
     private WarpIcon warpIcon;
     private ConfigButton configButton;
     private RegularWarpMenuButton regularWarpMenuButton;
-    private WarpMessages warpMessages;
-    private List<WarpCommandVariant> warpCommandVariants;
 
     private Layout(){}
 
@@ -55,14 +52,6 @@ public class Layout {
         return regularWarpMenuButton;
     }
 
-    public WarpMessages getWarpMessages() {
-        return warpMessages;
-    }
-
-    public List<WarpCommandVariant> getWarpCommandVariants() {
-        return warpCommandVariants;
-    }
-
     public static void validateLayout(Layout layout) throws IllegalArgumentException, NullPointerException {
         if (layout == null) {
             throw new NullPointerException("Warp configuration cannot be null");
@@ -79,15 +68,6 @@ public class Layout {
         WarpIcon.validateWarpIcon(layout.getWarpIcon());
         ConfigButton.validateConfigButtonIcon(layout.getConfigButton());
         RegularWarpMenuButton.validateRegularMenuButtonIcon(layout.getRegularWarpMenuButton());
-        WarpMessages.validateWarpMessages(layout.getWarpMessages());
-
-        if (layout.warpCommandVariants == null || layout.warpCommandVariants.isEmpty()) {
-            throw new NullPointerException("Warp command variant list cannot be empty");
-        }
-
-        for (WarpCommandVariant warpCommandVariant : layout.warpCommandVariants) {
-            WarpCommandVariant.validateWarpCommandVariant(warpCommandVariant);
-        }
     }
 
     @Override

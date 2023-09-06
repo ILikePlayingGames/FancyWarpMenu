@@ -20,49 +20,41 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu;
+package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
-import ca.tirelesstraveler.fancywarpmenu.data.*;
-import com.google.gson.Gson;
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.*;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-public class LayoutLoader {
-    private static final ResourceLocation WARP_CONFIG_LOCATION = new ResourceLocation("fancywarpmenu",
+public class LayoutLoader extends ResourceLoader {
+    private static final ResourceLocation LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
             "data/layout.json");
-    private static final Gson gson = new Gson();
-    private static final Logger logger = LogManager.getLogger();
 
     public static Layout loadLayout() {
         try {
-            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(WARP_CONFIG_LOCATION);
+            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(LAYOUT_LOCATION);
 
             try (InputStream stream = layoutResource.getInputStream();
                  JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
                 Layout layout = gson.fromJson(reader, Layout.class);
-                WarpIcon warpIcon = layout.getWarpIcon();
-                Warp.setWarpIcon(warpIcon);
                 Layout.validateLayout(layout);
 
                 // Warp icon
+                WarpIcon warpIcon = layout.getWarpIcon();
+                Warp.setWarpIcon(warpIcon);
                 warpIcon.init();
                 Pair<Integer, Integer> warpIconDimensions = getTextureDimensions(warpIcon.getTextureLocation());
                 warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
@@ -92,53 +84,16 @@ public class LayoutLoader {
 
                 return layout;
             } catch (RuntimeException e) {
-                ResourcePackRepository.Entry resourcePackEntry = Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries().stream().filter(
-                        entry -> entry.getResourcePackName().equals(layoutResource.getResourcePackName())).findFirst().orElse(null);
-                String resourcePackName;
-                String resourcePackDescription;
+                boolean fatal = FancyWarpMenu.getLayout() == null;
 
-                if (resourcePackEntry != null) {
-                    resourcePackName = layoutResource.getResourcePackName();
-                    resourcePackDescription = resourcePackEntry.getTexturePackDescription();
-                } else {
-                    resourcePackName = FancyWarpMenu.getInstance().getModContainer().getName() + " " + FancyWarpMenu.getInstance().getModContainer().getVersion();
-                    resourcePackDescription = "Built-in resource pack";
-                }
-
-                if (FancyWarpMenu.getLayout() != null) {
-                    StringBuilder stringBuilder = new StringBuilder("Your Fancy Warp Menu resource pack may be outdated.");
-                    stringBuilder.append("\n").append(String.format("Layout loading failed: %s", e.getMessage()));
-                    stringBuilder.append("\n").append("Resource Pack Details:");
-                    stringBuilder.append("\n").append("Name: ").append(resourcePackName);
-                    stringBuilder.append("\n").append("Description: ").append(resourcePackDescription);
-
-                    if (resourcePackEntry != null) {
-                        stringBuilder.append("\n").append("File: ").append(resourcePackEntry);
-                    }
-
-                    logger.error(stringBuilder, e);
-
-                    if (Minecraft.getMinecraft().ingameGUI != null) {
-                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + stringBuilder.toString()));
-                    }
-
-                    return null;
-                } else {
-                    CrashReport crashReport = new CrashReport("Your Fancy Warp Menu resource pack may be outdated", e);
-                    CrashReportCategory resourcePackDetails = crashReport.makeCategory("Resource Pack");
-
-                    resourcePackDetails.addCrashSection("Name", resourcePackName);
-                    resourcePackDetails.addCrashSection("Description", resourcePackDescription);
-
-                    if (resourcePackEntry != null) {
-                        resourcePackDetails.addCrashSection("File", resourcePackEntry.toString());
-                    }
-
-                    throw new ReportedException(crashReport);
-                }
+                handleResourceLoadException(layoutResource, fatal, e);
+                return null;
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            boolean fatal = FancyWarpMenu.getLayout() == null;
+
+            handleGetResourceException(LAYOUT_LOCATION.toString(), fatal, e);
+            return null;
         }
     }
 

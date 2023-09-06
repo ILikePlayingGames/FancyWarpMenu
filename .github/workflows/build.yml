@@ -55,7 +55,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
-      run: ./gradlew build --no-daemon -x downloadTranslations
+      run: ./gradlew build --no-daemon
     - name: Read Project Version
       id: read_project_version
       if: ${{ github.ref_name == 'main' || contains(github.event.inputs.upload_artifact, 'y') }}

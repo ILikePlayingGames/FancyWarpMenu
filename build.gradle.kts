@@ -136,7 +136,6 @@ tasks.shadowJar {
 
 tasks.register<DownloadTranslationsTask>("downloadTranslations") {
     group = "translations"
-    getTranslationsDirectory().set(buildDir.resolve("generated/resources/crowdin"))
 }
 tasks.register<UploadTranslationsTask>("uploadTranslations") {
     group = "translations"
@@ -153,7 +152,7 @@ tasks.register<Copy>("copyTranslationsToClassesDirectory") {
  * Copy built jar into a Minecraft launcher instance for debugging in a production environment
  */
 tasks.register<Copy>("copyJarToMinecraftLauncher") {
-    from(buildDir.resolve("libs"))
+    from(layout.buildDirectory.dir("libs"))
     into(file(System.getenv("MC_LAUNCHER_DIR")))
 }
 
@@ -161,5 +160,5 @@ tasks.assemble.get().dependsOn(tasks.remapJar)
 
 sourceSets.main {
     output.setResourcesDir(sourceSets.main.flatMap { it.java.classesDirectory })
-    output.dir(tasks.getByName("downloadTranslations"))
+    output.dir(layout.buildDirectory.dir("generated/resources/crowdin"))
 }

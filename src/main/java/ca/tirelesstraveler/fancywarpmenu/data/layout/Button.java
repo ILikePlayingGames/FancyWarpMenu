@@ -20,11 +20,13 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.data.layout;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+
+import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
 
 /**
  * Class that holds the settings for drawing buttons that are not islands, like the config button.
@@ -89,7 +91,7 @@ public abstract class Button {
     }
 
     public String toString() {
-        return Layout.gson.toJson(this);
+        return gson.toJson(this);
     }
 
     public static void validateButtonIcon(Button button) throws IllegalArgumentException, NullPointerException {

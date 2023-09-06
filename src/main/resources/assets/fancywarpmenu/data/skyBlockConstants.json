@@ -1,0 +1,39 @@
+{
+  "warpMessages": {
+    "warpSuccessMessages": [
+      "Warping..."
+    ],
+    "warpFailMessages": {
+      "Unknown destination! Check the Fast Travel menu to view options!": "fancywarpmenu.errors.unknownDestination",
+      "You haven't unlocked this fast travel destination!": "fancywarpmenu.errors.notUnlocked",
+      "Couldn't warp you! Try again later. (NO_DESTINATION_FOUND)": "fancywarpmenu.errors.noDestination",
+      "You need to have visited this island at least once before fast traveling to it!": "fancywarpmenu.errors.notVisited"
+    }
+  },
+  "warpCommandVariants": [
+    {
+      "command": "warp",
+      "type": "ALIAS"
+    },
+    {
+      "command": "travel",
+      "type": "ALIAS"
+    },
+    {
+      "command": "is",
+      "type": "WARP"
+    },
+    {
+      "command": "hub",
+      "type": "WARP"
+    },
+    {
+      "command": "warpforge",
+      "type": "WARP"
+    },
+    {
+      "command": "savethejerrys",
+      "type": "WARP"
+    }
+  ]
+}

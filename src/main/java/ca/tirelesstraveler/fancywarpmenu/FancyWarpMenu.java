@@ -22,11 +22,14 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
-import ca.tirelesstraveler.fancywarpmenu.data.Island;
-import ca.tirelesstraveler.fancywarpmenu.data.Layout;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.resourceloaders.LayoutLoader;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
 import ca.tirelesstraveler.fancywarpmenu.listeners.SkyBlockJoinListener;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
+import ca.tirelesstraveler.fancywarpmenu.resourceloaders.SkyBlockConstantsLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -56,6 +59,7 @@ public class FancyWarpMenu {
     static Logger logger;
     private static ForgeVersion.CheckResult updateCheckResult;
     private static Layout layout;
+    private static SkyBlockConstants skyBlockConstants;
     private static SkyBlockJoinListener skyblockJoinListener;
     private static WarpMenuListener warpMenuListener;
     private static KeyBinding keyBindingOpenWarpMenu;
@@ -66,7 +70,7 @@ public class FancyWarpMenu {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 3);
+        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 4);
         EnvironmentDetails.deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
@@ -82,7 +86,9 @@ public class FancyWarpMenu {
         Settings.syncConfig(true);
         logger = event.getModLog();
         event.getModMetadata().version = modContainer.getVersion();
-        bar.step("Loading Warp Configuration");
+        bar.step("Loading SkyBlock Constants");
+        skyBlockConstants = SkyBlockConstantsLoader.loadSkyBlockConstants();
+        bar.step("Loading Layout");
         layout = LayoutLoader.loadLayout();
         ProgressManager.pop(bar);
     }
@@ -137,13 +143,23 @@ public class FancyWarpMenu {
 
     public void reloadResources() {
         Minecraft.getMinecraft().refreshResources();
+        reloadSkyBlockConstants();
         reloadLayout();
+    }
+
+    public void reloadSkyBlockConstants() {
+        SkyBlockConstants loadedSkyBlockConstants = SkyBlockConstantsLoader.loadSkyBlockConstants();
+
+        // Will be null if json syntax is wrong or SkyBlock constants are invalid
+        if (loadedSkyBlockConstants != null) {
+            FancyWarpMenu.skyBlockConstants = loadedSkyBlockConstants;
+        }
     }
 
     public void reloadLayout() {
         Layout loadedLayout = LayoutLoader.loadLayout();
 
-        // Will be null if json syntax is wrong or config is invalid
+        // Will be null if json syntax is wrong or layout is invalid
         if (loadedLayout != null) {
             FancyWarpMenu.layout = loadedLayout;
         }
@@ -162,5 +178,9 @@ public class FancyWarpMenu {
 
     public static Layout getLayout() {
         return layout;
+    }
+
+    public static SkyBlockConstants getSkyBlockConstants() {
+        return skyBlockConstants;
     }
 }

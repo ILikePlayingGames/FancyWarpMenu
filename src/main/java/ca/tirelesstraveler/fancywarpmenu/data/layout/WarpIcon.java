@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.data.layout;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import net.minecraft.client.Minecraft;
@@ -29,6 +29,8 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+
+import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
 
 /**
  * Class that holds the settings for drawing the warp icon (portal)
@@ -91,7 +93,7 @@ public class WarpIcon {
         heightPercentage = textureHeight / textureWidth;
     }
     public String toString() {
-        return Layout.gson.toJson(this);
+        return gson.toJson(this);
     }
 
     public static void validateWarpIcon(WarpIcon warpIcon) throws IllegalArgumentException, NullPointerException {

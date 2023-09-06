@@ -26,8 +26,8 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.OpenConfigCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpCommandVariant;
-import ca.tirelesstraveler.fancywarpmenu.data.WarpMessages;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
@@ -85,10 +85,10 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         if (event.type == 0 && warpScreen != null && mc.currentScreen == warpScreen) {
             String unformattedText = event.message.getUnformattedText();
 
-            if (FancyWarpMenu.getLayout().getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
+            if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
                 mc.displayGuiScreen(null);
-            } else if (FancyWarpMenu.getLayout().getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
-                WarpMessages warpMessages = FancyWarpMenu.getLayout().getWarpMessages();
+            } else if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
+                WarpMessages warpMessages = FancyWarpMenu.getSkyBlockConstants().getWarpMessages();
                 Map<String, String> warpFailMessages = warpMessages.getWarpFailMessages();
                 String failMessageKey = warpFailMessages.get(unformattedText);
                 warpScreen.onWarpFail(failMessageKey);
@@ -253,7 +253,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         // Trim off the slash and all arguments
         String baseCommand = command.toLowerCase(Locale.US).substring(1).split(" ")[0];
 
-        for (WarpCommandVariant commandVariant : FancyWarpMenu.getLayout().getWarpCommandVariants()) {
+        for (WarpCommandVariant commandVariant : FancyWarpMenu.getSkyBlockConstants().getWarpCommandVariants()) {
             if (commandVariant.getCommand().equals(baseCommand)) {
                 return commandVariant;
             }

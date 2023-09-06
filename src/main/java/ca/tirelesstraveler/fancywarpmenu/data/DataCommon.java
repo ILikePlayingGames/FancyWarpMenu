@@ -22,44 +22,9 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data;
 
-@SuppressWarnings("unused")
-public class WarpCommandVariant {
-    private String command;
-    private WarpCommandType type;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
-    private WarpCommandVariant(){
-    }
-
-    public String getCommand() {
-        return command;
-    }
-
-    public WarpCommandType getType() {
-        return type;
-    }
-
-    public enum WarpCommandType {
-        /**
-         * An alias that works like the actual /warp command
-         */
-        ALIAS,
-        /**
-         * A shortcut to teleport to a single warp
-         */
-        WARP
-    }
-
-    public static void validateWarpCommandVariant(WarpCommandVariant warpCommandVariant) {
-        if (warpCommandVariant == null) {
-            throw new NullPointerException("Warp command variant cannot be null");
-        }
-
-        if (warpCommandVariant.command == null) {
-            throw new NullPointerException("Warp command variant's command cannot be null");
-        }
-
-        if (warpCommandVariant.type == null) {
-            throw new NullPointerException("Warp command variant's command type cannot be null");
-        }
-    }
+public class DataCommon {
+    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 }

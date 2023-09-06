@@ -20,11 +20,13 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.data.layout;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+
+import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
 
 /**
  * Warp entry data used to create the warp buttons on the GUI
@@ -104,7 +106,7 @@ public class Warp {
     }
 
     public String toString() {
-        return Layout.gson.toJson(this);
+        return gson.toJson(this);
     }
 
     /**

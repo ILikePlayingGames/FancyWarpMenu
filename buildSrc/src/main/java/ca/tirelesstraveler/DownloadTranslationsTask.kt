@@ -23,10 +23,8 @@
 package ca.tirelesstraveler
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
 import java.io.ByteArrayOutputStream
@@ -55,8 +53,7 @@ import javax.inject.Inject
  */
 
 /**
- * This task uses the Crowdin CLI to download translations.
- * It also tells the jar task to pull them from a folder specified by "getTranslationsDirectory" when building.
+ * This task uses the Crowdin CLI to download translations to the folder configured in crowdin.yml.
  * It is incremental and will re-run when the Crowdin project's translation progress changes.
  */
 abstract class DownloadTranslationsTask: DefaultTask() {
@@ -78,13 +75,6 @@ abstract class DownloadTranslationsTask: DefaultTask() {
 
         return outputStream.toString()
     }
-
-    /**
-     * This property tells the jar task where it should pull the translation files from. It doesn't set the folder
-     * Crowdin CLI downloads to. That is configured by crowdin.yml.
-     */
-    @OutputDirectory
-    abstract fun getTranslationsDirectory(): DirectoryProperty
 
     @TaskAction
     fun downloadTranslations() {
