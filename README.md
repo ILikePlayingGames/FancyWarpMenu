@@ -15,7 +15,7 @@ This is a recreation of the fancy warp menu from SkyblockAddons, rewritten for b
 - Built for Forge for Minecraft 1.8.9
   - Fabric 1.20.1 port planned
 - Lightweight
-  - Just the warp menu, using no external libraries
+  - Just the warp menu, no additional features
 - Supports custom layouts
   - Learn to make one [here](https://github.com/ILikePlayingGames/FancyWarpPackTemplate)!
 
