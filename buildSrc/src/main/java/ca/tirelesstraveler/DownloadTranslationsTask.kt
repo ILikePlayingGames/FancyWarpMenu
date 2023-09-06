@@ -24,6 +24,7 @@ package ca.tirelesstraveler
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ProjectLayout
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
@@ -75,13 +76,27 @@ abstract class DownloadTranslationsTask: DefaultTask() {
 
         return outputStream.toString()
     }
+    @get:Input
+    abstract val exportOnlyApproved: Property<Boolean>
+
+    init {
+        // This is the way recommended in Gradle docs
+        @Suppress("LeakingThis")
+        exportOnlyApproved.convention(false)
+    }
 
     @TaskAction
     fun downloadTranslations() {
+        val argList = mutableListOf("download", "--skip-untranslated-files", "--no-progress", "--no-colors")
+
+        if (exportOnlyApproved.get()) {
+            argList.add(1, "--export-only-approved")
+        }
+
         getExecOperations().exec {
             it.workingDir = getProjectLayout().projectDirectory.asFile
             it.executable = "crowdin"
-            it.args = mutableListOf("download", "--export-only-approved", "--skip-untranslated-files", "--no-progress", "--no-colors")
+            it.args = argList
         }
     }
 }

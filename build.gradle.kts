@@ -143,7 +143,7 @@ tasks.register<UploadTranslationsTask>("uploadTranslations") {
 
 tasks.register<Copy>("copyTranslationsToClassesDirectory") {
     group = "translations"
-    from(tasks.getByName("downloadTranslations"))
+    from(layout.buildDirectory.dir("generated/resources/crowdin"))
     into(sourceSets.main.get().java.classesDirectory.get())
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

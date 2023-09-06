@@ -37,6 +37,7 @@ Settings (access by clicking the portal in the bottom right corner)
 Help us translate the mod on [Crowdin](https://crowdin.com/project/fancy-warp-menu)!
 - English (US)
 - Chinese Simplified
+- Chinese Traditional
 
 ## Support
 
@@ -53,6 +54,11 @@ Island Renders: Rendered by Schlaumeyer using [Blender](https://www.blender.org/
 Translators:
 - PumpkinXD
 - Rodry
+- Astri_
+- KoT_B_MeWkE
+- outsparkled
+- taku565758
+- larryshow
 
 ## Licenses
 
