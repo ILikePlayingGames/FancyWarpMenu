@@ -38,6 +38,7 @@ Help us translate the mod on [Crowdin](https://crowdin.com/project/fancy-warp-me
 - English (US)
 - Chinese Simplified
 - Chinese Traditional
+- French
 
 ## Support
 
