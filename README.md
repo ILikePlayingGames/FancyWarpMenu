@@ -39,6 +39,7 @@ Help us translate the mod on [Crowdin](https://crowdin.com/project/fancy-warp-me
 - Chinese Simplified
 - Chinese Traditional
 - French
+- German
 
 ## Support
 
@@ -60,6 +61,8 @@ Translators:
 - outsparkled
 - taku565758
 - larryshow
+- The_Deerman
+- Seeloewen
 
 ## Licenses
 
