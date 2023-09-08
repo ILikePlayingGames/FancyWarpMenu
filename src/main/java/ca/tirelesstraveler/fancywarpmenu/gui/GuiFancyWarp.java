@@ -24,10 +24,11 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.GameState;
-import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.buttons.*;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -48,18 +49,23 @@ import java.util.Collections;
 import java.util.List;
 
 public class GuiFancyWarp extends GuiScreen {
+    private static final Logger logger = LogManager.getLogger();
     /** Delay in ms before the player can warp again if the last warp attempt failed */
     private static final long WARP_FAIL_COOL_DOWN = 500L;
     /** The amount of time in ms that the error message remains on-screen after a failed warp attempt */
     private static final long WARP_FAIL_TOOLTIP_DISPLAY_TIME = 2000L;
-    private static final Logger logger = LogManager.getLogger();
 
-    private ScaledResolution res;
+    protected Layout layout;
+    protected ScaledResolution res;
+    protected long warpFailCoolDownExpiryTime;
     private ScaledGrid scaledGrid;
     private boolean screenDrawn;
-    private long warpFailCoolDownExpiryTime;
     private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
+
+    public GuiFancyWarp(Layout layout) {
+        this.layout = layout;
+    }
 
     @Override
     public void initGui() {
@@ -71,38 +77,13 @@ public class GuiFancyWarp extends GuiScreen {
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
-        for (Island island : FancyWarpMenu.getLayout().getIslandList()) {
-            // Conditions for hiding Jerry's Workshop from the warp menu
-            if (!Settings.isDebugModeEnabled() || !Settings.shouldAlwaysShowJerryIsland()) {
-                if ((!Settings.shouldShowJerryIsland()
-                        || !GameState.isLateWinter())
-                        && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
-                    continue;
-                }
-            }
-
-            GuiButtonIsland islandButton = new GuiButtonIsland(this, buttonList.size(), res, island);
-            buttonList.add(islandButton);
-
-            for (Warp warp : island.getWarps()) {
-                if (Settings.shouldHideWarpLabelForIslandsWithOneWarp() && island.getWarpCount() == 1) {
-                    warp.setHideDisplayName(true);
-                }
-
-                if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
-                    buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
-                }
-            }
-        }
+        addIslandButtons();
 
         buttonList.add(new GuiButtonConfig(buttonList.size(), res));
 
         if (Settings.shouldShowRegularWarpMenuButton()) {
             buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
         }
-
-        // Sort by z level
-        buttonList.sort(null);
     }
 
     /**
@@ -175,10 +156,10 @@ public class GuiFancyWarp extends GuiScreen {
                     if (button instanceof GuiButtonIsland && button.isMouseOver()) {
                         GuiButtonIsland islandButton = (GuiButtonIsland) button;
                         debugStrings.add(EnumChatFormatting.GREEN + button.displayString);
-                        nearestX = islandButton.scaledGrid.findNearestGridX(mouseX);
-                        nearestY = islandButton.scaledGrid.findNearestGridY(mouseY);
-                        drawX = (int) islandButton.scaledGrid.getActualX(nearestX);
-                        drawY = (int) islandButton.scaledGrid.getActualY(nearestY);
+                        nearestX = islandButton.getScaledGrid().findNearestGridX(mouseX);
+                        nearestY = islandButton.getScaledGrid().findNearestGridY(mouseY);
+                        drawX = (int) islandButton.getScaledGrid().getActualX(nearestX);
+                        drawY = (int) islandButton.getScaledGrid().getActualY(nearestY);
                         drawDebugStrings(debugStrings, drawX, drawY, nearestX, nearestY, islandButton.getZLevel());
                         tooltipDrawn = true;
                         break;
@@ -212,33 +193,6 @@ public class GuiFancyWarp extends GuiScreen {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
-        // Block repeat clicks if the last warp failed
-        if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
-            if (button instanceof GuiButtonWarp) {
-                GuiButtonWarp warpButton = (GuiButtonWarp) button;
-
-                // Don't send command twice for single warp islands
-                if (warpButton.getIsland().getWarpCount() > 1) {
-                    String warpCommand = warpButton.getWarpCommand();
-                    sendCommand(warpCommand);
-                }
-            } else if (button instanceof GuiButtonIsland) {
-                Island island = ((GuiButtonIsland) button).island;
-
-                if (island.getWarpCount() == 1) {
-                    String warpCommand = island.getWarps().get(0).getWarpCommand();
-                    sendCommand(warpCommand);
-                }
-            } else if (button instanceof GuiButtonConfig) {
-                mc.displayGuiScreen(new FancyWarpMenuConfigScreen(this));
-            } else if (button instanceof GuiButtonRegularWarpMenu) {
-                sendCommand("/warp");
-            }
-        }
-    }
-
-    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
         FancyWarpMenu mod = FancyWarpMenu.getInstance();
@@ -250,7 +204,7 @@ public class GuiFancyWarp extends GuiScreen {
                 if (isShiftKeyDown()) {
                     mod.reloadResources();
                 } else {
-                    mod.reloadLayout();
+                    mod.reloadLayouts();
                 }
 
                 buttonList.clear();
@@ -263,8 +217,45 @@ public class GuiFancyWarp extends GuiScreen {
         }
     }
 
-    ScaledGrid getScaledGrid() {
+    public ScaledGrid getScaledGrid() {
         return scaledGrid;
+    }
+
+    protected void addIslandButtons() {
+        for (Island island : layout.getIslandList()) {
+            addIslandButton(island);
+        }
+
+        // Sort by z level
+        buttonList.sort(null);
+    }
+
+    protected void addIslandButton(Island island) {
+        GuiButtonIsland islandButton = new GuiButtonIsland(this, buttonList.size(), res, island);
+        buttonList.add(islandButton);
+
+        for (Warp warp : island.getWarps()) {
+            if (Settings.shouldHideWarpLabelForIslandsWithOneWarp() && island.getWarpCount() == 1) {
+                warp.setHideDisplayName(true);
+            }
+
+            if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
+                buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
+            }
+        }
+    }
+
+    protected void sendCommand(String command) {
+        try {
+            // Packets are used to bypass EntityPlayerSPHook
+            mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(command));
+
+            if (Settings.shouldAddWarpCommandToChatHistory()) {
+                mc.ingameGUI.getChatGUI().addToSentMessages(command);
+            }
+        } catch (Exception e) {
+            logger.error(String.format("Failed to send command \"%s\": %s", command, e.getMessage()), e);
+        }
     }
 
     private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {
@@ -276,18 +267,5 @@ public class GuiFancyWarp extends GuiScreen {
         }
         drawHoveringText(debugStrings, drawX, drawY);
         drawRect(drawX - 2, drawY - 2, drawX + 2, drawY + 2, Color.RED.getRGB());
-    }
-
-    private void sendCommand(String command) {
-        try {
-            // Packets are used to bypass EntityPlayerSPHook
-            mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(command));
-
-            if (Settings.shouldAddWarpCommandToChatHistory()) {
-                mc.ingameGUI.getChatGUI().addToSentMessages(command);
-            }
-        } catch (Exception e) {
-            logger.error(String.format("Failed to send command \"%s\": %s", command, e.getMessage()), e);
-        }
     }
 }

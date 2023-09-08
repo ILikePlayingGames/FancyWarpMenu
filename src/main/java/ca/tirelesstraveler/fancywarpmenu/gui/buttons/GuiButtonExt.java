@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.gui;
+package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -47,7 +47,7 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
         super(buttonId, x, y, buttonText);
     }
 
-    void setHovered(boolean hovered) {
+    public void setHovered(boolean hovered) {
         this.hovered = hovered;
     }
 

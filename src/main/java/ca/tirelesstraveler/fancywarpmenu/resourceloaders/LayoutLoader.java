@@ -40,12 +40,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LayoutLoader extends ResourceLoader {
-    private static final ResourceLocation LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
+    public static final ResourceLocation LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
             "data/layout.json");
+    public static final ResourceLocation RIFT_LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu", "data/riftLayout.json");
 
-    public static Layout loadLayout() {
+    public static Layout loadLayout(ResourceLocation resourceLocation) {
         try {
-            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(LAYOUT_LOCATION);
+            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
 
             try (InputStream stream = layoutResource.getInputStream();
                  JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
@@ -92,7 +93,7 @@ public class LayoutLoader extends ResourceLoader {
         } catch (IOException e) {
             boolean fatal = FancyWarpMenu.getLayout() == null;
 
-            handleGetResourceException(LAYOUT_LOCATION.toString(), fatal, e);
+            handleGetResourceException(resourceLocation.toString(), fatal, e);
             return null;
         }
     }

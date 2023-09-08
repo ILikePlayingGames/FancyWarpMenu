@@ -59,6 +59,7 @@ public class FancyWarpMenu {
     static Logger logger;
     private static ForgeVersion.CheckResult updateCheckResult;
     private static Layout layout;
+    private static Layout riftLayout;
     private static SkyBlockConstants skyBlockConstants;
     private static SkyBlockJoinListener skyblockJoinListener;
     private static WarpMenuListener warpMenuListener;
@@ -70,7 +71,7 @@ public class FancyWarpMenu {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 4);
+        ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 5);
         EnvironmentDetails.deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
@@ -89,7 +90,9 @@ public class FancyWarpMenu {
         bar.step("Loading SkyBlock Constants");
         skyBlockConstants = SkyBlockConstantsLoader.loadSkyBlockConstants();
         bar.step("Loading Layout");
-        layout = LayoutLoader.loadLayout();
+        layout = LayoutLoader.loadLayout(LayoutLoader.LAYOUT_LOCATION);
+        bar.step("Loading Rift Layout");
+        riftLayout = LayoutLoader.loadLayout(LayoutLoader.RIFT_LAYOUT_LOCATION);
         ProgressManager.pop(bar);
     }
 
@@ -144,7 +147,7 @@ public class FancyWarpMenu {
     public void reloadResources() {
         Minecraft.getMinecraft().refreshResources();
         reloadSkyBlockConstants();
-        reloadLayout();
+        reloadLayouts();
     }
 
     public void reloadSkyBlockConstants() {
@@ -156,12 +159,17 @@ public class FancyWarpMenu {
         }
     }
 
-    public void reloadLayout() {
-        Layout loadedLayout = LayoutLoader.loadLayout();
+    public void reloadLayouts() {
+        Layout loadedLayout = LayoutLoader.loadLayout(LayoutLoader.LAYOUT_LOCATION);
+        Layout loadedRiftLayout = LayoutLoader.loadLayout(LayoutLoader.RIFT_LAYOUT_LOCATION);
 
         // Will be null if json syntax is wrong or layout is invalid
         if (loadedLayout != null) {
             FancyWarpMenu.layout = loadedLayout;
+        }
+
+        if (loadedRiftLayout != null) {
+            FancyWarpMenu.riftLayout = loadedRiftLayout;
         }
     }
 
@@ -178,6 +186,10 @@ public class FancyWarpMenu {
 
     public static Layout getLayout() {
         return layout;
+    }
+
+    public static Layout getRiftLayout() {
+        return riftLayout;
     }
 
     public static SkyBlockConstants getSkyBlockConstants() {

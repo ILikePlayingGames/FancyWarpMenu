@@ -20,12 +20,13 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.gui;
+package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.ConfigButton;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
@@ -90,7 +91,7 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
                 mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
             }
 
-            FancyWarpMenu.getInstance().getWarpMenuListener().displayFancyWarpMenu();
+            FancyWarpMenu.getInstance().getWarpMenuListener().createFastTravelMenu(true);
         }
 
         return clicked;

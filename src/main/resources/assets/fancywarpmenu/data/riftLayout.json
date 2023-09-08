@@ -1,0 +1,35 @@
+{
+  "islandList": [
+    {
+      "name": "Hub",
+      "texturePath": "textures/gui/islands/Hub.png",
+      "gridX": 21,
+      "gridY": 17,
+      "zLevel": 0,
+      "widthPercentage": 0.35,
+      "warpList": [
+        {
+          "displayName": "Spawn",
+          "commandName": "hub",
+          "slotIndex": 0,
+          "gridX": 19,
+          "gridY": 11
+        }
+      ]
+    }
+  ],
+  "warpIcon": {
+    "texturePath": "textures/gui/Portal.png",
+    "widthPercentage": 0.02
+  },
+  "configButton": {
+    "gridX": 60,
+    "gridY": 31,
+    "widthPercentage": 0.05
+  },
+  "regularWarpMenuButton": {
+    "gridX": 60,
+    "gridY": 29,
+    "widthPercentage": 0.05
+  }
+}

@@ -50,6 +50,8 @@ public class Warp {
     private String displayName;
     /** Name of the warp as used in the {@code /warp} command */
     private String commandName;
+    /** Index of the inventory slot corresponding to this warp in a warp {@code GuiChest} */
+    private int slotIndex;
     /** Don't draw the display name under the warp's button */
     private boolean hideDisplayName;
     /** Warps only usable during special game modes such as Bingo */
@@ -79,6 +81,10 @@ public class Warp {
     public String getWarpCommand() {
         // hardcoded to prevent command injection
         return commandName.equals("/savethejerrys") ? commandName : "/warp " + commandName;
+    }
+
+    public int getSlotIndex() {
+        return slotIndex;
     }
 
     public int getWidth() {

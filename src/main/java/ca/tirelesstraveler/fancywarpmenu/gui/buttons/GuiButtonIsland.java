@@ -20,11 +20,12 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.gui;
+package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Warp;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
 import net.minecraft.client.Minecraft;
@@ -34,8 +35,8 @@ import net.minecraft.util.EnumChatFormatting;
 import java.awt.*;
 
 public class GuiButtonIsland extends GuiButtonScaleTransition {
-    static final float HOVERED_SCALE = 1.1F;
-    static final long SCALE_TRANSITION_DURATION = 400;
+    private static final float HOVERED_SCALE = 1.1F;
+    private static final long SCALE_TRANSITION_DURATION = 400;
     final Island island;
     final ScaledGrid scaledGrid;
 
@@ -92,6 +93,14 @@ public class GuiButtonIsland extends GuiButtonScaleTransition {
 
             zLevel = originalZ;
         }
+    }
+
+    public Island getIsland() {
+        return island;
+    }
+
+    public ScaledGrid getScaledGrid() {
+        return scaledGrid;
     }
 
     public float getScaledXPosition() {

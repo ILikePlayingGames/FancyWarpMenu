@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.gui;
+package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
@@ -87,7 +87,11 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         return WARP.getWarpCommand();
     }
 
-    Island getIsland() {
+    public int getWarpSlotIndex() {
+        return WARP.getSlotIndex();
+    }
+
+    public Island getIsland() {
         return PARENT.island;
     }
 }
