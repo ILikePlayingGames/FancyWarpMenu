@@ -340,8 +340,7 @@
   ],
   "warpIcon": {
     "texturePath": "textures/gui/Portal.png",
-    "widthPercentage": 0.02,
-    "heightPercentage": 1.2
+    "widthPercentage": 0.02
   },
   "configButton": {
     "gridX": 60,

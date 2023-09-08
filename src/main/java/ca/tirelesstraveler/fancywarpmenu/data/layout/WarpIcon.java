@@ -50,8 +50,6 @@ public class WarpIcon {
     private transient int textureWidth;
     /** Height of the warp icon texture, used to set the hit box of the warp button */
     private transient int textureHeight;
-    /** {@link this#textureHeight} as a percentage of {@link this#textureWidth}, used to validate that the warp is not outside the island */
-    private transient int heightPercentage;
 
     private WarpIcon(){}
 
@@ -83,14 +81,9 @@ public class WarpIcon {
         return textureHeight;
     }
 
-    public float getHeightPercentage() {
-        return heightPercentage;
-    }
-
     public void setTextureDimensions(int textureWidth, int textureHeight) {
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
-        heightPercentage = textureHeight / textureWidth;
     }
     public String toString() {
         return gson.toJson(this);

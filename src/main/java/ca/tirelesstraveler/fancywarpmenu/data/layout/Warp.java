@@ -44,7 +44,7 @@ public class Warp {
     private static int height;
     /** x-coordinate to draw the warp button at (0-40) */
     private int gridX;
-    /** y-coordinate to draw the warp button at (0-${@code GRID_UNIT_WIDTH_FACTOR * warpIcon.getHeightPercentage()}) */
+    /** y-coordinate to draw the warp button at (0-40) */
     private int gridY;
     /** Name of the warp, rendered below the warp button texture */
     private String displayName;
