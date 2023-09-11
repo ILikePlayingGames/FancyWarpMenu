@@ -64,6 +64,10 @@ Translators:
 - The_Deerman
 - Seeloewen
 
+Hypixel SkyBlock and SkyBlock Islands: Hypixel Inc.
+<br>
+Fancy Warp Menu is a modification created by players and is not affiliated with or endorsed by Hypixel Inc.
+
 ## Licenses
 
 View the list [here](https://github.com/ILikePlayingGames/FancyWarpMenu/wiki/Licenses).
