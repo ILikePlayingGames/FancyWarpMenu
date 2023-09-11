@@ -2,6 +2,7 @@
 
 import ca.tirelesstraveler.DownloadTranslationsTask
 import ca.tirelesstraveler.UploadTranslationsTask
+import org.apache.commons.lang3.SystemUtils
 
 plugins {
     idea
@@ -33,6 +34,27 @@ loom {
             property("mixin.debug", "true")
             property("asmhelper.verbose", "true")
             arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+        }
+    }
+    runConfigs {
+        "client" {
+            if (SystemUtils.IS_OS_MAC_OSX) {
+                // This argument causes a crash on macOS
+                vmArgs.remove("-XstartOnFirstThread")
+            }
+        }
+        remove(getByName("server"))
+        create("client21by9") {
+            name("Minecraft Client 21:9")
+            environment("client")
+            defaultMainClass(getByName("client").defaultMainClass)
+            programArgs("--width", "1920", "--height", "823")
+        }
+        create("client32by9") {
+            name("Minecraft Client 32:9")
+            environment("client")
+            defaultMainClass(getByName("client").defaultMainClass)
+            programArgs("--width", "1920", "--height", "540")
         }
     }
     forge {
