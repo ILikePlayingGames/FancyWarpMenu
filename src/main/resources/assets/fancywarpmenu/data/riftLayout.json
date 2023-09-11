@@ -1,18 +1,29 @@
 {
   "islandList": [
     {
-      "name": "Hub",
-      "texturePath": "textures/gui/islands/Hub.png",
+      "name": "Rift",
+      "texturePath": "textures/gui/islands/Rift.png",
       "gridX": 21,
-      "gridY": 17,
+      "gridY": 6,
       "zLevel": 0,
       "widthPercentage": 0.35,
       "warpList": [
         {
-          "displayName": "Spawn",
-          "commandName": "hub",
-          "slotIndex": 0,
-          "gridX": 19,
+          "displayName": "Wizard Tower",
+          "slotIndex": 10,
+          "gridX": 18,
+          "gridY": 25
+        },
+        {
+          "displayName": "Lagoon Hut",
+          "slotIndex": 11,
+          "gridX": 8,
+          "gridY": 23
+        },
+        {
+          "displayName": "Dreadfarm",
+          "slotIndex": 12,
+          "gridX": 18,
           "gridY": 11
         }
       ]
@@ -23,13 +34,13 @@
     "widthPercentage": 0.02
   },
   "configButton": {
-    "gridX": 60,
-    "gridY": 31,
-    "widthPercentage": 0.05
+    "gridX": 0,
+    "gridY": 0,
+    "widthPercentage": 0
   },
   "regularWarpMenuButton": {
-    "gridX": 60,
-    "gridY": 29,
-    "widthPercentage": 0.05
+    "gridX": 0,
+    "gridY": 0,
+    "widthPercentage": 0
   }
 }

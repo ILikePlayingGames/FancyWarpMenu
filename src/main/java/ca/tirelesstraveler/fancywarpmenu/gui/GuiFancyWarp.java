@@ -34,8 +34,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.inventory.ContainerChest;
+import net.minecraft.inventory.Slot;
 import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.EnumChatFormatting;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +61,7 @@ public class GuiFancyWarp extends GuiScreen {
     protected Layout layout;
     protected ScaledResolution res;
     protected long warpFailCoolDownExpiryTime;
-    private ScaledGrid scaledGrid;
+    protected ScaledGrid scaledGrid;
     private boolean screenDrawn;
     private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
@@ -78,12 +81,6 @@ public class GuiFancyWarp extends GuiScreen {
         Warp.initDefaults(res);
 
         addIslandButtons();
-
-        buttonList.add(new GuiButtonConfig(buttonList.size(), res));
-
-        if (Settings.shouldShowRegularWarpMenuButton()) {
-            buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
-        }
     }
 
     /**
@@ -241,6 +238,24 @@ public class GuiFancyWarp extends GuiScreen {
 
             if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
                 buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
+            }
+        }
+    }
+
+    /**
+     * Left-clicks an inventory slot at the given index in the current screen if the current screen
+     * is an instance of {@link GuiChest} and the mouse is not already holding an item
+     *
+     * @param slotIndex the index of the inventory slot to click
+     */
+    protected void clickSlot(int slotIndex) {
+        if (mc.currentScreen instanceof GuiChest) {
+            GuiChest guiChest = (GuiChest) mc.currentScreen;
+            ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
+            Slot slot = containerChest.inventorySlots.get(slotIndex);
+
+            if (mc.thePlayer.inventory.getItemStack() == null && slot.getHasStack()) {
+                mc.playerController.windowClick(containerChest.windowId, slot.slotNumber, 0, 0, this.mc.thePlayer);
             }
         }
     }

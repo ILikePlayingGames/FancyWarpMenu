@@ -56,6 +56,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -126,7 +127,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
      * Add a button to the regular warp menu for players to enable the fancy warp menu or switch to it.
      */
     @SubscribeEvent
-    public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post e) {
+    public void afterGuiInit(GuiScreenEvent.InitGuiEvent.Post e) {
         if (Settings.isWarpMenuEnabled()
                 && modInstance.isPlayerOnSkyBlock()
                 && e.gui instanceof GuiChest) {
@@ -168,6 +169,12 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
      */
     @SubscribeEvent
     public void beforeGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) throws IOException {
+        if (warpScreen instanceof GuiRiftFastTravel) {
+            warpScreen.handleMouseInput();
+            event.setCanceled(true);
+        }
+
+        // Redirect the player to the Fancy Warp Menu if they click on the fast travel button in the SkyBlock menu
         if (Settings.isWarpMenuEnabled()
                 && modInstance.isPlayerOnSkyBlock()
                 && Mouse.getEventButton() == 0
@@ -190,17 +197,15 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
                 }
             }
         }
-
-        if (warpScreen instanceof GuiRiftFastTravel) {
-            warpScreen.handleMouseInput();
-            event.setCanceled(true);
-        }
     }
 
     @SubscribeEvent
     public void beforeGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre e) throws IOException {
         if (warpScreen instanceof GuiRiftFastTravel) {
-            warpScreen.handleKeyboardInput();
+            if (Keyboard.getEventKey() != Keyboard.KEY_ESCAPE && Keyboard.getEventKey() != mc.gameSettings.keyBindInventory.getKeyCode()) {
+                warpScreen.handleKeyboardInput();
+                e.setCanceled(true);
+            }
         }
     }
 

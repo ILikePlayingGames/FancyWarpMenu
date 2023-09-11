@@ -24,15 +24,10 @@ package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
-import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
-import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonRegularWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.Slot;
 
 public class GuiRiftFastTravel extends GuiFancyWarp {
 
@@ -47,7 +42,7 @@ public class GuiRiftFastTravel extends GuiFancyWarp {
             if (button instanceof GuiButtonWarp) {
                 GuiButtonWarp warpButton = (GuiButtonWarp) button;
 
-                // Don't send command twice for single warp islands
+                // Don't click twice for single warp islands
                 if (warpButton.getIsland().getWarpCount() > 1) {
                     clickSlot(warpButton.getWarpSlotIndex());
                 }
@@ -57,22 +52,6 @@ public class GuiRiftFastTravel extends GuiFancyWarp {
                 if (island.getWarpCount() == 1) {
                     clickSlot(island.getWarps().get(0).getSlotIndex());
                 }
-            } else if (button instanceof GuiButtonConfig) {
-                mc.displayGuiScreen(new FancyWarpMenuConfigScreen(this));
-            } else if (button instanceof GuiButtonRegularWarpMenu) {
-                sendCommand("/warp");
-            }
-        }
-    }
-
-    private void clickSlot(int slotIndex) {
-        if (mc.currentScreen instanceof GuiChest) {
-            GuiChest guiChest = (GuiChest) mc.currentScreen;
-            ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
-            Slot slot = containerChest.inventorySlots.get(slotIndex);
-
-            if (mc.thePlayer.inventory.getItemStack() == null && slot.getHasStack()) {
-                mc.playerController.windowClick(containerChest.windowId, slot.slotNumber, 0, 0, this.mc.thePlayer);
             }
         }
     }

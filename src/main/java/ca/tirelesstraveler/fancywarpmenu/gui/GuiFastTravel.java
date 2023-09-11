@@ -41,6 +41,15 @@ public class GuiFastTravel extends GuiFancyWarp {
     }
 
     @Override
+    public void initGui() {
+        super.initGui();
+        buttonList.add(new GuiButtonConfig(buttonList.size(), res));
+        if (Settings.shouldShowRegularWarpMenuButton()) {
+            buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
+        }
+    }
+
+    @Override
     protected void actionPerformed(GuiButton button) {
         // Block repeat clicks if the last warp failed
         if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {

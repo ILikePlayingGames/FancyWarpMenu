@@ -25,13 +25,14 @@ package ca.tirelesstraveler.fancywarpmenu.data.layout;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StringUtils;
 
 import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
 
 /**
  * Warp entry data used to create the warp buttons on the GUI
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "FieldMayBeFinal"})
 public class Warp {
     // Height scale is the same as width
     /** Grid unit width is islandWidth / widthFactor */
@@ -60,6 +61,7 @@ public class Warp {
     private boolean hideButton;
 
     private Warp() {
+        slotIndex = -1;
     }
 
     public String getDisplayName() {
@@ -144,8 +146,8 @@ public class Warp {
             throw new IllegalArgumentException(String.format("The following warp lacks a name: %s", warp));
         }
 
-        if (warp.commandName == null || warp.commandName.isEmpty()) {
-            throw new IllegalArgumentException(String.format("Warp %s is missing a command name", warp.displayName));
+        if (StringUtils.isNullOrEmpty(warp.commandName) && warp.slotIndex < 0) {
+            throw new IllegalArgumentException(String.format("Warp %s must have a command name or a slot index", warp.displayName));
         }
 
         if (warp.gridX < 0 || warp.gridX > GRID_UNIT_WIDTH_FACTOR) {

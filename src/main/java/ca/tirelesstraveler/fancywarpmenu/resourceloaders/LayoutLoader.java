@@ -59,7 +59,6 @@ public class LayoutLoader extends ResourceLoader {
                 warpIcon.init();
                 Pair<Integer, Integer> warpIconDimensions = getTextureDimensions(warpIcon.getTextureLocation());
                 warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
-                Warp.setWarpIcon(warpIcon);
 
                 // Config and regular warp menu button icon dimensions
                 ConfigButton configButton = layout.getConfigButton();
