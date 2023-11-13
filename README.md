@@ -53,6 +53,10 @@ Portal texture: [SkyblockAddons](https://github.com/BiscuitDevelopment/SkyblockA
 <br>
 Island Renders: Rendered by Schlaumeyer using [Blender](https://www.blender.org/)
 <br>
+Hypixel SkyBlock and SkyBlock Islands: Hypixel Inc.
+<br>
+Minecraft block textures: Mojang
+<br>
 Translators:
 - PumpkinXD
 - Rodry
@@ -63,10 +67,11 @@ Translators:
 - larryshow
 - The_Deerman
 - Seeloewen
-
-Hypixel SkyBlock and SkyBlock Islands: Hypixel Inc.
+<br>
 <br>
 Fancy Warp Menu is a modification created by players and is not affiliated with or endorsed by Hypixel Inc.
+<br>
+NOT AN OFFICIAL MINECRAFT PRODUCT. NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT.
 
 ## Licenses
 
