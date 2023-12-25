@@ -1,6 +1,7 @@
 package ca.tirelesstraveler.fancywarpmenu.hooks;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.LogHelper;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
@@ -11,7 +12,7 @@ import java.util.Locale;
 
 public class EntityPlayerSPHook {
     public static void onSendChatMessage(String message, CallbackInfo ci) {
-        if (Settings.isWarpMenuEnabled() && FancyWarpMenu.getInstance().isPlayerOnSkyBlock() && message.startsWith("/")) {
+        if (Settings.isWarpMenuEnabled() && GameState.isOnSkyBlock() && message.startsWith("/")) {
             WarpCommandVariant warpCommandVariant = WarpMenuListener.getWarpCommandVariant(message);
 
             LogHelper.logDebug("Caught sent command: {}", message);

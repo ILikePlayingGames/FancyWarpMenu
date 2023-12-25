@@ -22,18 +22,29 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.Menu;
+
 /**
- * This class stores the state of the SkyBlock server the player is on. This information is used for the conditional hiding of warps.
+ * This class stores information about the state of the SkyBlock game the player is currently in.
  */
 public class GameState {
+    /**
+     * Whether the player is currently on SkyBlock
+     */
     private static boolean onSkyBlock;
     /**
      * Whether the current SkyBlock season is Late Winter
      */
     private static boolean lateWinter;
 
+    /**
+     * Current in-game menu the player has open
+     */
+    private static Menu currentMenu;
+
     public static boolean isOnSkyBlock() {
-        return onSkyBlock;
+        return onSkyBlock || Settings.shouldSkipSkyBlockCheck();
     }
 
     public static void setOnSkyBlock(boolean onSkyBlock) {
@@ -46,5 +57,13 @@ public class GameState {
 
     public static void setLateWinter(boolean lateWinter) {
         GameState.lateWinter = lateWinter;
+    }
+
+    public static Menu getCurrentMenu() {
+        return currentMenu;
+    }
+
+    public static void setCurrentMenu(Menu currentMenu) {
+        GameState.currentMenu = currentMenu;
     }
 }

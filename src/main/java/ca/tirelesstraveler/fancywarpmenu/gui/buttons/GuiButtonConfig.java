@@ -23,13 +23,14 @@
 package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.ConfigButton;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
-import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
+import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
@@ -83,15 +84,13 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
 
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
+        WarpMenuListener warpMenuListener = FancyWarpMenu.getInstance().getWarpMenuListener();
         boolean clicked = super.mousePressed(mc, mouseX, mouseY);
 
-        if (clicked && !(mc.currentScreen instanceof GuiFancyWarp)) {
-            if (!Settings.isWarpMenuEnabled()) {
-                Settings.setWarpMenuEnabled(true);
-                mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
-            }
-
-            FancyWarpMenu.getInstance().getWarpMenuListener().createFastTravelMenu(true);
+        if (clicked && !Settings.isWarpMenuEnabled()) {
+            Settings.setWarpMenuEnabled(true);
+            mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+            warpMenuListener.createFastTravelMenu(Menu.FAST_TRAVEL, false);
         }
 
         return clicked;

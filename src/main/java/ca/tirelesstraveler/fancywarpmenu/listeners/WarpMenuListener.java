@@ -26,13 +26,13 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.OpenConfigCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.Menu;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpMessages;
 import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
-import ca.tirelesstraveler.fancywarpmenu.gui.GuiRiftFastTravel;
-import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFastTravel;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiRiftFastTravel;
+import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonConfig;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
 import net.minecraft.client.Minecraft;
@@ -42,12 +42,12 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.inventory.ContainerChest;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -57,12 +57,10 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * General purpose event listener
@@ -92,61 +90,75 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
             if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
                 mc.displayGuiScreen(null);
             } else if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
-                WarpMessages warpMessages = FancyWarpMenu.getSkyBlockConstants().getWarpMessages();
-                Map<String, String> warpFailMessages = warpMessages.getWarpFailMessages();
-                String failMessageKey = warpFailMessages.get(unformattedText);
+                String failMessageKey = FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpFailMessages().get(unformattedText);
                 warpScreen.onWarpFail(failMessageKey);
             }
         }
     }
 
-    /**
-     * Minecraft closes the current screen after executing a command,
-     * meaning any {@code GuiScreen} opened by the command is closed.
-     * This method interrupts the closing of the current screen to get around this behavior.
-     */
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
+        if (warpScreen != null && (mc.currentScreen == warpScreen || mc.currentScreen instanceof GuiChest)) {
+            warpScreen = null;
+            return;
+        }
+
+        /*
+        Minecraft closes the current screen after executing a command, meaning any GuiScreen opened by the command is closed.
+        This section interrupts the closing of the current screen to get around this behavior.
+         */
         if (event.gui == null) {
             if (openMenuRequested) {
-                createFastTravelMenu(false);
+                createFastTravelMenu(Menu.FAST_TRAVEL, false);
                 event.gui = warpScreen;
                 openMenuRequested = false;
             } else if (openConfigMenuRequested) {
                 event.gui = new FancyWarpMenuConfigScreen(null);
                 openConfigMenuRequested = false;
             }
-        }
+        } else if (event.gui instanceof GuiChest) {
+            IInventory chestInventory = ((ContainerChest) ((GuiChest) event.gui).inventorySlots).getLowerChestInventory();
 
-        if (warpScreen != null && (mc.currentScreen == warpScreen || mc.currentScreen instanceof GuiChest)) {
-            warpScreen = null;
+            if (chestInventory.hasCustomName()) {
+                /*
+                Guess which in-game GuiChest menu the player is in based on its title.
+                This is not accurate and should be used with more specific checks.
+                 */
+                String containerTitle = chestInventory.getDisplayName().getUnformattedText();
+
+                for (Menu menu : Menu.values()) {
+                    if (containerTitle.equals(menu.getMenuTitle())) {
+                        GameState.setCurrentMenu(menu);
+                        return;
+                    }
+                }
+            }
+
+            GameState.setCurrentMenu(Menu.NONE);
         }
     }
 
-    /**
-     * Add a button to the regular warp menu for players to enable the fancy warp menu or switch to it.
-     */
     @SubscribeEvent
     public void afterGuiInit(GuiScreenEvent.InitGuiEvent.Post e) {
-        if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyBlock()
-                && e.gui instanceof GuiChest) {
-            GuiChest guiChest = (GuiChest) e.gui;
-            ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
-            String containerName = containerChest.getLowerChestInventory().getName();
+        if (GameState.isOnSkyBlock() && e.gui instanceof GuiChest) {
+            Menu currentMenu = GameState.getCurrentMenu();
 
-            if (containerName.equals("Fast Travel")) {
-                e.buttonList.add(new GuiButtonConfig(e.buttonList.size(), new ScaledResolution(mc)));
-            } else if (containerName.equals("Porhtal")) {
-                warpScreen = new GuiRiftFastTravel(FancyWarpMenu.getRiftLayout());
-                warpScreen.setWorldAndResolution(mc, guiChest.width, guiChest.height);
+            if (currentMenu == Menu.FAST_TRAVEL) {
+                if (Settings.isWarpMenuEnabled()) {
+                    createFastTravelMenu(Menu.FAST_TRAVEL, false);
+                } else {
+                    // Add a button to the regular warp menu for players to enable the fancy warp menu or switch to it.
+                    e.buttonList.add(new GuiButtonConfig(e.buttonList.size(), new ScaledResolution(mc)));
+                }
+            } else if (currentMenu == Menu.PORHTAL) {
+                createFastTravelMenu(Menu.PORHTAL, false);
             }
         }
     }
 
     @SubscribeEvent
     public void beforeGuiDraw(GuiScreenEvent.DrawScreenEvent.Pre e) {
-        if (warpScreen instanceof GuiRiftFastTravel) {
+        if (isFancyWarpMenuOpen()) {
             warpScreen.drawScreen(e.mouseX, e.mouseY, e.renderPartialTicks);
             e.setCanceled(true);
         }
@@ -158,50 +170,24 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     @SubscribeEvent
     public void onKeyboardInput(InputEvent.KeyInputEvent event) {
         if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyBlock()
+                && GameState.isOnSkyBlock()
                 && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
-            createFastTravelMenu(true);
+            createFastTravelMenu(Menu.FAST_TRAVEL, true);
         }
     }
 
-    /**
-     * Redirect to the fancy warp menu when the player attempts to access the warp menu from the SkyBlock menu
-     */
     @SubscribeEvent
     public void beforeGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) throws IOException {
-        if (warpScreen instanceof GuiRiftFastTravel) {
+        if (isFancyWarpMenuOpen()) {
             warpScreen.handleMouseInput();
             event.setCanceled(true);
-        }
-
-        // Redirect the player to the Fancy Warp Menu if they click on the fast travel button in the SkyBlock menu
-        if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyBlock()
-                && Mouse.getEventButton() == 0
-                && Mouse.getEventButtonState()
-                && event.gui instanceof GuiChest) {
-            GuiChest guiChest = (GuiChest) event.gui;
-
-            if (guiChest.inventorySlots instanceof ContainerChest) {
-                ContainerChest container = (ContainerChest) guiChest.inventorySlots;
-
-                if (container.getLowerChestInventory() != null
-                        && container.getLowerChestInventory().hasCustomName()
-                        && container.getLowerChestInventory().getName().equals("SkyBlock Menu")
-                        && guiChest.getSlotUnderMouse() != null
-                        && guiChest.getSlotUnderMouse().getSlotIndex() == 47
-                        // Rift SkyBlock Menu has a return to hub button in slot 47
-                        && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
-                    createFastTravelMenu(true);
-                    event.setCanceled(true);
-                }
-            }
         }
     }
 
     @SubscribeEvent
     public void beforeGuiKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre e) throws IOException {
-        if (warpScreen instanceof GuiRiftFastTravel) {
+        if (isFancyWarpMenuOpen()) {
+            // Pass requests to close the chest to the underlying GuiChest to make sure it is closed properly
             if (Keyboard.getEventKey() != Keyboard.KEY_ESCAPE && Keyboard.getEventKey() != mc.gameSettings.keyBindInventory.getKeyCode()) {
                 warpScreen.handleKeyboardInput();
                 e.setCanceled(true);
@@ -233,7 +219,7 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         if (mc.currentScreen instanceof GuiChat) {
             openMenuRequested = true;
         } else {
-            createFastTravelMenu(true);
+            createFastTravelMenu(Menu.FAST_TRAVEL, true);
         }
     }
 
@@ -244,13 +230,30 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
         openConfigMenuRequested = true;
     }
 
-    public void createFastTravelMenu(boolean display) {
+    public void createFastTravelMenu(Menu menuType, boolean display) {
+        if (menuType == null) {
+            throw new NullPointerException("menuType cannot be null");
+        } else if (menuType != Menu.FAST_TRAVEL && menuType != Menu.PORHTAL) {
+            throw new IllegalArgumentException(menuType + " is not a valid menu type");
+        }
+
         checkLateWinter();
-        warpScreen = new GuiFastTravel(FancyWarpMenu.getLayout());
+        warpScreen = menuType == Menu.FAST_TRAVEL ?
+                new GuiFastTravel(FancyWarpMenu.getLayout()) :
+                new GuiRiftFastTravel(FancyWarpMenu.getRiftLayout());
 
         if (display) {
             mc.displayGuiScreen(warpScreen);
+        } else if (mc.currentScreen instanceof GuiChest) {
+            /*
+            If drawing over a GuiChest, setup the dimensions of the GuiFancyWarp manually since the normal setup process is skipped
+            */
+            warpScreen.setWorldAndResolution(mc, mc.currentScreen.width, mc.currentScreen.height);
         }
+    }
+
+    private boolean isFancyWarpMenuOpen() {
+        return warpScreen != null && mc.currentScreen != warpScreen;
     }
 
     /**

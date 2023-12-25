@@ -22,6 +22,8 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.List;
 
 import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
@@ -31,8 +33,12 @@ public class SkyBlockConstants {
     private SkyBlockConstants() {
     }
 
+    /** Chat messages sent by the server when a warp attempt succeeds or fails */
     private WarpMessages warpMessages;
+    /** Names of the warp command and its aliases */
     private List<WarpCommandVariant> warpCommandVariants;
+    /** Chat messages are checked to see if they start with this string in order to see if the player joined SkyBlock */
+    private String skyBlockJoinMessage;
 
     public WarpMessages getWarpMessages() {
         return warpMessages;
@@ -40,6 +46,10 @@ public class SkyBlockConstants {
 
     public List<WarpCommandVariant> getWarpCommandVariants() {
         return warpCommandVariants;
+    }
+
+    public String getSkyBlockJoinMessage() {
+        return skyBlockJoinMessage;
     }
 
     @Override
@@ -60,6 +70,10 @@ public class SkyBlockConstants {
 
         for (WarpCommandVariant warpCommandVariant : skyBlockConstants.warpCommandVariants) {
             WarpCommandVariant.validateWarpCommandVariant(warpCommandVariant);
+        }
+
+        if (StringUtils.isEmpty(skyBlockConstants.skyBlockJoinMessage)) {
+            throw new IllegalArgumentException("SkyBlock join message cannot be null or empty.");
         }
     }
 }

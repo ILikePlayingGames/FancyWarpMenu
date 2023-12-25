@@ -71,6 +71,7 @@ public class GuiFastTravel extends GuiFancyWarp {
             } else if (button instanceof GuiButtonConfig) {
                 mc.displayGuiScreen(new FancyWarpMenuConfigScreen(this));
             } else if (button instanceof GuiButtonRegularWarpMenu) {
+                Settings.setWarpMenuEnabled(false);
                 sendCommand("/warp");
             }
         }

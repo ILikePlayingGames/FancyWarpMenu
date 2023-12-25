@@ -35,5 +35,6 @@
       "command": "savethejerrys",
       "type": "WARP"
     }
-  ]
+  ],
+  "skyBlockJoinMessage": "Profile ID:"
 }

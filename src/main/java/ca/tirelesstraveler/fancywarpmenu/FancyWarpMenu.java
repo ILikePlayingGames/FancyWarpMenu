@@ -140,10 +140,6 @@ public class FancyWarpMenu {
         return warpMenuListener;
     }
 
-    public boolean isPlayerOnSkyBlock() {
-        return skyblockJoinListener.isOnSkyBlock();
-    }
-
     public void reloadResources() {
         Minecraft.getMinecraft().refreshResources();
         reloadSkyBlockConstants();
