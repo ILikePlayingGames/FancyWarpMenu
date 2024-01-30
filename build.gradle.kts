@@ -87,7 +87,7 @@ dependencies {
         isTransitive = false
     }
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
-    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.2")
+    runtimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.2.0")
 }
 
 // Tasks:
