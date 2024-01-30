@@ -23,7 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.GameState;
+import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

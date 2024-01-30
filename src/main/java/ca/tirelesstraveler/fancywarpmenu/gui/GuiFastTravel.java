@@ -22,35 +22,30 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
-import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.GameState;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
-import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonConfig;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
-import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonRegularWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.IInventory;
+import org.lwjgl.input.Keyboard;
+
+import java.io.IOException;
 
 public class GuiFastTravel extends GuiFancyWarp {
 
-    public GuiFastTravel(Layout layout) {
-        super(layout);
-    }
-
-    @Override
-    public void initGui() {
-        super.initGui();
-        buttonList.add(new GuiButtonConfig(buttonList.size(), res));
-        if (Settings.shouldShowRegularWarpMenuButton()) {
-            buttonList.add(new GuiButtonRegularWarpMenu(buttonList.size(), res, scaledGrid));
-        }
+    public GuiFastTravel(IInventory playerInventory, IInventory chestInventory, Layout layout) {
+        super(playerInventory, chestInventory, layout);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
+
         // Block repeat clicks if the last warp failed
         if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
             if (button instanceof GuiButtonWarp) {
@@ -68,18 +63,23 @@ public class GuiFastTravel extends GuiFancyWarp {
                     String warpCommand = island.getWarps().get(0).getWarpCommand();
                     sendCommand(warpCommand);
                 }
-            } else if (button instanceof GuiButtonConfig) {
-                mc.displayGuiScreen(new FancyWarpMenuConfigScreen(this));
-            } else if (button instanceof GuiButtonRegularWarpMenu) {
-                Settings.setWarpMenuEnabled(false);
-                sendCommand("/warp");
             }
         }
     }
 
     @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+
+        if (Settings.isDebugModeEnabled() && keyCode == Keyboard.KEY_R) {
+            this.layout = FancyWarpMenuState.getOverworldLayout();
+            this.onResize(mc, res.getScaledWidth(), res.getScaledHeight());
+        }
+    }
+
+    @Override
     protected void addIslandButtons() {
-        for (Island island : FancyWarpMenu.getLayout().getIslandList()) {
+        for (Island island : FancyWarpMenuState.getOverworldLayout().getIslandList()) {
             // Conditions for hiding Jerry's Workshop from the warp menu
             if (!Settings.isDebugModeEnabled() || !Settings.shouldAlwaysShowJerryIsland()) {
                 if ((!Settings.shouldShowJerryIsland()

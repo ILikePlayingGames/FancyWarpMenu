@@ -48,10 +48,6 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         backgroundTextureLocation = WARP.getWarpTextureLocation();
         foregroundTextureLocation = WARP.getWarpHoverEffectTextureLocation();
         transition = new ScaleTransition(0, 0, 0);
-
-        if (warp.shouldHideButton()) {
-            visible = false;
-        }
     }
 
     /**

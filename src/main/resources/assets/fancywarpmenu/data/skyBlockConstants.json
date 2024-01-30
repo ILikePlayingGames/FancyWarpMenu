@@ -1,4 +1,21 @@
 {
+  "menuMatchingMap": {
+    "SKYBLOCK_MENU": [
+      {
+        "menuName": "SkyBlock Menu"
+      }
+    ],
+    "FAST_TRAVEL": [
+      {
+        "menuName": "Fast Travel"
+      }
+    ],
+    "PORHTAL": [
+      {
+        "menuName": "Porhtal"
+      }
+    ]
+  },
   "warpMessages": {
     "warpSuccessMessages": [
       "Warping..."

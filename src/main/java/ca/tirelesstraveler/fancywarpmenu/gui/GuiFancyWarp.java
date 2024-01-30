@@ -22,25 +22,34 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
-import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Warp;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.*;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
+import ca.tirelesstraveler.fancywarpmenu.listeners.ChestInventoryListener;
+import ca.tirelesstraveler.fancywarpmenu.state.EnvironmentDetails;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.inventory.ContainerChest;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C01PacketChatMessage;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
@@ -50,8 +59,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
-public class GuiFancyWarp extends GuiScreen {
+public class GuiFancyWarp extends GuiChestMenu {
+    protected static final FancyWarpMenu modInstance = FancyWarpMenu.getInstance();
     private static final Logger logger = LogManager.getLogger();
     /** Delay in ms before the player can warp again if the last warp attempt failed */
     private static final long WARP_FAIL_COOL_DOWN = 500L;
@@ -59,19 +70,23 @@ public class GuiFancyWarp extends GuiScreen {
     private static final long WARP_FAIL_TOOLTIP_DISPLAY_TIME = 2000L;
 
     protected Layout layout;
-    protected ScaledResolution res;
+    private final ChestInventoryListener inventoryListener;
     protected long warpFailCoolDownExpiryTime;
-    protected ScaledGrid scaledGrid;
     private boolean screenDrawn;
     private long warpFailTooltipExpiryTime;
     private String warpFailMessage;
+    private GuiButton configButton;
 
-    public GuiFancyWarp(Layout layout) {
+    public GuiFancyWarp(IInventory playerInventory, IInventory chestInventory, Layout layout) {
+        super(playerInventory, chestInventory);
         this.layout = layout;
+        inventoryListener = new ChestInventoryListener(new ChestItemChangeCallback(this));
+        ((InventoryBasic) chestInventory).addInventoryChangeListener(inventoryListener);
     }
 
     @Override
     public void initGui() {
+        super.initGui();
         if (!screenDrawn && EnvironmentDetails.isPatcherInstalled()) {
             return;
         }
@@ -80,19 +95,27 @@ public class GuiFancyWarp extends GuiScreen {
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
+        configButton = new GuiButtonConfig(layout, buttonList.size(), res);
+        buttonList.add(configButton);
+        if (Settings.shouldShowRegularWarpMenuButton()) {
+            buttonList.add(new GuiButtonRegularWarpMenu(layout, buttonList.size(), res, scaledGrid));
+        }
+
         addIslandButtons();
+        updateButtonStates();
     }
 
-    /**
-     * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
-     */
+    public ScaledGrid getScaledGrid() {
+        return scaledGrid;
+    }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+    public void drawCustomUI(int mouseX, int mouseY, float partialTicks) {
         /*
         Patcher inventory scale doesn't reset inventory scale until the first draw of the screen after
         the inventory is closed. Setting res in initGui would use Patcher's scaled resolution instead of Minecraft's
         resolution.
-         */
+        */
         if (!screenDrawn && EnvironmentDetails.isPatcherInstalled()) {
             screenDrawn = true;
             initGui();
@@ -100,9 +123,9 @@ public class GuiFancyWarp extends GuiScreen {
             this.height = res.getScaledHeight();
         }
 
-        drawDefaultBackground();
+        drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
-        List<GuiButtonExt> hoveredButtons = new ArrayList<>();
+        List<GuiButtonChestMenu> hoveredButtons = new ArrayList<>();
 
         // When multiple island buttons overlap, mark only the top one as hovered.
         for (GuiButton button : buttonList) {
@@ -114,7 +137,7 @@ public class GuiFancyWarp extends GuiScreen {
                         mouseY <= ((GuiButtonIsland) button).getScaledYPosition() + islandButton.getScaledHeight());
 
                 if (button.isMouseOver()) {
-                    hoveredButtons.add((GuiButtonExt) button);
+                    hoveredButtons.add((GuiButtonChestMenu) button);
                 }
             }
         }
@@ -123,7 +146,7 @@ public class GuiFancyWarp extends GuiScreen {
             hoveredButtons.get(i).setHovered(false);
         }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        drawButtons(mouseX, mouseY);
 
         // Draw warp fail tooltip
         if (Minecraft.getSystemTime() <= warpFailTooltipExpiryTime && warpFailMessage != null) {
@@ -181,31 +204,56 @@ public class GuiFancyWarp extends GuiScreen {
      * Called when a warp attempt fails
      *
      * @param failMessageKey the translation key of the failure message to display on the Gui
+     * @param replacements replacement objects to substitute in place of placeholders in the translated message
      */
-    public void onWarpFail(String failMessageKey) {
+    public void onWarpFail(String failMessageKey, Object... replacements) {
         long currentTime = Minecraft.getSystemTime();
         warpFailCoolDownExpiryTime = currentTime + WARP_FAIL_COOL_DOWN;
         warpFailTooltipExpiryTime = currentTime + WARP_FAIL_TOOLTIP_DISPLAY_TIME;
-        warpFailMessage = EnumChatFormatting.RED + I18n.format(failMessageKey);
+        warpFailMessage = EnumChatFormatting.RED + I18n.format(failMessageKey, replacements);
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        FancyWarpMenu mod = FancyWarpMenu.getInstance();
+    protected void actionPerformed(GuiButton button) {
+        if (Settings.isWarpMenuEnabled()) {
+            if (button instanceof GuiButtonConfig) {
+                FancyWarpMenuState.setOpenConfigMenuRequested(true);
+                mc.thePlayer.closeScreen();
+            } else if (button instanceof GuiButtonRegularWarpMenu) {
+                Settings.setWarpMenuEnabled(false);
+                setCustomUIState(false, false);
+            }
+        } else if (button instanceof GuiButtonConfig) {
+                Settings.setWarpMenuEnabled(true);
+                mc.thePlayer.addChatMessage(new ChatComponentTranslation(
+                        "fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(
+                                new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+                setCustomUIState(true, true);
+        }
+    }
 
-        if (Settings.isDebugModeEnabled()) {
-            if (keyCode == mc.gameSettings.keyBindInventory.getKeyCode()) {
-                mc.displayGuiScreen(null);
-            } else if (keyCode == Keyboard.KEY_R) {
-                if (isShiftKeyDown()) {
-                    mod.reloadResources();
-                } else {
-                    mod.reloadLayouts();
+    @Override
+    protected void handleCustomUIMouseInput(int mouseX, int mouseY, int mouseButton) {
+        // Left click
+        if (mouseButton == 0) {
+            for (GuiButton button : buttonList) {
+                if (handlePotentialButtonPress(button, mouseX, mouseY)) {
+                    break;
                 }
+            }
+        }
+    }
 
-                buttonList.clear();
-                initGui();
+    @Override
+    protected void handleCustomUIKeyboardInput(char typedChar, int keyCode) {
+        if (Settings.isDebugModeEnabled()) {
+            if (keyCode == Keyboard.KEY_R) {
+                // Layout isn't loaded into the currently opened screen. That must be implemented in subclasses.
+                if (isShiftKeyDown()) {
+                    modInstance.reloadResources();
+                } else {
+                    modInstance.reloadLayouts();
+                }
             } else if (keyCode == Keyboard.KEY_TAB) {
                 Settings.setShowDebugOverlay(!Settings.shouldShowDebugOverlay());
             } else if (keyCode == Keyboard.KEY_B) {
@@ -214,8 +262,22 @@ public class GuiFancyWarp extends GuiScreen {
         }
     }
 
-    public ScaledGrid getScaledGrid() {
-        return scaledGrid;
+    /**
+     * Called when a mouse button is clicked.
+     *
+     * @param mouseX mouse x coordinate
+     * @param mouseY mouse y coordinate
+     * @param mouseButton clicked button (0 == left click is the only one that matters here)
+     * @throws IOException not thrown here, may be thrown in super
+     */
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+
+        // Process button presses on the default UI too since the config button is also active there.
+        if (!customUIInteractionEnabled) {
+            handlePotentialButtonPress(configButton, mouseX, mouseY);
+        }
     }
 
     protected void addIslandButtons() {
@@ -249,14 +311,21 @@ public class GuiFancyWarp extends GuiScreen {
      * @param slotIndex the index of the inventory slot to click
      */
     protected void clickSlot(int slotIndex) {
-        if (mc.currentScreen instanceof GuiChest) {
-            GuiChest guiChest = (GuiChest) mc.currentScreen;
-            ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
-            Slot slot = containerChest.inventorySlots.get(slotIndex);
+        if (slotIndex >= 0 && slotIndex < inventorySlots.inventorySlots.size()) {
+            Slot slotToClick = inventorySlots.getSlot(slotIndex);
 
-            if (mc.thePlayer.inventory.getItemStack() == null && slot.getHasStack()) {
-                mc.playerController.windowClick(containerChest.windowId, slot.slotNumber, 0, 0, this.mc.thePlayer);
+            if (slotToClick.getHasStack()) {
+                if (mc.thePlayer.inventory.getItemStack() == null) {
+                    // Left click no shift
+                    handleMouseClick(inventorySlots.getSlot(slotIndex), slotIndex, 0, 0);
+                } else {
+                    onWarpFail(FancyWarpMenu.getFullLanguageKey("errors.mouseIsHoldingItem"));
+                }
+            } else {
+                onWarpFail(FancyWarpMenu.getFullLanguageKey("errors.slotHasNoItem"), slotIndex);
             }
+        } else {
+            onWarpFail(FancyWarpMenu.getFullLanguageKey("errors.slotNumberOutOfBounds"), slotIndex);
         }
     }
 
@@ -273,6 +342,43 @@ public class GuiFancyWarp extends GuiScreen {
         }
     }
 
+    protected void drawButtons(int mouseX, int mouseY) {
+        for (GuiButton button : buttonList) {
+            if (button instanceof GuiButtonConfig || Settings.isWarpMenuEnabled()) {
+                button.drawButton(mc, mouseX, mouseY);
+            }
+        }
+    }
+
+    @Override
+    protected void updateButtonStates() {
+        for (GuiButton button : buttonList) {
+            // The config button is active on both the custom and default UI.
+            if (button instanceof GuiButtonChestMenu && !(button instanceof GuiButtonConfig)) {
+                GuiButtonChestMenu buttonChestMenu = (GuiButtonChestMenu) button;
+
+                buttonChestMenu.setEnabled(customUIInteractionEnabled);
+                buttonChestMenu.setVisible(renderCustomUI);
+            }
+        }
+    }
+
+    private void onChestItemChange(InventoryBasic chestInventory, int triggerCount) {
+        ItemStack lastStack = chestInventory.getStackInSlot(chestInventory.getSizeInventory() - 1);
+
+        if (lastStack != null) {
+            if (GameChecks.determineOpenMenu(chestInventory, false) == Menu.SKYBLOCK_MENU) {
+                setCustomUIState(true, true);
+                chestInventory.removeInventoryChangeListener(inventoryListener);
+                return;
+            }
+        }
+
+        if (triggerCount > chestInventory.getSizeInventory()) {
+            chestInventory.removeInventoryChangeListener(inventoryListener);
+        }
+    }
+
     private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {
         debugStrings.add("gridX: " + nearestGridX);
         debugStrings.add("gridY: " + nearestGridY);
@@ -282,5 +388,54 @@ public class GuiFancyWarp extends GuiScreen {
         }
         drawHoveringText(debugStrings, drawX, drawY);
         drawRect(drawX - 2, drawY - 2, drawX + 2, drawY + 2, Color.RED.getRGB());
+    }
+
+    /**
+     * Tests for and handles a {@code GuiButton} press if the provided button was pressed. This re-implements most of
+     * the logic from {@link net.minecraft.client.gui.GuiScreen#mouseClicked(int, int, int)} that is skipped when
+     * the custom UI processes input instead of the default UI.
+     *
+     * @param button {@code GuiButton} to check
+     * @param mouseX mouse x coordinate
+     * @param mouseY mouse y coordinate
+     * @return {@code true} if the press was cancelled via an event listener, {@code false} otherwise
+     */
+    private boolean handlePotentialButtonPress(GuiButton button, int mouseX, int mouseY) {
+        if (button.mousePressed(mc, mouseX, mouseY)) {
+            GuiScreenEvent.ActionPerformedEvent.Pre preEvent = new GuiScreenEvent.ActionPerformedEvent.Pre(this, button, buttonList);
+
+            if (MinecraftForge.EVENT_BUS.post(preEvent)) {
+                return true;
+            }
+
+            GuiButton resultButton = preEvent.button;
+            selectedButton = resultButton;
+            resultButton.playPressSound(mc.getSoundHandler());
+            this.actionPerformed(resultButton);
+            if (mc.currentScreen == this) {
+                MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.ActionPerformedEvent.Post(this, resultButton, buttonList));
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * A callback called when any item in the chest it is attached to changes
+     */
+    private static class ChestItemChangeCallback implements Consumer<InventoryBasic> {
+        private final GuiFancyWarp GUI_FANCY_WARP;
+        private int triggerCount;
+
+        ChestItemChangeCallback(GuiFancyWarp guiFancyWarp) {
+            GUI_FANCY_WARP = guiFancyWarp;
+            triggerCount = 0;
+        }
+
+        @Override
+        public void accept(InventoryBasic chestInventory) {
+            triggerCount++;
+            GUI_FANCY_WARP.onChestItemChange(chestInventory, triggerCount);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. TirelessTraveler
+ * Copyright (c) 2024. TirelessTraveler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,23 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu;
+package ca.tirelesstraveler.fancywarpmenu.listeners;
 
-/**
- * Information about the local environment at runtime, for constants and compatibility with other mods
- */
-public class EnvironmentDetails {
-    public static String SUPPORT_LINK = "https://discord.gg/tXFf9umfA9";
-    static boolean deobfuscatedEnvironment;
-    static boolean patcherInstalled;
+import net.minecraft.inventory.IInvBasic;
+import net.minecraft.inventory.InventoryBasic;
 
-    private EnvironmentDetails() {
+import java.util.function.Consumer;
+
+public class ChestInventoryListener implements IInvBasic {
+    private final Consumer<InventoryBasic> CALLBACK;
+
+    public ChestInventoryListener(Consumer<InventoryBasic> callback) {
+        CALLBACK = callback;
     }
 
-    public static boolean isDeobfuscatedEnvironment() {
-        return deobfuscatedEnvironment;
-    }
 
-    public static boolean isPatcherInstalled() {
-        return patcherInstalled;
+    @Override
+    public void onInventoryChanged(InventoryBasic inventoryBasic) {
+        CALLBACK.accept(inventoryBasic);
     }
 }

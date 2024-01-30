@@ -22,8 +22,8 @@
 
 package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
-import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.*;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -40,7 +40,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LayoutLoader extends ResourceLoader {
-    public static final ResourceLocation LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
+    public static final ResourceLocation OVERWORLD_LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
             "data/layout.json");
     public static final ResourceLocation RIFT_LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu", "data/riftLayout.json");
 
@@ -84,13 +84,13 @@ public class LayoutLoader extends ResourceLoader {
 
                 return layout;
             } catch (RuntimeException e) {
-                boolean fatal = FancyWarpMenu.getLayout() == null;
+                boolean fatal = FancyWarpMenuState.getOverworldLayout() == null;
 
                 handleResourceLoadException(layoutResource, fatal, e);
                 return null;
             }
         } catch (IOException e) {
-            boolean fatal = FancyWarpMenu.getLayout() == null;
+            boolean fatal = FancyWarpMenuState.getOverworldLayout() == null;
 
             handleGetResourceException(resourceLocation.toString(), fatal, e);
             return null;

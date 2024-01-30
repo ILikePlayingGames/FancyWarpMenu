@@ -26,7 +26,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 
-import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
+import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.gson;
 
 /**
  * Class that holds the settings for drawing buttons that are not islands, like the config button.
@@ -35,19 +35,19 @@ import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
 @SuppressWarnings("unused")
 public abstract class Button {
 
-    /** x-coordinate on {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp} to draw the config button at (0-{@link Island#GRID_UNIT_WIDTH_FACTOR}) */
+    /** x-coordinate on {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp} to draw the button at (0-{@link Island#GRID_UNIT_WIDTH_FACTOR}) */
     private int gridX;
-    /** y-coordinate on {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp} to draw the config button at (0-{@link Island#GRID_UNIT_HEIGHT_FACTOR}) */
+    /** y-coordinate on {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp} to draw the button at (0-{@link Island#GRID_UNIT_HEIGHT_FACTOR}) */
     private int gridY;
-    /** Width to render the config button texture at as a percentage of the screen width. Texture height is set automatically. */
+    /** Width to render the button texture at as a percentage of the screen width. Texture height is set automatically. */
     private float widthPercentage;
-    /** Width of the warp icon texture, used to set the width of the warp button */
+    /** Width of the icon texture in pixels, used to set the width of the button */
     private transient int textureWidth;
-    /** Height of the warp icon texture, used to set the height of the warp button */
+    /** Height of the icon texture in pixels, used to set the height of the button */
     private transient int textureHeight;
-    /** Width of the config button */
+    /** Width of the button in pixels */
     private transient int width;
-    /** Height of the config button */
+    /** Height of the button in pixels */
     private transient int height;
 
     Button(){}
@@ -75,7 +75,7 @@ public abstract class Button {
     }
 
     /**
-     * Initialize config button width and height.
+     * Initialize button width and height.
      * This should be called in {@link GuiScreen#initGui()}.
      */
     public void init(ScaledResolution res) {
@@ -103,8 +103,9 @@ public abstract class Button {
             throw new IllegalArgumentException("Button gridX must be between 0 and " + Island.GRID_UNIT_HEIGHT_FACTOR + " inclusive");
         }
 
-        if (button.widthPercentage < 0 || button.widthPercentage > 1) {
-            throw new IllegalArgumentException("Button icon widthPercentage must be between 0 and 1");
+        // A button width of zero causes a stack overflow
+        if (button.widthPercentage <= 0 || button.widthPercentage > 1) {
+            throw new IllegalArgumentException("Button icon widthPercentage must be within the interval (0,1]");
         }
     }
 }

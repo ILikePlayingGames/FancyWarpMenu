@@ -26,16 +26,13 @@ import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.ConfigButton;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.Menu;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.gui.transitions.ScaleTransition;
-import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.ForgeVersion;
 
@@ -51,10 +48,10 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
     // Bottom edge
     private final int GRID_Y;
 
-    public GuiButtonConfig(int buttonId, ScaledResolution res) {
+    public GuiButtonConfig(Layout layout, int buttonId, ScaledResolution res) {
         super(buttonId, EnumChatFormatting.GREEN + I18n.format(FancyWarpMenu.getFullLanguageKey("gui.buttons.config")));
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
-        ConfigButton configButtonSettings = FancyWarpMenu.getLayout().getConfigButton();
+        ConfigButton configButtonSettings = layout.getConfigButton();
         configButtonSettings.init(res);
         GRID_X = configButtonSettings.getGridX();
         GRID_Y = configButtonSettings.getGridY();
@@ -80,19 +77,5 @@ public class GuiButtonConfig extends GuiButtonScaleTransition {
                 drawButtonForegroundLayer(ConfigButton.NOTIFICATION_TEXTURE_LOCATION);
             }
         }
-    }
-
-    @Override
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
-        WarpMenuListener warpMenuListener = FancyWarpMenu.getInstance().getWarpMenuListener();
-        boolean clicked = super.mousePressed(mc, mouseX, mouseY);
-
-        if (clicked && !Settings.isWarpMenuEnabled()) {
-            Settings.setWarpMenuEnabled(true);
-            mc.thePlayer.addChatMessage(new ChatComponentTranslation("fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
-            warpMenuListener.createFastTravelMenu(Menu.FAST_TRAVEL, false);
-        }
-
-        return clicked;
     }
 }

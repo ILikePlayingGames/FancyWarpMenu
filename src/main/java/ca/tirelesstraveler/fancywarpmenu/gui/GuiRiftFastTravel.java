@@ -22,27 +22,35 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.inventory.IInventory;
+import org.lwjgl.input.Keyboard;
+
+import java.io.IOException;
 
 public class GuiRiftFastTravel extends GuiFancyWarp {
 
-    public GuiRiftFastTravel(Layout layout) {
-        super(layout);
+    public GuiRiftFastTravel(IInventory playerInventory, IInventory chestInventory, Layout layout) {
+        super(playerInventory, chestInventory, layout);
     }
 
     @Override
     protected void actionPerformed(GuiButton button) {
+        super.actionPerformed(button);
+
         // Block repeat clicks if the last warp failed
         if (Minecraft.getSystemTime() > warpFailCoolDownExpiryTime) {
             if (button instanceof GuiButtonWarp) {
                 GuiButtonWarp warpButton = (GuiButtonWarp) button;
 
-                // Don't click twice for single warp islands
+                // Don't click twice for islands with only one warp
                 if (warpButton.getIsland().getWarpCount() > 1) {
                     clickSlot(warpButton.getWarpSlotIndex());
                 }
@@ -53,6 +61,16 @@ public class GuiRiftFastTravel extends GuiFancyWarp {
                     clickSlot(island.getWarps().get(0).getSlotIndex());
                 }
             }
+        }
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        super.keyTyped(typedChar, keyCode);
+
+        if (Settings.isDebugModeEnabled() && keyCode == Keyboard.KEY_R) {
+            this.layout = FancyWarpMenuState.getRiftLayout();
+            this.onResize(mc, res.getScaledWidth(), res.getScaledHeight());
         }
     }
 }

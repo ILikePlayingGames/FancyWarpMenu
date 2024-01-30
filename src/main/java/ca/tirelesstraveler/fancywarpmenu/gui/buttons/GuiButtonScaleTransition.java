@@ -37,7 +37,7 @@ import java.awt.Color;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
-public abstract class GuiButtonScaleTransition extends GuiButtonExt {
+public abstract class GuiButtonScaleTransition extends GuiButtonChestMenu {
     private static final float HOVERED_BRIGHTNESS = 1F;
     private static final float UN_HOVERED_BRIGHTNESS = 0.9F;
 

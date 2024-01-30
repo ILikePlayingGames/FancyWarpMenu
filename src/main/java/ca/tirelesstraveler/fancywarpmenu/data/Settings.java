@@ -22,7 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data;
 
-import ca.tirelesstraveler.fancywarpmenu.EnvironmentDetails;
+import ca.tirelesstraveler.fancywarpmenu.state.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
 import net.minecraft.util.EnumChatFormatting;

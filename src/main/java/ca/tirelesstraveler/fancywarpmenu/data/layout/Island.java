@@ -32,7 +32,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.List;
 
-import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
+import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.gson;
 
 /**
  * Island data used to create the island buttons on the GUI

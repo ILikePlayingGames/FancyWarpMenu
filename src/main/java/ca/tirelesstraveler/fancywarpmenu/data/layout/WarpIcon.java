@@ -30,7 +30,7 @@ import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 
-import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
+import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.gson;
 
 /**
  * Class that holds the settings for drawing the warp icon (portal)

@@ -24,7 +24,7 @@ package ca.tirelesstraveler.fancywarpmenu.data.layout;
 
 import java.util.List;
 
-import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
+import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.gson;
 
 @SuppressWarnings("unused")
 public class Layout {

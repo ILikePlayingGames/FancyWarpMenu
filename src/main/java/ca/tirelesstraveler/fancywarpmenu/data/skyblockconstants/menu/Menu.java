@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. TirelessTraveler
+ * Copyright (c) 2023-2024. TirelessTraveler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,15 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-public class DataCommon {
-    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+/**
+ * In-game menus, not serialized
+ */
+public enum Menu {
+    /** Value used when player is not in a menu or in an unknown or irrelevant menu */
+    NONE,
+    SKYBLOCK_MENU,
+    FAST_TRAVEL,
+    PORHTAL
 }

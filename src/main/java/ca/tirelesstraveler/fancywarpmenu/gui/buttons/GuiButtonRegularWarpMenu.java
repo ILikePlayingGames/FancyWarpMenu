@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.RegularWarpMenuButton;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.GridRectangle;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
@@ -41,9 +42,9 @@ public class GuiButtonRegularWarpMenu extends GuiButtonScaleTransition {
     // Bottom edge
     private final int GRID_Y;
 
-    public GuiButtonRegularWarpMenu(int buttonId, ScaledResolution res, ScaledGrid scaledGrid) {
+    public GuiButtonRegularWarpMenu(Layout layout, int buttonId, ScaledResolution res, ScaledGrid scaledGrid) {
         super(buttonId, EnumChatFormatting.GREEN + I18n.format(FancyWarpMenu.getFullLanguageKey("gui.buttons.regularWarpMenu")));
-        RegularWarpMenuButton regularWarpMenuButtonSettings = FancyWarpMenu.getLayout().getRegularWarpMenuButton();
+        RegularWarpMenuButton regularWarpMenuButtonSettings = layout.getRegularWarpMenuButton();
         regularWarpMenuButtonSettings.init(res);
         GRID_X = regularWarpMenuButtonSettings.getGridX();
         GRID_Y = regularWarpMenuButtonSettings.getGridY();

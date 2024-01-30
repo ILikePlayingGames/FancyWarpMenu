@@ -27,7 +27,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 
-import static ca.tirelesstraveler.fancywarpmenu.data.DataCommon.gson;
+import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.gson;
 
 /**
  * Warp entry data used to create the warp buttons on the GUI

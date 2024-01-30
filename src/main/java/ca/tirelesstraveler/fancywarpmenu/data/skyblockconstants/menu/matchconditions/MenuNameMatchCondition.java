@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. TirelessTraveler
+ * Copyright (c) 2024. TirelessTraveler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +20,30 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants;
+package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions;
 
 /**
- * In-game menus, not serialized
+ * A {@link MenuMatchCondition} that checks if a given SkyBlock {@code GuiChest} menu has the same display name as the
+ * name specified in this condition.
  */
-public enum Menu {
-    /** Value used when player is not in a menu or in an unknown or irrelevant menu */
-    NONE("None"),
-    SKYBLOCK_MENU("SkyBlock Menu"),
-    FAST_TRAVEL("Fast Travel"),
-    PORHTAL("Porhtal");
+@SuppressWarnings("unused")
+public class MenuNameMatchCondition extends MenuMatchCondition {
+    /** The name of the menu, as displayed at the top of the {@code GuiChest} */
+    private String menuName;
 
-    /** Title of menu as it appears on the top of the {@code GuiChest}*/
-    private final String MENU_TITLE;
-    Menu(String menuTitle) {
-        MENU_TITLE = menuTitle;
+    private MenuNameMatchCondition() {}
+
+    public String getMenuName() {
+        return menuName;
     }
 
-    public String getMenuTitle() {
-        return MENU_TITLE;
+    public boolean menuNameMatches(String menuName) {
+        return this.menuName.equals(menuName);
+    }
+
+    public void validateCondition() {
+        if (this.menuName == null) {
+            throw new NullPointerException("menuName cannot be null");
+        }
     }
 }

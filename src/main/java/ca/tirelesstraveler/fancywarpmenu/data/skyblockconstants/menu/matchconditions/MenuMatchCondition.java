@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. TirelessTraveler
+ * Copyright (c) 2024. TirelessTraveler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,34 +20,16 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu;
+package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-
-public class OpenConfigCommand extends CommandBase {
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
-    @Override
-    public String getCommandName() {
-        return "fancywarpmenuconfig";
-    }
-
-    @Override
-    public String getCommandUsage(ICommandSender sender) {
-        // Is not shown in a server-side help menu
-        return "";
-    }
+/**
+ * A condition that is checked to identify the current SkyBlock {@code GuiChest} menu the player has open.
+ */
+public abstract class MenuMatchCondition {
 
     /**
-     * The chat GUI closes the current screen after executing the command.
-     * The {@link net.minecraftforge.event.CommandEvent} is intercepted instead to prevent the screen from being closed.
+     * Checks that this {@code MenuMatchCondition} contains valid field values after deserialization.
+     * Implementations should throw {@code RuntimeException} when invalid values are found.
      */
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) {
-        FancyWarpMenu.getInstance().getWarpMenuListener().onOpenConfigMenuCommand();
-    }
+    public void validateCondition() {}
 }

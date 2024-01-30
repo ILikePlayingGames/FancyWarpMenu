@@ -22,6 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
+import ca.tirelesstraveler.fancywarpmenu.commands.OpenConfigCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
@@ -30,6 +31,8 @@ import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstant
 import ca.tirelesstraveler.fancywarpmenu.listeners.SkyBlockJoinListener;
 import ca.tirelesstraveler.fancywarpmenu.listeners.WarpMenuListener;
 import ca.tirelesstraveler.fancywarpmenu.resourceloaders.SkyBlockConstantsLoader;
+import ca.tirelesstraveler.fancywarpmenu.state.EnvironmentDetails;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -58,8 +61,6 @@ public class FancyWarpMenu {
     private static String modId;
     static Logger logger;
     private static ForgeVersion.CheckResult updateCheckResult;
-    private static Layout layout;
-    private static Layout riftLayout;
     private static SkyBlockConstants skyBlockConstants;
     private static SkyBlockJoinListener skyblockJoinListener;
     private static WarpMenuListener warpMenuListener;
@@ -72,7 +73,7 @@ public class FancyWarpMenu {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         ProgressManager.ProgressBar bar = ProgressManager.push("Pre-init", 5);
-        EnvironmentDetails.deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+        EnvironmentDetails.setDeobfuscatedEnvironment((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment"));
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
         bar.step("Initializing Listeners");
@@ -90,9 +91,9 @@ public class FancyWarpMenu {
         bar.step("Loading SkyBlock Constants");
         skyBlockConstants = SkyBlockConstantsLoader.loadSkyBlockConstants();
         bar.step("Loading Layout");
-        layout = LayoutLoader.loadLayout(LayoutLoader.LAYOUT_LOCATION);
+        FancyWarpMenuState.setOverworldLayout(LayoutLoader.loadLayout(LayoutLoader.OVERWORLD_LAYOUT_LOCATION));
         bar.step("Loading Rift Layout");
-        riftLayout = LayoutLoader.loadLayout(LayoutLoader.RIFT_LAYOUT_LOCATION);
+        FancyWarpMenuState.setRiftLayout(LayoutLoader.loadLayout(LayoutLoader.RIFT_LAYOUT_LOCATION));
         ProgressManager.pop(bar);
     }
 
@@ -103,25 +104,25 @@ public class FancyWarpMenu {
         ClientRegistry.registerKeyBinding(keyBindingOpenWarpMenu);
         ClientCommandHandler.instance.registerCommand(new OpenConfigCommand());
 
-        ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures", layout.getIslandList().size() + 1);
+        Layout overworldLayout = FancyWarpMenuState.getOverworldLayout();
+        ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures",
+                overworldLayout.getIslandList().size() + 1);
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        for (Island island : layout.getIslandList()) {
+        for (Island island : overworldLayout.getIslandList()) {
             bar.step(island.getName());
             textureManager.bindTexture(island.getTextureLocation());
         }
 
         bar.step("Warp Icon");
-        textureManager.bindTexture(layout.getWarpIcon().getTextureLocation());
+        textureManager.bindTexture(overworldLayout.getWarpIcon().getTextureLocation());
 
         ProgressManager.pop(bar);
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        if (Loader.isModLoaded("patcher")) {
-            EnvironmentDetails.patcherInstalled = true;
-        }
+        EnvironmentDetails.setPatcherInstalled(Loader.isModLoaded("patcher"));
     }
 
     public ModContainer getModContainer() {
@@ -156,16 +157,16 @@ public class FancyWarpMenu {
     }
 
     public void reloadLayouts() {
-        Layout loadedLayout = LayoutLoader.loadLayout(LayoutLoader.LAYOUT_LOCATION);
+        Layout loadedOverworldLayout = LayoutLoader.loadLayout(LayoutLoader.OVERWORLD_LAYOUT_LOCATION);
         Layout loadedRiftLayout = LayoutLoader.loadLayout(LayoutLoader.RIFT_LAYOUT_LOCATION);
 
         // Will be null if json syntax is wrong or layout is invalid
-        if (loadedLayout != null) {
-            FancyWarpMenu.layout = loadedLayout;
+        if (loadedOverworldLayout != null) {
+            FancyWarpMenuState.setOverworldLayout(loadedOverworldLayout);
         }
 
         if (loadedRiftLayout != null) {
-            FancyWarpMenu.riftLayout = loadedRiftLayout;
+            FancyWarpMenuState.setRiftLayout(loadedRiftLayout);
         }
     }
 
@@ -178,14 +179,6 @@ public class FancyWarpMenu {
 
     public static KeyBinding getKeyBindingOpenWarpMenu() {
         return keyBindingOpenWarpMenu;
-    }
-
-    public static Layout getLayout() {
-        return layout;
-    }
-
-    public static Layout getRiftLayout() {
-        return riftLayout;
     }
 
     public static SkyBlockConstants getSkyBlockConstants() {

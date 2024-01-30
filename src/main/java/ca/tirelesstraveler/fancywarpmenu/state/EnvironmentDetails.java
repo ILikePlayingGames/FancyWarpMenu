@@ -20,50 +20,36 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu;
-
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.Menu;
+package ca.tirelesstraveler.fancywarpmenu.state;
 
 /**
- * This class stores information about the state of the SkyBlock game the player is currently in.
+ * Information about the local environment at runtime, for constants and compatibility with other mods
  */
-public class GameState {
+public class EnvironmentDetails {
+    public static final String SUPPORT_LINK = "https://discord.gg/tXFf9umfA9";
+    private static boolean deobfuscatedEnvironment;
     /**
-     * Whether the player is currently on SkyBlock
-     */
-    private static boolean onSkyBlock;
-    /**
-     * Whether the current SkyBlock season is Late Winter
-     */
-    private static boolean lateWinter;
+     *  Whether the Sk1er Patcher mod is installed. Patcher's GUI scale feature causes the Fancy Warp Menu to not be
+     *  scaled properly so the menu must be initialized differently when Patcher is present.
+     * */
+    private static boolean patcherInstalled;
 
-    /**
-     * Current in-game menu the player has open
-     */
-    private static Menu currentMenu;
-
-    public static boolean isOnSkyBlock() {
-        return onSkyBlock || Settings.shouldSkipSkyBlockCheck();
+    private EnvironmentDetails() {
     }
 
-    public static void setOnSkyBlock(boolean onSkyBlock) {
-        GameState.onSkyBlock = onSkyBlock;
+    public static boolean isDeobfuscatedEnvironment() {
+        return deobfuscatedEnvironment;
     }
 
-    public static boolean isLateWinter() {
-        return lateWinter;
+    public static boolean isPatcherInstalled() {
+        return patcherInstalled;
     }
 
-    public static void setLateWinter(boolean lateWinter) {
-        GameState.lateWinter = lateWinter;
+    public static void setDeobfuscatedEnvironment(boolean deobfuscatedEnvironment) {
+        EnvironmentDetails.deobfuscatedEnvironment = deobfuscatedEnvironment;
     }
 
-    public static Menu getCurrentMenu() {
-        return currentMenu;
-    }
-
-    public static void setCurrentMenu(Menu currentMenu) {
-        GameState.currentMenu = currentMenu;
+    public static void setPatcherInstalled(boolean patcherInstalled) {
+        EnvironmentDetails.patcherInstalled = patcherInstalled;
     }
 }

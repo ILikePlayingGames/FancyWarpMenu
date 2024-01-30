@@ -55,3 +55,6 @@ fancywarpmenu.errors.notUnlocked=Not Unlocked
 fancywarpmenu.errors.unknownDestination=Unknown Destination
 fancywarpmenu.errors.noDestination=No Destination Found
 fancywarpmenu.errors.notVisited=Visit Location to Unlock Warp
+fancywarpmenu.errors.slotNumberOutOfBounds=Invalid Slot Number (%d)
+fancywarpmenu.errors.slotHasNoItem=Slot %d Has No Item to Click On
+fancywarpmenu.errors.mouseIsHoldingItem=Mouse is Already Holding an Item
