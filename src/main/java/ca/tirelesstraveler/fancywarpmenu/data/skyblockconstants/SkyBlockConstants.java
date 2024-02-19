@@ -22,8 +22,8 @@
 
 package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants;
 
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.ItemMatchCondition;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions.MenuMatchCondition;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,11 +34,10 @@ import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.g
 
 @SuppressWarnings("unused")
 public class SkyBlockConstants {
-    private SkyBlockConstants() {
-    }
+    public static final String WARP_COMMAND_BASE = "/warp";
 
-    /** A map with SkyBlock menus as keys and lists of conditions used to identify them as values */
-    private Map<Menu, List<MenuMatchCondition>> menuMatchingMap;
+    /** Map of match conditions used to identify SkyBlock menus */
+    private Map<Menu, List<ItemMatchCondition>> menuMatchingMap;
 
     /** Chat messages sent by the server when a warp attempt succeeds or fails */
     private WarpMessages warpMessages;
@@ -47,8 +46,23 @@ public class SkyBlockConstants {
     /** Chat messages are checked to see if they start with this string in order to see if the player joined SkyBlock */
     private String skyBlockJoinMessage;
 
-    public Map<Menu, List<MenuMatchCondition>> getMenuMatchingMap() {
+    private SkyBlockConstants() {
+    }
+
+    public Map<Menu, List<ItemMatchCondition>> getMenuMatchingMap() {
         return menuMatchingMap;
+    }
+
+    /**
+     * Returns the inventory slot index of the last {@link ItemMatchCondition} for the given {@link Menu}.
+     *
+     * @param menu the {@code Menu} to get the inventory slot index from
+     * @return the inventory slot index of the last {@code ItemMatchCondition} for the given {@code Menu}
+     */
+    public int getLastMatchConditionInventorySlotIndex(Menu menu) {
+        List<ItemMatchCondition> matchConditions = menuMatchingMap.get(menu);
+
+        return matchConditions.get(matchConditions.size() - 1).getInventorySlotIndex();
     }
 
     public WarpMessages getWarpMessages() {
@@ -73,11 +87,11 @@ public class SkyBlockConstants {
             throw new NullPointerException("SkyBlock constants cannot be null");
         }
 
-        for(Map.Entry<Menu, List<MenuMatchCondition>> menuMatchingMapEntry : skyBlockConstants.menuMatchingMap.entrySet()) {
-            List<MenuMatchCondition> matchConditions = getMenuMatchConditions(menuMatchingMapEntry);
+        for(Map.Entry<Menu, List<ItemMatchCondition>> menuMatchingMapEntry : skyBlockConstants.menuMatchingMap.entrySet()) {
+            List<ItemMatchCondition> matchConditions = getMenuMatchConditions(menuMatchingMapEntry);
 
-            for (MenuMatchCondition menuMatchCondition : matchConditions) {
-                menuMatchCondition.validateCondition();
+            for (ItemMatchCondition matchCondition : matchConditions) {
+                matchCondition.validateCondition();
             }
         }
 
@@ -97,8 +111,8 @@ public class SkyBlockConstants {
     }
 
     @NotNull
-    private static List<MenuMatchCondition> getMenuMatchConditions(Map.Entry<Menu, List<MenuMatchCondition>> menuMatchingMapEntry) {
-        List<MenuMatchCondition> matchConditions = menuMatchingMapEntry.getValue();
+    private static List<ItemMatchCondition> getMenuMatchConditions(Map.Entry<Menu, List<ItemMatchCondition>> menuMatchingMapEntry) {
+        List<ItemMatchCondition> matchConditions = menuMatchingMapEntry.getValue();
 
         if (matchConditions == null) {
             throw new NullPointerException(String.format("Menu %s's menu match conditions list cannot be null",

@@ -22,9 +22,11 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
@@ -39,6 +41,8 @@ public class GuiRiftFastTravel extends GuiFancyWarp {
 
     public GuiRiftFastTravel(IInventory playerInventory, IInventory chestInventory, Layout layout) {
         super(playerInventory, chestInventory, layout);
+        menu = Menu.PORHTAL;
+        lastSlotIndexToCheck = FancyWarpMenu.getSkyBlockConstants().getLastMatchConditionInventorySlotIndex(menu);
     }
 
     @Override

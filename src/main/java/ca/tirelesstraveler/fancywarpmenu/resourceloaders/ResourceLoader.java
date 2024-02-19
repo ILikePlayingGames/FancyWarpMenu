@@ -23,8 +23,6 @@
 package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions.MenuMatchCondition;
-import ca.tirelesstraveler.fancywarpmenu.resourceloaders.typeadapters.MenuMatchConditionAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
@@ -43,7 +41,6 @@ import java.io.IOException;
 public abstract class ResourceLoader {
     public static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
-            .registerTypeAdapter(MenuMatchCondition.class, new MenuMatchConditionAdapter())
             .create();
     protected static final Logger logger = LogManager.getLogger();
 

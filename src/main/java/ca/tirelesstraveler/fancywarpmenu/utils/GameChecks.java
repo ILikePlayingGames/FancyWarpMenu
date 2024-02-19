@@ -25,9 +25,7 @@ package ca.tirelesstraveler.fancywarpmenu.utils;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions.ItemMatchCondition;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions.MenuMatchCondition;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions.MenuNameMatchCondition;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.ItemMatchCondition;
 import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
@@ -78,46 +76,54 @@ public class GameChecks {
     }
 
     /**
-     * Determines which SkyBlock {@code GuiChest} menu the player is in using
-     * {@link ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions.MenuMatchCondition}s, saves
-     * the determined {@code Menu} to {@link ca.tirelesstraveler.fancywarpmenu.state.GameState}, and also returns it.
+     * Determines which SkyBlock {@code GuiChest} menu the player is in using the {@link net.minecraft.client.gui.inventory.GuiChest}
+     * display name. This is used for initial checks when the items haven't loaded in yet.
+     * The matched menu will be saved to {@code GameState#currentMenu}.
      *
      * @param chestInventory the inventory of the chest holding the menu
-     * @param titleOnly check only the chest title, used for initial checks when the items haven't loaded in yet
      * @return a {@code Menu} value representing the current menu the player has open
      */
-    public static Menu determineOpenMenu(IInventory chestInventory, boolean titleOnly) {
-        Menu matchedMenu = Menu.NONE;
-
+    public static Menu determineOpenMenu(IInventory chestInventory) {
         if (chestInventory.hasCustomName()) {
             String chestTitle = chestInventory.getDisplayName().getUnformattedText();
 
-            for (Map.Entry<Menu, List<MenuMatchCondition>> menuMatchingEntry :
+            for (Map.Entry<Menu, List<ItemMatchCondition>> menuMatchingEntry :
                     FancyWarpMenu.getSkyBlockConstants().getMenuMatchingMap().entrySet()) {
-                List<MenuMatchCondition> matchConditions = menuMatchingEntry.getValue();
-                boolean conditionFailed = false;
-
-                for (MenuMatchCondition matchCondition : matchConditions) {
-                    if (matchCondition.getClass().equals(MenuNameMatchCondition.class)) {
-                        if (!((MenuNameMatchCondition) matchCondition).menuNameMatches(chestTitle)) {
-                            conditionFailed = true;
-                            break;
-                        }
-                    } else if (!titleOnly && matchCondition.getClass().equals(ItemMatchCondition.class)) {
-                        if (!((ItemMatchCondition) matchCondition).inventoryContainsMatchingItem(chestInventory)) {
-                            conditionFailed = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!conditionFailed) {
-                    matchedMenu = menuMatchingEntry.getKey();
+                if (chestTitle.equals(menuMatchingEntry.getKey().getMenuDisplayName())) {
+                    GameState.setCurrentMenu(menuMatchingEntry.getKey());
+                    return menuMatchingEntry.getKey();
                 }
             }
         }
 
-        GameState.setCurrentMenu(matchedMenu);
-        return matchedMenu;
+        GameState.setCurrentMenu(Menu.NONE);
+        return Menu.NONE;
+    }
+
+    /**
+     * Determines if the player is in the given menu by checking whether all the {@link ItemMatchCondition}s for that menu
+     * match the given inventory. This should be used after the inventory has loaded the slot index returned by
+     * {@link ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants#getLastMatchConditionInventorySlotIndex(Menu)}.
+     *
+     * @param menu the {@code Menu} whose match conditions will be checked
+     * @param chestInventory the inventory to check against the match conditions
+     * @return {@code true} if all the {@link ItemMatchCondition}s match, {@code false} otherwise
+     */
+    public static boolean menuItemsMatch(Menu menu, IInventory chestInventory) {
+        List<ItemMatchCondition> matchConditions = FancyWarpMenu.getSkyBlockConstants().getMenuMatchingMap().get(menu);
+
+        for (ItemMatchCondition matchCondition : matchConditions) {
+            logger.debug("Starting item match on slot {} for menu {}.",
+                    matchCondition.getInventorySlotIndex(), menu);
+
+            if (!matchCondition.inventoryContainsMatchingItem(chestInventory)) {
+                logger.debug("Item match on slot {} failed.", matchCondition.getInventorySlotIndex());
+                GameState.setCurrentMenu(Menu.NONE);
+                return false;
+            }
+        }
+
+        GameState.setCurrentMenu(menu);
+        return true;
     }
 }

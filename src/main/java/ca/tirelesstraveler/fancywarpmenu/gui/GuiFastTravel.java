@@ -22,9 +22,11 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
+import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
@@ -40,6 +42,8 @@ public class GuiFastTravel extends GuiFancyWarp {
 
     public GuiFastTravel(IInventory playerInventory, IInventory chestInventory, Layout layout) {
         super(playerInventory, chestInventory, layout);
+        menu = Menu.FAST_TRAVEL;
+        lastSlotIndexToCheck = FancyWarpMenu.getSkyBlockConstants().getLastMatchConditionInventorySlotIndex(menu);
     }
 
     @Override
@@ -54,14 +58,14 @@ public class GuiFastTravel extends GuiFancyWarp {
                 // Don't send command twice for single warp islands
                 if (warpButton.getIsland().getWarpCount() > 1) {
                     String warpCommand = warpButton.getWarpCommand();
-                    sendCommand(warpCommand);
+                    mc.thePlayer.sendChatMessage(warpCommand);
                 }
             } else if (button instanceof GuiButtonIsland) {
                 Island island = ((GuiButtonIsland) button).getIsland();
 
                 if (island.getWarpCount() == 1) {
                     String warpCommand = island.getWarps().get(0).getWarpCommand();
-                    sendCommand(warpCommand);
+                    mc.thePlayer.sendChatMessage(warpCommand);
                 }
             }
         }

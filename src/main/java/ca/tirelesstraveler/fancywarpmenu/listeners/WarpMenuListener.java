@@ -24,6 +24,7 @@ package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
@@ -31,6 +32,7 @@ import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFastTravel;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiRiftFastTravel;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -45,6 +47,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,7 +85,7 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
         /*
         Minecraft closes the current screen after executing a command, meaning any GuiScreen opened by the command is closed.
         This section interrupts the closing of the current screen to get around this behavior.
-         */
+        */
         if (event.gui == null) {
             if (FancyWarpMenuState.isOpenConfigMenuRequested()) {
                 event.gui = new FancyWarpMenuConfigScreen(null);
@@ -92,13 +95,21 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
             IInventory playerInventory = mc.thePlayer.inventory;
             IInventory chestInventory = ((ContainerChest) ((GuiChest) event.gui).inventorySlots).getLowerChestInventory();
 
-            Menu currentMenu = GameChecks.determineOpenMenu(chestInventory, true);
+            Menu currentMenu = GameChecks.determineOpenMenu(chestInventory);
 
             if (currentMenu == Menu.FAST_TRAVEL) {
                 event.gui = new GuiFastTravel(playerInventory, chestInventory, FancyWarpMenuState.getOverworldLayout());
             } else if (currentMenu == Menu.PORHTAL) {
                 event.gui = new GuiRiftFastTravel(playerInventory, chestInventory, FancyWarpMenuState.getRiftLayout());
             }
+        }
+    }
+
+    @SubscribeEvent
+    public void keyTyped(InputEvent.KeyInputEvent event) {
+        if (Settings.isWarpMenuEnabled() && (GameState.isOnSkyBlock() || Settings.shouldSkipSkyBlockCheck()) &&
+                FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
+            mc.thePlayer.sendChatMessage(SkyBlockConstants.WARP_COMMAND_BASE);
         }
     }
 

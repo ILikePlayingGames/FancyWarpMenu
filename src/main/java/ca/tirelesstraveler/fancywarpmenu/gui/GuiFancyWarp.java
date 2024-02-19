@@ -27,10 +27,11 @@ import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Warp;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.*;
 import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
-import ca.tirelesstraveler.fancywarpmenu.listeners.ChestInventoryListener;
+import ca.tirelesstraveler.fancywarpmenu.listeners.InventoryChangeListener;
 import ca.tirelesstraveler.fancywarpmenu.state.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
@@ -43,8 +44,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.C01PacketChatMessage;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
@@ -69,19 +68,32 @@ public class GuiFancyWarp extends GuiChestMenu {
     /** The amount of time in ms that the error message remains on-screen after a failed warp attempt */
     private static final long WARP_FAIL_TOOLTIP_DISPLAY_TIME = 2000L;
 
+    protected Menu menu;
     protected Layout layout;
-    private final ChestInventoryListener inventoryListener;
+    private final InventoryBasic chestInventory;
+    private GuiButton configButton;
+    private InventoryChangeListener inventoryListener;
+    private String warpFailMessage;
+    /**
+     * Last slot index in the {@link ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.ItemMatchCondition}
+     * list for {@link #menu}
+     *
+     * @see SkyBlockConstants#getMenuMatchingMap()
+     */
+    protected int lastSlotIndexToCheck;
     protected long warpFailCoolDownExpiryTime;
     private boolean screenDrawn;
     private long warpFailTooltipExpiryTime;
-    private String warpFailMessage;
-    private GuiButton configButton;
 
     public GuiFancyWarp(IInventory playerInventory, IInventory chestInventory, Layout layout) {
         super(playerInventory, chestInventory);
         this.layout = layout;
-        inventoryListener = new ChestInventoryListener(new ChestItemChangeCallback(this));
-        ((InventoryBasic) chestInventory).addInventoryChangeListener(inventoryListener);
+        this.chestInventory = (InventoryBasic) chestInventory;
+
+        if (Settings.isWarpMenuEnabled()) {
+            inventoryListener = new InventoryChangeListener(new ChestItemChangeCallback(this));
+            this.chestInventory.addInventoryChangeListener(inventoryListener);
+        }
     }
 
     @Override
@@ -224,11 +236,17 @@ public class GuiFancyWarp extends GuiChestMenu {
                 setCustomUIState(false, false);
             }
         } else if (button instanceof GuiButtonConfig) {
-                Settings.setWarpMenuEnabled(true);
-                mc.thePlayer.addChatMessage(new ChatComponentTranslation(
-                        "fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(
-                                new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+            Settings.setWarpMenuEnabled(true);
+            mc.thePlayer.addChatMessage(new ChatComponentTranslation(
+                    "fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(
+                    new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+
+            if (GameChecks.menuItemsMatch(menu, chestInventory)) {
                 setCustomUIState(true, true);
+            } else {
+                FancyWarpMenuState.setOpenConfigMenuRequested(true);
+                mc.thePlayer.closeScreen();
+            }
         }
     }
 
@@ -272,11 +290,15 @@ public class GuiFancyWarp extends GuiChestMenu {
      */
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-
-        // Process button presses on the default UI too since the config button is also active there.
-        if (!customUIInteractionEnabled) {
-            handlePotentialButtonPress(configButton, mouseX, mouseY);
+        if (customUIInteractionEnabled) {
+            handleCustomUIMouseInput(mouseX, mouseY, mouseButton);
+        } else {
+            // Don't send a C0EPacketClickWindow when clicking the config button while the custom UI is disabled
+            if (mouseButton == 0 && configButton.isMouseOver()) {
+                actionPerformed(configButton);
+            } else {
+                super.mouseClicked(mouseX, mouseY, mouseButton);
+            }
         }
     }
 
@@ -329,19 +351,6 @@ public class GuiFancyWarp extends GuiChestMenu {
         }
     }
 
-    protected void sendCommand(String command) {
-        try {
-            // Packets are used to bypass EntityPlayerSPHook
-            mc.thePlayer.sendQueue.addToSendQueue(new C01PacketChatMessage(command));
-
-            if (Settings.shouldAddWarpCommandToChatHistory()) {
-                mc.ingameGUI.getChatGUI().addToSentMessages(command);
-            }
-        } catch (Exception e) {
-            logger.error(String.format("Failed to send command \"%s\": %s", command, e.getMessage()), e);
-        }
-    }
-
     protected void drawButtons(int mouseX, int mouseY) {
         for (GuiButton button : buttonList) {
             if (button instanceof GuiButtonConfig || Settings.isWarpMenuEnabled()) {
@@ -363,31 +372,26 @@ public class GuiFancyWarp extends GuiChestMenu {
         }
     }
 
-    private void onChestItemChange(InventoryBasic chestInventory, int triggerCount) {
-        ItemStack lastStack = chestInventory.getStackInSlot(chestInventory.getSizeInventory() - 1);
+    /**
+     * Called whenever an item in the inventory of the {@link GuiChestMenu} changes.
+     * This is used to enable the fancy warp menu when the SkyBlock menu the player has open is a warp menu.
+     *
+     * @param triggerCount number of times {@link #inventoryListener} was triggered
+     */
+    private void onChestItemChange(int triggerCount) {
+        /*
+        Don't start checking until the item in the last slot to check has been loaded.
 
-        if (lastStack != null) {
-            if (GameChecks.determineOpenMenu(chestInventory, false) == Menu.SKYBLOCK_MENU) {
+        The item change event is triggered twice for each item, and the item stack is set on the 2nd time it's
+        triggered. For example, slot 53 is actually set on the 106th time the item change event triggers.
+         */
+        if (triggerCount > lastSlotIndexToCheck * 2 && chestInventory.getStackInSlot(lastSlotIndexToCheck) != null) {
+            if (GameChecks.menuItemsMatch(menu, chestInventory)) {
                 setCustomUIState(true, true);
-                chestInventory.removeInventoryChangeListener(inventoryListener);
-                return;
             }
-        }
 
-        if (triggerCount > chestInventory.getSizeInventory()) {
             chestInventory.removeInventoryChangeListener(inventoryListener);
         }
-    }
-
-    private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {
-        debugStrings.add("gridX: " + nearestGridX);
-        debugStrings.add("gridY: " + nearestGridY);
-        // zLevel of -1 means z is not relevant, like in the case of screen coordinates
-        if (zLevel > -1) {
-            debugStrings.add("zLevel: " + zLevel);
-        }
-        drawHoveringText(debugStrings, drawX, drawY);
-        drawRect(drawX - 2, drawY - 2, drawX + 2, drawY + 2, Color.RED.getRGB());
     }
 
     /**
@@ -420,6 +424,17 @@ public class GuiFancyWarp extends GuiChestMenu {
         return false;
     }
 
+    private void drawDebugStrings(ArrayList<String> debugStrings, int drawX, int drawY, int nearestGridX, int nearestGridY, int zLevel) {
+        debugStrings.add("gridX: " + nearestGridX);
+        debugStrings.add("gridY: " + nearestGridY);
+        // zLevel of -1 means z is not relevant, like in the case of screen coordinates
+        if (zLevel > -1) {
+            debugStrings.add("zLevel: " + zLevel);
+        }
+        drawHoveringText(debugStrings, drawX, drawY);
+        drawRect(drawX - 2, drawY - 2, drawX + 2, drawY + 2, Color.RED.getRGB());
+    }
+
     /**
      * A callback called when any item in the chest it is attached to changes
      */
@@ -435,7 +450,7 @@ public class GuiFancyWarp extends GuiChestMenu {
         @Override
         public void accept(InventoryBasic chestInventory) {
             triggerCount++;
-            GUI_FANCY_WARP.onChestItemChange(chestInventory, triggerCount);
+            GUI_FANCY_WARP.onChestItemChange(triggerCount);
         }
     }
 }

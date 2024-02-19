@@ -1,18 +1,31 @@
 {
   "menuMatchingMap": {
-    "SKYBLOCK_MENU": [
-      {
-        "menuName": "SkyBlock Menu"
-      }
-    ],
     "FAST_TRAVEL": [
       {
-        "menuName": "Fast Travel"
+        "inventorySlotIndex": 45,
+        "itemName": "Island Browser",
+        "minecraftItemID": "minecraft:blaze_powder"
+      },
+      {
+        "inventorySlotIndex": 49,
+        "itemName": "Close",
+        "minecraftItemID": "minecraft:barrier"
+      },
+      {
+        "inventorySlotIndex": 53,
+        "itemName": "Paper Icons",
+        "minecraftItemID": "minecraft:map",
+        "loreMatchPattern": {
+          "pattern": ".*§eClick to toggle!$",
+          "flags": 0
+        }
       }
     ],
     "PORHTAL": [
       {
-        "menuName": "Porhtal"
+        "inventorySlotIndex": 31,
+        "itemName": "Close",
+        "minecraftItemID": "minecraft:barrier"
       }
     ]
   },

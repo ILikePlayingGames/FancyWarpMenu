@@ -27,8 +27,21 @@ package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu;
  */
 public enum Menu {
     /** Value used when player is not in a menu or in an unknown or irrelevant menu */
-    NONE,
-    SKYBLOCK_MENU,
-    FAST_TRAVEL,
-    PORHTAL
+    NONE(""),
+    SKYBLOCK_MENU("SkyBlock Menu"),
+    FAST_TRAVEL("Fast Travel"),
+    PORHTAL("Porhtal");
+
+    /**
+     * Menu name as displayed at the top of the {@code GuiChest}
+     */
+    final String MENU_DISPLAY_NAME;
+
+    Menu(String menuDisplayName) {
+        this.MENU_DISPLAY_NAME = menuDisplayName;
+    }
+
+    public String getMenuDisplayName() {
+        return MENU_DISPLAY_NAME;
+    }
 }

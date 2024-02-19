@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.matchconditions;
+package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -28,15 +28,19 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.util.Constants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Pattern;
 
 /**
- * A {@link MenuMatchCondition} that checks if a given SkyBlock {@code GuiChest} menu contains an item with the same
+ * A match condition that checks if a given SkyBlock {@code GuiChest} menu contains an item with the same
  * item name, inventory slot index, Minecraft item ID, and SkyBlock item ID as the item specified in this condition.
  */
 @SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "unused"})
-public class ItemMatchCondition extends MenuMatchCondition {
+public class ItemMatchCondition {
+    public static final Logger logger = LogManager.getLogger();
+
     /** Display name of the {@code ItemStack} (excluding formatting codes) */
     private String itemName;
     /** The slot index of the slot the item occupies in the {@code IInventory} provided to {@link #inventoryContainsMatchingItem(IInventory)} */
@@ -100,35 +104,41 @@ public class ItemMatchCondition extends MenuMatchCondition {
 
             if (itemName != null) {
                 itemNameMatches = itemStack.hasDisplayName() &&
-                        !StringUtils.stripControlCodes(itemStack.getDisplayName()).equals(itemName);
+                        StringUtils.stripControlCodes(itemStack.getDisplayName()).equals(itemName);
+                logger.debug("Item name matches: {}", itemNameMatches);
 
                 if (!itemNameMatches) return false;
             }
 
             if (minecraftItemID != null) {
                 minecraftItemIDMatches = itemStack.getItem().getRegistryName().equals(minecraftItemID);
+                logger.debug("Minecraft registry ID matches: {}", minecraftItemIDMatches);
 
                 if (!minecraftItemIDMatches) return false;
             }
 
+            // Following checks require NBT data, fail if NBT data not present
+            if (!itemStack.hasTagCompound()) return false;
+
             if (skyBlockItemID != null) {
-                if (!itemStack.hasTagCompound() || !itemStack.getTagCompound().hasKey("ExtraAttributes", Constants.NBT.TAG_COMPOUND)) {
+                if (!itemStack.getTagCompound().hasKey("ExtraAttributes", Constants.NBT.TAG_COMPOUND)) {
                     return false;
                 }
 
                 NBTTagCompound extraAttributesTag = itemStack.getSubCompound("ExtraAttributes", false);
                 skyBlockItemIDMatches = extraAttributesTag.hasKey("id", Constants.NBT.TAG_STRING) &&
                         extraAttributesTag.getString("id").equals(skyBlockItemID);
+                logger.debug("SkyBlock Item ID matches: {}", skyBlockItemIDMatches);
 
                 if (!skyBlockItemIDMatches) return false;
             }
 
-            if (loreMatchPattern != null) {
-                if (!itemStack.hasTagCompound() || !itemStack.getTagCompound().hasKey("display")) {
+            if (loreMatchPattern != null && loreMatchPattern.pattern() != null) {
+                if (!itemStack.getTagCompound().hasKey("display", Constants.NBT.TAG_COMPOUND)) {
                     return false;
                 }
 
-                NBTTagCompound displayTag = itemStack.getTagCompound().getCompoundTag("display");
+                NBTTagCompound displayTag = itemStack.getSubCompound("display", false);
 
                 if (displayTag.hasKey("Lore", Constants.NBT.TAG_LIST)) {
                     NBTTagList loreTag = displayTag.getTagList("Lore", Constants.NBT.TAG_STRING);
@@ -139,12 +149,12 @@ public class ItemMatchCondition extends MenuMatchCondition {
                         for (int i = 0; i < loreTag.tagCount(); i++) {
                             loreStringBuilder.append(loreTag.getStringTagAt(i)).append("\n");
                         }
-
-                        loreStringBuilder.setLength(loreStringBuilder.length() - 1);
+                        loreStringBuilder.deleteCharAt(loreStringBuilder.length() - 1);
 
                         String loreString = loreStringBuilder.toString();
 
                         lorePatternMatches = loreMatchPattern.asPredicate().test(loreString);
+                        logger.debug("Lore pattern matches: {}", lorePatternMatches);
 
                         return lorePatternMatches;
                     }
@@ -157,15 +167,23 @@ public class ItemMatchCondition extends MenuMatchCondition {
         return false;
     }
 
+    /**
+     * Verifies that this match condition's properties are valid.
+     * This is called for conditions that have just been deserialized.
+     */
     public void validateCondition() {
 
         if (this.inventorySlotIndex <= -1) {
             throw new IllegalArgumentException("inventorySlotIndex must be greater than or equal to 0");
         }
 
-        if (this.itemName == null && this.minecraftItemID == null &&
-                this.skyBlockItemID == null && this.loreMatchPattern == null) {
-            throw new IllegalArgumentException("No item name, Minecraft item ID, SkyBlock item ID, or lore criteria specified");
+        if (this.itemName == null && this.minecraftItemID == null && this.skyBlockItemID == null && this.loreMatchPattern == null) {
+            throw new IllegalArgumentException("No item name, Minecraft item ID, SkyBlock item ID, or lore criteria specified.");
+        }
+
+        if (this.loreMatchPattern != null && loreMatchPattern.pattern() == null) {
+            throw new IllegalArgumentException(
+                    String.format("Lore match pattern for item in slot %d lacks a regex string.", inventorySlotIndex));
         }
     }
 }

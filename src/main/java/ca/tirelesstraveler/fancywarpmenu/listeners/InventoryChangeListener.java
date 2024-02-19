@@ -27,10 +27,13 @@ import net.minecraft.inventory.InventoryBasic;
 
 import java.util.function.Consumer;
 
-public class ChestInventoryListener implements IInvBasic {
+/**
+ * A simple listener that calls a callback when an item changes in the inventory it is assigned to.
+ */
+public class InventoryChangeListener implements IInvBasic {
     private final Consumer<InventoryBasic> CALLBACK;
 
-    public ChestInventoryListener(Consumer<InventoryBasic> callback) {
+    public InventoryChangeListener(Consumer<InventoryBasic> callback) {
         CALLBACK = callback;
     }
 
