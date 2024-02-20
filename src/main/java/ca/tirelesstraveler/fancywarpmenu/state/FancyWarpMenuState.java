@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.state;
 
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import net.minecraft.client.Minecraft;
 
@@ -32,8 +33,21 @@ import net.minecraft.client.Minecraft;
 public class FancyWarpMenuState {
     private static Layout overworldLayout;
     private static Layout riftLayout;
-    private static boolean openWarpMenuRequested;
     private static boolean openConfigMenuRequested;
+
+    /**
+     * Gets the layout corresponding to the given SkyBlock menu.
+     *
+     * @param menu the SkyBlock menu to get a layout for
+     * @return {@code riftLayout} if {@code Menu.PORHTAL} is provided, {@code overworldLayout} otherwise
+     */
+    public static Layout getLayoutForMenu(Menu menu) {
+        if (menu == Menu.PORHTAL) {
+            return getRiftLayout();
+        } else {
+            return getOverworldLayout();
+        }
+    }
 
     public static Layout getOverworldLayout() {
         return overworldLayout;
@@ -47,10 +61,6 @@ public class FancyWarpMenuState {
         return Minecraft.getMinecraft().currentScreen instanceof GuiFancyWarp;
     }
 
-    public static boolean isOpenWarpMenuRequested() {
-        return openWarpMenuRequested;
-    }
-
     public static boolean isOpenConfigMenuRequested() {
         return openConfigMenuRequested;
     }
@@ -61,10 +71,6 @@ public class FancyWarpMenuState {
 
     public static void setRiftLayout(Layout riftLayout) {
         FancyWarpMenuState.riftLayout = riftLayout;
-    }
-
-    public static void setOpenWarpMenuRequested(boolean openWarpMenuRequested) {
-        FancyWarpMenuState.openWarpMenuRequested = openWarpMenuRequested;
     }
 
     public static void setOpenConfigMenuRequested(boolean openConfigMenuRequested) {

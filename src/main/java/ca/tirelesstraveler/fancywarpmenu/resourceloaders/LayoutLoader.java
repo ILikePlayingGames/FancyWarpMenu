@@ -53,6 +53,9 @@ public class LayoutLoader extends ResourceLoader {
                 Layout layout = gson.fromJson(reader, Layout.class);
                 Layout.validateLayout(layout);
 
+                // Layout background texture
+                layout.setBackgroundTextureLocation();
+
                 // Warp icon
                 WarpIcon warpIcon = layout.getWarpIcon();
                 Warp.setWarpIcon(warpIcon);

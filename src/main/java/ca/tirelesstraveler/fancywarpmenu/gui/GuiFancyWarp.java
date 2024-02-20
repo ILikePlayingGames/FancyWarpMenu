@@ -87,7 +87,7 @@ public class GuiFancyWarp extends GuiChestMenu {
     private long warpFailTooltipExpiryTime;
 
     public GuiFancyWarp(IInventory playerInventory, IInventory chestInventory, Layout layout) {
-        super(playerInventory, chestInventory);
+        super(playerInventory, chestInventory, layout.getBackgroundTextureLocation());
         this.layout = layout;
         this.chestInventory = (InventoryBasic) chestInventory;
 
@@ -108,7 +108,8 @@ public class GuiFancyWarp extends GuiChestMenu {
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
-        configButton = new GuiButtonConfig(layout, buttonList.size(), res);
+        buttonList.clear();
+        configButton = new GuiButtonConfig(layout, 0, res);
         buttonList.add(configButton);
         if (Settings.shouldShowRegularWarpMenuButton()) {
             buttonList.add(new GuiButtonRegularWarpMenu(layout, buttonList.size(), res, scaledGrid));
@@ -273,6 +274,7 @@ public class GuiFancyWarp extends GuiChestMenu {
                     modInstance.reloadLayouts();
                 }
 
+                layout = FancyWarpMenuState.getLayoutForMenu(menu);
                 initGui();
             } else if (keyCode == Keyboard.KEY_TAB) {
                 Settings.setShowDebugOverlay(!Settings.shouldShowDebugOverlay());

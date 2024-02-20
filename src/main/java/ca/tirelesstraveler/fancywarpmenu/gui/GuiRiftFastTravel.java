@@ -23,19 +23,14 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
-import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
-import org.lwjgl.input.Keyboard;
-
-import java.io.IOException;
 
 public class GuiRiftFastTravel extends GuiFancyWarp {
 
@@ -65,16 +60,6 @@ public class GuiRiftFastTravel extends GuiFancyWarp {
                     clickSlot(island.getWarps().get(0).getSlotIndex());
                 }
             }
-        }
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-
-        if (Settings.isDebugModeEnabled() && keyCode == Keyboard.KEY_R) {
-            this.layout = FancyWarpMenuState.getRiftLayout();
-            this.onResize(mc, res.getScaledWidth(), res.getScaledHeight());
         }
     }
 }

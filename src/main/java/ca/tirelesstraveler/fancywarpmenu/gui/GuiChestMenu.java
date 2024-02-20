@@ -57,8 +57,8 @@ public abstract class GuiChestMenu extends GuiChest {
      */
     protected GuiButton selectedButton;
 
-    public GuiChestMenu(IInventory playerInventory, IInventory chestInventory) {
-        this(playerInventory, chestInventory, null, false, false);
+    public GuiChestMenu(IInventory playerInventory, IInventory chestInventory, ResourceLocation backgroundTextureLocation) {
+        this(playerInventory, chestInventory, backgroundTextureLocation, false, false);
     }
 
     public GuiChestMenu(IInventory playerInventory, IInventory chestInventory, ResourceLocation backgroundTextureLocation,
