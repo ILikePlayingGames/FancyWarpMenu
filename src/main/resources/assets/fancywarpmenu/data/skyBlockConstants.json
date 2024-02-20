@@ -37,7 +37,8 @@
       "Unknown destination! Check the Fast Travel menu to view options!": "fancywarpmenu.errors.unknownDestination",
       "You haven't unlocked this fast travel destination!": "fancywarpmenu.errors.notUnlocked",
       "Couldn't warp you! Try again later. (NO_DESTINATION_FOUND)": "fancywarpmenu.errors.noDestination",
-      "You need to have visited this island at least once before fast traveling to it!": "fancywarpmenu.errors.notVisited"
+      "You need to have visited this island at least once before fast traveling to it!": "fancywarpmenu.errors.notVisited",
+      "Jerry's Workshop is only available during the Winter!": "fancywarpmenu.errors.notOpenYet"
     }
   },
   "warpCommandVariants": [
