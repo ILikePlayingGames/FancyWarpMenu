@@ -27,6 +27,9 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.gson;
 
 /**
@@ -36,7 +39,9 @@ import static ca.tirelesstraveler.fancywarpmenu.resourceloaders.ResourceLoader.g
 public class Warp {
     // Height scale is the same as width
     /** Grid unit width is islandWidth / widthFactor */
-    public static int GRID_UNIT_WIDTH_FACTOR = 40;
+    public static final int GRID_UNIT_WIDTH_FACTOR = 40;
+    /** Pattern used to validate tags in {@link Warp#validateWarp(Warp)} */
+    private static final Pattern tagValidationPattern = Pattern.compile("[a-z\\d-]");
     /** Warp button texture, shared between all warp buttons */
     public static WarpIcon warpIcon;
     /** Warp button width in pixels, see {@link this#initDefaults(ScaledResolution)} */
@@ -51,12 +56,10 @@ public class Warp {
     private String displayName;
     /** Name of the warp as used in the {@code /warp} command */
     private String commandName;
+    /** Tags used to group related warps together */
+    private List<String> tags;
     /** Index of the inventory slot corresponding to this warp in a warp {@code GuiChest} */
     private int slotIndex;
-    /** Don't draw the display name under the warp's button */
-    private boolean hideDisplayName;
-    /** Warps only usable during special game modes such as Bingo */
-    private boolean requiresSpecialGameMode;
     /** Skips drawing the warp button, useful for islands with only one warp */
     private boolean hideButton;
 
@@ -65,7 +68,7 @@ public class Warp {
     }
 
     public String getDisplayName() {
-        return hideDisplayName ? "" : displayName;
+        return displayName;
     }
 
     public ResourceLocation getWarpTextureLocation() {
@@ -82,7 +85,14 @@ public class Warp {
      */
     public String getWarpCommand() {
         // hardcoded to prevent command injection
-        return commandName.equals("/savethejerrys") ? commandName : "/warp " + commandName;
+        return commandName.equals("/garry") ? commandName : "/warp " + commandName;
+    }
+
+    /**
+     * Returns the list of category tags
+     */
+    public List<String> getTags() {
+        return tags;
     }
 
     public int getSlotIndex() {
@@ -105,10 +115,6 @@ public class Warp {
         return gridY;
     }
 
-    public boolean requiresSpecialGameMode() {
-        return requiresSpecialGameMode;
-    }
-
     public boolean shouldHideButton() {
         return hideButton;
     }
@@ -128,10 +134,6 @@ public class Warp {
         height = (int) (warpIcon.getTextureHeight() * scaleFactor);
     }
 
-    public void setHideDisplayName(boolean hideDisplayName) {
-        this.hideDisplayName = hideDisplayName;
-    }
-
     public static void setWarpIcon(WarpIcon warpIcon) {
         Warp.warpIcon = warpIcon;
     }
@@ -148,6 +150,18 @@ public class Warp {
 
         if (StringUtils.isNullOrEmpty(warp.commandName) && warp.slotIndex < 0) {
             throw new IllegalArgumentException(String.format("Warp %s must have a command name or a slot index", warp.displayName));
+        }
+
+        if (warp.commandName != null && !warp.commandName.matches("(?i)/?[a-z]+")) {
+            throw new IllegalArgumentException("Warp %s's command name contains invalid characters.");
+        }
+
+        if (warp.tags != null) {
+            for (String tag : warp.tags) {
+                if (!tagValidationPattern.asPredicate().test(tag)) {
+                    throw new IllegalArgumentException(String.format("\"%s\" is not a valid warp tag.", tag));
+                }
+            }
         }
 
         if (warp.gridX < 0 || warp.gridX > GRID_UNIT_WIDTH_FACTOR) {

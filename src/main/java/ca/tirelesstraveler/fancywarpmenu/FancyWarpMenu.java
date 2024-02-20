@@ -26,6 +26,7 @@ import ca.tirelesstraveler.fancywarpmenu.commands.OpenConfigCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.listeners.ChatListener;
 import ca.tirelesstraveler.fancywarpmenu.resourceloaders.LayoutLoader;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
 import ca.tirelesstraveler.fancywarpmenu.listeners.SkyBlockJoinListener;
@@ -62,8 +63,6 @@ public class FancyWarpMenu {
     static Logger logger;
     private static ForgeVersion.CheckResult updateCheckResult;
     private static SkyBlockConstants skyBlockConstants;
-    private static SkyBlockJoinListener skyblockJoinListener;
-    private static WarpMenuListener warpMenuListener;
     private static KeyBinding keyBindingOpenWarpMenu;
 
     public static FancyWarpMenu getInstance() {
@@ -77,11 +76,13 @@ public class FancyWarpMenu {
         modId = event.getModMetadata().modId;
         modContainer = Loader.instance().activeModContainer();
         bar.step("Initializing Listeners");
-        warpMenuListener = new WarpMenuListener();
+        WarpMenuListener warpMenuListener = new WarpMenuListener();
         MinecraftForge.EVENT_BUS.register(warpMenuListener);
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(warpMenuListener);
-        skyblockJoinListener = new SkyBlockJoinListener();
+        SkyBlockJoinListener skyblockJoinListener = new SkyBlockJoinListener();
         MinecraftForge.EVENT_BUS.register(skyblockJoinListener);
+        ChatListener chatListener = new ChatListener();
+        MinecraftForge.EVENT_BUS.register(chatListener);
         bar.step("Loading Settings");
         Settings.setConfig(new Configuration(event.getSuggestedConfigurationFile(), modContainer.getVersion()));
         Settings.setConfigPropertyOrder();
@@ -135,10 +136,6 @@ public class FancyWarpMenu {
 
     public static ForgeVersion.CheckResult getUpdateCheckResult() {
         return updateCheckResult;
-    }
-
-    public WarpMenuListener getWarpMenuListener() {
-        return warpMenuListener;
     }
 
     public void reloadResources() {

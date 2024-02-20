@@ -33,6 +33,8 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
     /** The button of the island this warp belongs to */
     private final GuiButtonIsland PARENT;
     private final Warp WARP;
+    /** Whether the warp label should be drawn under the button */
+    private boolean drawWarpLabel;
 
     /**
      * x and y are relative to the top left corner of the parent island button.
@@ -45,6 +47,7 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
         parent.scaledGrid.addRectangle(warp.getDisplayName(), buttonRectangle);
         zLevel = 10;
         displayString = warp.getDisplayName();
+        drawWarpLabel = true;
         backgroundTextureLocation = WARP.getWarpTextureLocation();
         foregroundTextureLocation = WARP.getWarpHoverEffectTextureLocation();
         transition = new ScaleTransition(0, 0, 0);
@@ -71,7 +74,7 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
                 drawButtonForegroundLayer(foregroundTextureLocation);
             }
 
-            if (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver()) {
+            if (drawWarpLabel && (!Settings.shouldHideWarpLabelsUntilIslandHovered() || PARENT.isMouseOver())) {
                 drawDisplayString(mc, buttonRectangle.getWidth() / 2F, buttonRectangle.getHeight());
             }
 
@@ -89,5 +92,13 @@ public class GuiButtonWarp extends GuiButtonScaleTransition {
 
     public Island getIsland() {
         return PARENT.island;
+    }
+
+    public Warp getWarp() {
+        return WARP;
+    }
+
+    public void setDrawWarpLabel(boolean drawWarpLabel) {
+        this.drawWarpLabel = drawWarpLabel;
     }
 }

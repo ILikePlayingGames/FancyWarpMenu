@@ -30,7 +30,7 @@ import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
-import ca.tirelesstraveler.fancywarpmenu.state.GameState;
+import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
@@ -44,6 +44,8 @@ public class GuiFastTravel extends GuiFancyWarp {
         super(playerInventory, chestInventory, layout);
         menu = Menu.FAST_TRAVEL;
         lastSlotIndexToCheck = FancyWarpMenu.getSkyBlockConstants().getLastMatchConditionInventorySlotIndex(menu);
+        // Season is needed to show/hide the Jerry island button.
+        GameChecks.checkSeason();
     }
 
     @Override
@@ -84,15 +86,6 @@ public class GuiFastTravel extends GuiFancyWarp {
     @Override
     protected void addIslandButtons() {
         for (Island island : FancyWarpMenuState.getOverworldLayout().getIslandList()) {
-            // Conditions for hiding Jerry's Workshop from the warp menu
-            if (!Settings.isDebugModeEnabled() || !Settings.shouldAlwaysShowJerryIsland()) {
-                if ((!Settings.shouldShowJerryIsland()
-                        || !GameState.isLateWinter())
-                        && island.getWarps().get(0).getWarpCommand().equals("/savethejerrys")) {
-                    continue;
-                }
-            }
-
             addIslandButton(island);
         }
 

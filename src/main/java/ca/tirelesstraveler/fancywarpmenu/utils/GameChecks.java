@@ -37,6 +37,8 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class contains utility methods that determine the values to save in {@link ca.tirelesstraveler.fancywarpmenu.state.GameState}
@@ -44,33 +46,41 @@ import java.util.Map;
  */
 public class GameChecks {
     private static final Logger logger = LogManager.getLogger();
+    private static final Matcher seasonMatcher =
+            Pattern.compile("(?:Late|Early)? ?(?<season>[a-zA-Z]+) \\d{1,2}.*").matcher("");
 
-    // TODO: Re-add show workshop during winter
     /**
-     * Checks if the SkyBlock season is Late Winter, used for hiding Jerry's Workshop when it's closed
+     * Checks the current SkyBlock season and saves using {@link GameState#setSeason(String)}.
      */
-    public static void checkLateWinter() {
+    public static void checkSeason() {
         // Don't run outside of SB to prevent exceptions
         if (!Settings.shouldSkipSkyBlockCheck()) {
             try {
                 Scoreboard sb = Minecraft.getMinecraft().theWorld.getScoreboard();
                 // SkyBlock sidebar objective
-                ArrayList<Score> scores = (ArrayList<Score>) sb.getSortedScores(sb.getObjective("SBScoreboard"));
+                ArrayList<Score> scores = (ArrayList<Score>) sb.getSortedScores(sb.getObjectiveInDisplaySlot(1));
 
                 // The date is always near the top (highest score) so we iterate backwards.
                 for (int i = scores.size(); i > 0; i--) {
                     Score score = scores.get(i - 1);
-                    String playerNameDisplayFormat = sb.getPlayersTeam(score.getPlayerName()).formatString("");
+                    String skyBlockScoreboardLine =
+                            sb.getPlayersTeam(score.getPlayerName()).formatString("").trim();
 
-                    if (playerNameDisplayFormat.trim().startsWith("Late Winter")) {
-                        GameState.setLateWinter(true);
-                        return;
+                    seasonMatcher.reset(skyBlockScoreboardLine);
+
+                    if (seasonMatcher.matches()) {
+                        String season = seasonMatcher.group("season");
+
+                        if (season != null) {
+                            GameState.setSeason(season);
+                            return;
+                        }
                     }
                 }
 
-                GameState.setLateWinter(false);
+                GameState.setSeason(null);
             } catch (RuntimeException e) {
-                logger.warn("Failed to check scoreboard season for late winter", e);
+                logger.warn("Failed to check scoreboard season", e);
             }
         }
     }

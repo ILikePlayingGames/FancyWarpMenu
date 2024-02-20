@@ -35,6 +35,7 @@ import ca.tirelesstraveler.fancywarpmenu.listeners.InventoryChangeListener;
 import ca.tirelesstraveler.fancywarpmenu.state.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
+import ca.tirelesstraveler.fancywarpmenu.utils.WarpVisibilityChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -266,12 +267,13 @@ public class GuiFancyWarp extends GuiChestMenu {
     protected void handleCustomUIKeyboardInput(char typedChar, int keyCode) {
         if (Settings.isDebugModeEnabled()) {
             if (keyCode == Keyboard.KEY_R) {
-                // Layout isn't loaded into the currently opened screen. That must be implemented in subclasses.
                 if (isShiftKeyDown()) {
                     modInstance.reloadResources();
                 } else {
                     modInstance.reloadLayouts();
                 }
+
+                initGui();
             } else if (keyCode == Keyboard.KEY_TAB) {
                 Settings.setShowDebugOverlay(!Settings.shouldShowDebugOverlay());
             } else if (keyCode == Keyboard.KEY_B) {
@@ -316,13 +318,7 @@ public class GuiFancyWarp extends GuiChestMenu {
         buttonList.add(islandButton);
 
         for (Warp warp : island.getWarps()) {
-            if (Settings.shouldHideWarpLabelForIslandsWithOneWarp() && island.getWarpCount() == 1) {
-                warp.setHideDisplayName(true);
-            }
-
-            if (!Settings.shouldHideUnobtainableWarps() || !warp.requiresSpecialGameMode()) {
-                buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
-            }
+            buttonList.add(new GuiButtonWarp(buttonList.size(), islandButton, warp));
         }
     }
 
@@ -359,12 +355,44 @@ public class GuiFancyWarp extends GuiChestMenu {
         }
     }
 
+    /**
+     * Updates the enable and visibility states of all the buttons in this {@code GuiFancyWarp}.
+     * This should be called when the screen is initialized or mod settings affecting button enable/visibility change.
+     *
+     * @see WarpVisibilityChecks#shouldShowWarp(Warp)
+     * @see Settings#shouldHideWarpLabelForIslandsWithOneWarp()
+     */
     @Override
     protected void updateButtonStates() {
         for (GuiButton button : buttonList) {
             // The config button is active on both the custom and default UI.
             if (button instanceof GuiButtonChestMenu && !(button instanceof GuiButtonConfig)) {
                 GuiButtonChestMenu buttonChestMenu = (GuiButtonChestMenu) button;
+
+                if (button instanceof GuiButtonIsland) {
+                    Island island = ((GuiButtonIsland) button).getIsland();
+
+                    if (island.getWarpCount() == 1) {
+                        boolean showIsland = WarpVisibilityChecks.shouldShowSingleWarpIsland(island);
+
+                        buttonChestMenu.setEnabled(showIsland);
+                        buttonChestMenu.setVisible(showIsland);
+                        continue;
+                    }
+                } else if (button instanceof GuiButtonWarp) {
+                    GuiButtonWarp warpButton = (GuiButtonWarp) button;
+                    Island island = warpButton.getIsland();
+                    Warp warp = warpButton.getWarp();
+                    boolean shouldShowWarp = WarpVisibilityChecks.shouldShowWarp(warp);
+
+                    if (island.getWarpCount() == 1) {
+                        warpButton.setDrawWarpLabel(!Settings.shouldHideWarpLabelForIslandsWithOneWarp());
+                    }
+
+                    warpButton.setEnabled(shouldShowWarp);
+                    warpButton.setVisible(shouldShowWarp);
+                    continue;
+                }
 
                 buttonChestMenu.setEnabled(customUIInteractionEnabled);
                 buttonChestMenu.setVisible(renderCustomUI);

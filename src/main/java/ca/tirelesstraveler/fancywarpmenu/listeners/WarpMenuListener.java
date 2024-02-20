@@ -25,10 +25,8 @@ package ca.tirelesstraveler.fancywarpmenu.listeners;
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
-import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFastTravel;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiRiftFastTravel;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
@@ -40,18 +38,12 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import java.util.Locale;
 
 /**
  * General purpose event listener
@@ -65,19 +57,6 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
         mc = Minecraft.getMinecraft();
         modInstance = FancyWarpMenu.getInstance();
         logger = LogManager.getLogger();
-    }
-
-    @SubscribeEvent
-    public void onChatMessageReceived(ClientChatReceivedEvent event) {
-        // type 0 is a standard chat message
-        if (event.type == 0 && FancyWarpMenuState.isFancyWarpMenuOpen()) {
-            String unformattedText = event.message.getUnformattedText();
-
-            if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
-                String failMessageKey = FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpFailMessages().get(unformattedText);
-                ((GuiFancyWarp) mc.currentScreen).onWarpFail(failMessageKey);
-            }
-        }
     }
 
     @SubscribeEvent
@@ -123,31 +102,5 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
         FancyWarpMenu.getInstance().reloadLayouts();
-    }
-
-    /**
-     * Checks if a given command is the warp command or any of its variants and returns the corresponding
-     * {@code WarpCommandVariant} object if one is found.
-     *
-     * @param command the command the player sent
-     * @return a {@link WarpCommandVariant} if one with the same command is found, or {@code null} otherwise
-     */
-    public static WarpCommandVariant getWarpCommandVariant(String command) {
-        // Trim off the slash and all arguments
-        String baseCommand = command.toLowerCase(Locale.US).substring(1).split(" ")[0];
-
-        for (WarpCommandVariant commandVariant : FancyWarpMenu.getSkyBlockConstants().getWarpCommandVariants()) {
-            if (commandVariant.getCommand().equals(baseCommand)) {
-                return commandVariant;
-            }
-        }
-
-        return null;
-    }
-
-    public static void sendReminderToUseWarpScreen() {
-        mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu
-                .getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
-                .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }
 }

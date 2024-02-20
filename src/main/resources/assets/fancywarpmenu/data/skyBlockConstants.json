@@ -64,6 +64,10 @@
     {
       "command": "savethejerrys",
       "type": "WARP"
+    },
+    {
+      "command": "garry",
+      "type": "WARP"
     }
   ],
   "skyBlockJoinMessage": "Profile ID:"

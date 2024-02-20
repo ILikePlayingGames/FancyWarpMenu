@@ -30,14 +30,13 @@ import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
  */
 public class GameState {
     /**
+     * The current in-game season
+     */
+    private static String season;
+    /**
      * Whether the player is currently on SkyBlock
      */
     private static boolean onSkyBlock;
-    /**
-     * Whether the current SkyBlock season is Late Winter
-     */
-    private static boolean lateWinter;
-
     /**
      * Current in-game menu the player has open
      */
@@ -51,12 +50,12 @@ public class GameState {
         GameState.onSkyBlock = onSkyBlock;
     }
 
-    public static boolean isLateWinter() {
-        return lateWinter;
+    public static String getSeason() {
+        return season;
     }
 
-    public static void setLateWinter(boolean lateWinter) {
-        GameState.lateWinter = lateWinter;
+    public static void setSeason(String season) {
+        GameState.season = season;
     }
 
     public static Menu getCurrentMenu() {
