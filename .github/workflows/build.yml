@@ -45,7 +45,6 @@ jobs:
         skip_ref_checkout: true
         download_translations: true
         export_only_approved: true
-        skip_untranslated_files: true
         push_translations: false
         upload_sources: false
       env:
