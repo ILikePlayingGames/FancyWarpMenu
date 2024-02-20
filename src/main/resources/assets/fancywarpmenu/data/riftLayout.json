@@ -1,0 +1,64 @@
+{
+  "islandList": [
+    {
+      "name": "Rift",
+      "texturePath": "textures/gui/islands/Rift.png",
+      "gridX": 21,
+      "gridY": 6,
+      "zLevel": 0,
+      "widthPercentage": 0.35,
+      "warpList": [
+        {
+          "displayName": "Wizard Tower",
+          "slotIndex": 10,
+          "gridX": 18,
+          "gridY": 25
+        },
+        {
+          "displayName": "Lagoon Hut",
+          "slotIndex": 11,
+          "gridX": 8,
+          "gridY": 23
+        },
+        {
+          "displayName": "Dreadfarm",
+          "slotIndex": 12,
+          "gridX": 18,
+          "gridY": 11
+        },
+        {
+          "displayName": "Plaza",
+          "slotIndex": 13,
+          "gridX": 22,
+          "gridY": 19
+        },
+        {
+          "displayName": "Colosseum",
+          "slotIndex": 14,
+          "gridX": 11,
+          "gridY": 18
+        },
+        {
+          "displayName": "Stillgore Château",
+          "slotIndex": 15,
+          "gridX": 31,
+          "gridY": 28
+        }
+      ]
+    }
+  ],
+  "warpIcon": {
+    "texturePath": "textures/gui/Portal.png",
+    "widthPercentage": 0.02
+  },
+  "configButton": {
+    "gridX": 60,
+    "gridY": 31,
+    "widthPercentage": 0.05
+  },
+  "regularWarpMenuButton": {
+    "gridX": 60,
+    "gridY": 29,
+    "widthPercentage": 0.05
+  }
+}

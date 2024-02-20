@@ -20,34 +20,36 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu;
+package ca.tirelesstraveler.fancywarpmenu.state;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.ICommandSender;
-
-public class OpenConfigCommand extends CommandBase {
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
-    @Override
-    public String getCommandName() {
-        return "fancywarpmenuconfig";
-    }
-
-    @Override
-    public String getCommandUsage(ICommandSender sender) {
-        // Is not shown in a server-side help menu
-        return "";
-    }
-
+/**
+ * Information about the local environment at runtime, for constants and compatibility with other mods
+ */
+public class EnvironmentDetails {
+    public static final String SUPPORT_LINK = "https://discord.gg/tXFf9umfA9";
+    private static boolean deobfuscatedEnvironment;
     /**
-     * The chat GUI closes the current screen after executing the command.
-     * The {@link net.minecraftforge.event.CommandEvent} is intercepted instead to prevent the screen from being closed.
-     */
-    @Override
-    public void processCommand(ICommandSender sender, String[] args) {
-        FancyWarpMenu.getInstance().getWarpMenuListener().onOpenConfigMenuCommand();
+     *  Whether the Sk1er Patcher mod is installed. Patcher's GUI scale feature causes the Fancy Warp Menu to not be
+     *  scaled properly so the menu must be initialized differently when Patcher is present.
+     * */
+    private static boolean patcherInstalled;
+
+    private EnvironmentDetails() {
+    }
+
+    public static boolean isDeobfuscatedEnvironment() {
+        return deobfuscatedEnvironment;
+    }
+
+    public static boolean isPatcherInstalled() {
+        return patcherInstalled;
+    }
+
+    public static void setDeobfuscatedEnvironment(boolean deobfuscatedEnvironment) {
+        EnvironmentDetails.deobfuscatedEnvironment = deobfuscatedEnvironment;
+    }
+
+    public static void setPatcherInstalled(boolean patcherInstalled) {
+        EnvironmentDetails.patcherInstalled = patcherInstalled;
     }
 }

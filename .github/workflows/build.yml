@@ -51,7 +51,7 @@ jobs:
         CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
         CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
     - name: Fix ownership of Gradle build directory
-      run: sudo chown -R $(whoami):$(id -gn) build
+      run:  '[ -d build ] && sudo chown -R $(whoami):$(id -gn) build || echo "Skipped, build directory does not exist."'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle

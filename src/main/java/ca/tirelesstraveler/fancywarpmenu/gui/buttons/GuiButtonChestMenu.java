@@ -20,7 +20,7 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.gui;
+package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,23 +31,23 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 
 /**
- * Button class with additional utility methods
+ * Button class used with {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiChestMenu}
  */
-public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiButtonExt> {
+public abstract class GuiButtonChestMenu extends GuiButton implements Comparable<GuiButtonChestMenu> {
     protected ResourceLocation backgroundTextureLocation;
     protected ResourceLocation foregroundTextureLocation;
 
     /**
      * Constructor without coordinates for when placement is set at runtime
      */
-    public GuiButtonExt(int buttonId, String buttonText) {
+    public GuiButtonChestMenu(int buttonId, String buttonText) {
         this(buttonId, 0, 0, buttonText);
     }
-    public GuiButtonExt(int buttonId, int x, int y, String buttonText) {
+    public GuiButtonChestMenu(int buttonId, int x, int y, String buttonText) {
         super(buttonId, x, y, buttonText);
     }
 
-    void setHovered(boolean hovered) {
+    public void setHovered(boolean hovered) {
         this.hovered = hovered;
     }
 
@@ -59,14 +59,6 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
         if (visible) {
             hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
         }
-    }
-
-    /**
-     * Draw the button's display string (label).
-     */
-    public void drawDisplayString(float x, float y) {
-        // White
-        drawDisplayString(x, y, 14737632);
     }
 
     /**
@@ -86,18 +78,26 @@ public abstract class GuiButtonExt extends GuiButton implements Comparable<GuiBu
     }
 
     /**
-     * Compares the z-level of this {@code GuiButtonExt} with another {@code GuiButtonExt}
+     * Compares the z-level of this {@code GuiButtonChestMenu} with another {@code GuiButtonChestMenu}
      * Returns negative if this button's z-level is smaller than the other button's, 0 if their z-levels are equal,
      * and positive if this button's z-level is greater than the other button's.
      *
      * @param o the object to be compared.
      */
     @Override
-    public int compareTo(@NotNull GuiButtonExt o) {
+    public int compareTo(@NotNull GuiButtonChestMenu o) {
         return (int) (this.zLevel - o.zLevel);
     }
 
     public int getZLevel() {
         return (int) zLevel;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
     }
 }

@@ -23,14 +23,14 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.GameState;
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
+import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.network.play.server.S3DPacketDisplayScoreboard;
+import net.minecraft.client.gui.GuiDownloadTerrain;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -40,25 +40,12 @@ import org.apache.logging.log4j.Logger;
  * Forge event and packet listener that detects when the player joins/leaves SkyBlock
  */
 @ChannelHandler.Sharable
-public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketDisplayScoreboard> {
+public class SkyBlockJoinListener {
     private static final String SERVER_BRAND_START = "Hypixel BungeeCord";
-    private static final String PACKET_LISTENER_NAME = String.format("%s:skyblock_join_listener",
-            FancyWarpMenu.getInstance().getModId());
 
     private static final Logger logger = LogManager.getLogger();
     private boolean serverBrandChecked;
     private boolean onHypixel;
-
-    public SkyBlockJoinListener() {
-        super(false);
-    }
-
-    @SubscribeEvent
-    public void onClientConnectedToServer(FMLNetworkEvent.ClientConnectedToServerEvent e) {
-        if (e.manager.channel().pipeline().get(PACKET_LISTENER_NAME) == null) {
-            e.manager.channel().pipeline().addBefore("packet_handler", PACKET_LISTENER_NAME, this);
-        }
-    }
 
     @SubscribeEvent
     public void onClientDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
@@ -66,60 +53,48 @@ public class SkyBlockJoinListener extends SimpleChannelInboundHandler<S3DPacketD
             serverBrandChecked = false;
             onHypixel = false;
             GameState.setOnSkyBlock(false);
-            logger.info("Disconnected from Hypixel.");
+            logger.debug("Disconnected from Hypixel.");
         }
     }
 
-    /**
-     * This method listens for {@link S3DPacketDisplayScoreboard} packets. These are sent once per world join/switch
-     * and contain the name of the game mode, thus making them excellent for checking whether the player is on SkyBlock.
-     */
-    @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, S3DPacketDisplayScoreboard packet) {
-        if (channelHandlerContext.channel().isOpen()) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+    @SubscribeEvent
+    public void onGuiOpen(GuiOpenEvent event) {
+        // Reset on world switch
+        if (event.gui instanceof GuiDownloadTerrain) {
+            GameState.setOnSkyBlock(false);
+        }
+    }
 
-            try {
-                logger.debug("Received S3DPacketDisplayScoreboard packet with title \"{}\"", packet.func_149370_d());
+    @SubscribeEvent
+    public void onChatMessageReceived(ClientChatReceivedEvent event) {
+        if (!serverBrandChecked || onHypixel) {
+            // type 0 is a standard chat message
+            if (event.type == 0 && event.message.getUnformattedText().startsWith(
+                    FancyWarpMenu.getSkyBlockConstants().getSkyBlockJoinMessage())) {
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
-                // Player hasn't been spawned yet, skip this packet.
-                if (thePlayer != null && thePlayer.getClientBrand() != null) {
-                    if (!serverBrandChecked) {
-                        onHypixel = thePlayer.getClientBrand().startsWith(SERVER_BRAND_START);
-                        serverBrandChecked = true;
+                if (!serverBrandChecked) {
+                    onHypixel = thePlayer.getClientBrand().startsWith(SERVER_BRAND_START);
+                    serverBrandChecked = true;
 
-                        if (onHypixel) {
-                            logger.info("Player joined Hypixel.");
-                        }
-                    }
-
-                    // 1 is the sidebar objective slot.
-                    if (onHypixel && packet.func_149371_c() == 1) {
-                        String objectiveName = packet.func_149370_d();
-                        boolean newSkyBlockState = objectiveName.equals("SBScoreboard");
-
-                        if (newSkyBlockState && !GameState.isOnSkyBlock()) {
-                            logger.info("Player joined SkyBlock.");
-                        } else if (!newSkyBlockState && GameState.isOnSkyBlock()) {
-                            logger.info("Player left SkyBlock.");
-                        }
-
-                        GameState.setOnSkyBlock(newSkyBlockState);
+                    if (onHypixel) {
+                        logger.debug("Player joined Hypixel.");
                     }
                 }
-            } catch (RuntimeException e) {
-                logger.error(String.format("SkyBlock Join Check Failed: %s" +
-                        "\nBrand: %s" +
-                        "\nPacket contents:" +
-                        "\n  Position: %s" +
-                        "\n  Score Name: %s", e.getMessage(), thePlayer.getClientBrand(), packet.func_149371_c(), packet.func_149370_d()), e);
+
+                if (onHypixel) {
+                    Scoreboard scoreboard = thePlayer.getWorldScoreboard();
+                    boolean newSkyBlockState = scoreboard != null && scoreboard.getObjective("SBScoreboard") != null;
+
+                    if (newSkyBlockState && !GameState.isOnSkyBlock()) {
+                        logger.debug("Player joined SkyBlock.");
+                    } else if (!newSkyBlockState && GameState.isOnSkyBlock()) {
+                        logger.debug("Player left SkyBlock.");
+                    }
+
+                    GameState.setOnSkyBlock(newSkyBlockState);
+                }
             }
         }
-
-        channelHandlerContext.fireChannelRead(packet);
-    }
-
-    public boolean isOnSkyBlock() {
-        return (Settings.isDebugModeEnabled() && Settings.shouldSkipSkyBlockCheck()) || GameState.isOnSkyBlock();
     }
 }

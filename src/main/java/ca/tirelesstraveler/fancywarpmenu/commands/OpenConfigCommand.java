@@ -20,11 +20,35 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.data;
+package ca.tirelesstraveler.fancywarpmenu.commands;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.ICommandSender;
 
-public class DataCommon {
-    public static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+public class OpenConfigCommand extends CommandBase {
+    @Override
+    public int getRequiredPermissionLevel() {
+        return 0;
+    }
+
+    @Override
+    public String getCommandName() {
+        return "fancywarpmenuconfig";
+    }
+
+    @Override
+    public String getCommandUsage(ICommandSender sender) {
+        // Is not shown in a server-side help menu
+        return "";
+    }
+
+    /**
+     * The chat GUI closes the current screen after executing the command.
+     * The {@link net.minecraftforge.event.CommandEvent} is intercepted instead to prevent the screen from being closed.
+     */
+    @Override
+    public void processCommand(ICommandSender sender, String[] args) {
+        FancyWarpMenuState.setOpenConfigMenuRequested(true);
+    }
 }

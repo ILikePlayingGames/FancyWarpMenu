@@ -23,55 +23,35 @@
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.GameState;
-import ca.tirelesstraveler.fancywarpmenu.OpenConfigCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
-import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpMessages;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.FancyWarpMenuConfigScreen;
-import ca.tirelesstraveler.fancywarpmenu.gui.GuiButtonConfig;
-import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiFastTravel;
+import ca.tirelesstraveler.fancywarpmenu.gui.GuiRiftFastTravel;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import ca.tirelesstraveler.fancywarpmenu.state.GameState;
+import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.inventory.ContainerChest;
-import net.minecraft.scoreboard.Score;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StringUtils;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraft.inventory.IInventory;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Mouse;
-
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * General purpose event listener
  */
-@ChannelHandler.Sharable
-public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements IResourceManagerReloadListener {
+public class WarpMenuListener implements IResourceManagerReloadListener {
     private static final Minecraft mc;
     private static final FancyWarpMenu modInstance;
     private static final Logger logger;
-
-    private static GuiFancyWarp warpScreen;
-    private static boolean openMenuRequested;
-    private static boolean openConfigMenuRequested;
 
     static {
         mc = Minecraft.getMinecraft();
@@ -80,93 +60,35 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
     }
 
     @SubscribeEvent
-    public void onChatMessageReceived(ClientChatReceivedEvent event) {
-        // type 0 is a standard chat message
-        if (event.type == 0 && warpScreen != null && mc.currentScreen == warpScreen) {
-            String unformattedText = event.message.getUnformattedText();
-
-            if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpSuccessMessages().contains(unformattedText)) {
-                mc.displayGuiScreen(null);
-            } else if (FancyWarpMenu.getSkyBlockConstants().getWarpMessages().getWarpFailMessages().containsKey(unformattedText)) {
-                WarpMessages warpMessages = FancyWarpMenu.getSkyBlockConstants().getWarpMessages();
-                Map<String, String> warpFailMessages = warpMessages.getWarpFailMessages();
-                String failMessageKey = warpFailMessages.get(unformattedText);
-                warpScreen.onWarpFail(failMessageKey);
-            }
-        }
-    }
-
-    /**
-     * Minecraft closes the current screen after executing a command,
-     * meaning any {@code GuiScreen} opened by the command is closed.
-     * This method interrupts the closing of the current screen to get around this behavior.
-     */
-    @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
+        /*
+        Minecraft closes the current screen after executing a command, meaning any GuiScreen opened by the command is closed.
+        This section interrupts the closing of the current screen to get around this behavior.
+        */
         if (event.gui == null) {
-            if (openMenuRequested) {
-                event.gui = warpScreen;
-                openMenuRequested = false;
-            } else if (openConfigMenuRequested) {
+            if (FancyWarpMenuState.isOpenConfigMenuRequested()) {
                 event.gui = new FancyWarpMenuConfigScreen(null);
-                openConfigMenuRequested = false;
+                FancyWarpMenuState.setOpenConfigMenuRequested(false);
+            }
+        } else if (event.gui instanceof GuiChest) {
+            IInventory playerInventory = mc.thePlayer.inventory;
+            IInventory chestInventory = ((ContainerChest) ((GuiChest) event.gui).inventorySlots).getLowerChestInventory();
+
+            Menu currentMenu = GameChecks.determineOpenMenu(chestInventory);
+
+            if (currentMenu == Menu.FAST_TRAVEL) {
+                event.gui = new GuiFastTravel(playerInventory, chestInventory, FancyWarpMenuState.getOverworldLayout());
+            } else if (currentMenu == Menu.PORHTAL) {
+                event.gui = new GuiRiftFastTravel(playerInventory, chestInventory, FancyWarpMenuState.getRiftLayout());
             }
         }
     }
 
-    /**
-     * Add a button to the regular warp menu for players to enable the fancy warp menu or switch to it.
-     */
     @SubscribeEvent
-    public void onGuiInit(GuiScreenEvent.InitGuiEvent.Post e) {
-        if (e.gui instanceof GuiChest) {
-            GuiChest guiChest = (GuiChest) e.gui;
-            ContainerChest containerChest = (ContainerChest) guiChest.inventorySlots;
-
-            if (containerChest.getLowerChestInventory().getName().equals("Fast Travel")) {
-                e.buttonList.add(new GuiButtonConfig(e.buttonList.size(), new ScaledResolution(mc)));
-            }
-        }
-    }
-
-    /**
-     * Open the fancy warp menu when the player presses the open warp menu hotkey while the mod is enabled
-     */
-    @SubscribeEvent
-    public void onKeyboardInput(InputEvent.KeyInputEvent event) {
-        if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyBlock()
-                && FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
-            displayFancyWarpMenu();
-        }
-    }
-
-    /**
-     * Redirect to the fancy warp menu when the player attempts to access the warp menu from the SkyBlock menu
-     */
-    @SubscribeEvent
-    public void onGuiMouseInput(GuiScreenEvent.MouseInputEvent.Pre event) {
-        if (Settings.isWarpMenuEnabled()
-                && modInstance.isPlayerOnSkyBlock()
-                && Mouse.getEventButton() == 0
-                && Mouse.getEventButtonState()
-                && event.gui instanceof GuiChest) {
-            GuiChest guiChest = (GuiChest) event.gui;
-
-            if (guiChest.inventorySlots instanceof ContainerChest) {
-                ContainerChest container = (ContainerChest) guiChest.inventorySlots;
-
-                if (container.getLowerChestInventory() != null
-                        && container.getLowerChestInventory().hasCustomName()
-                        && container.getLowerChestInventory().getName().equals("SkyBlock Menu")
-                        && guiChest.getSlotUnderMouse() != null
-                        && guiChest.getSlotUnderMouse().getSlotIndex() == 47
-                        // Rift SkyBlock Menu has a return to hub button in slot 47
-                        && StringUtils.stripControlCodes(guiChest.getSlotUnderMouse().getStack().getDisplayName()).equals("Fast Travel")) {
-                    displayFancyWarpMenu();
-                    event.setCanceled(true);
-                }
-            }
+    public void keyTyped(InputEvent.KeyInputEvent event) {
+        if (Settings.isWarpMenuEnabled() && (GameState.isOnSkyBlock() || Settings.shouldSkipSkyBlockCheck()) &&
+                FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
+            mc.thePlayer.sendChatMessage(SkyBlockConstants.WARP_COMMAND_BASE);
         }
     }
 
@@ -179,92 +101,6 @@ public class WarpMenuListener extends ChannelOutboundHandlerAdapter implements I
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
-        FancyWarpMenu.getInstance().reloadLayout();
-    }
-
-    /**
-     * Called when the {@code /warp} command is run without any arguments
-     */
-    public void onWarpCommand() {
-        warpScreen = new GuiFancyWarp();
-
-        if (Settings.shouldAddWarpCommandToChatHistory()) {
-            mc.ingameGUI.getChatGUI().addToSentMessages("/warp");
-        }
-
-        // GuiChat closes itself after executing the command so wait until after it closes to open the warp menu.
-        if (mc.currentScreen instanceof GuiChat) {
-            openMenuRequested = true;
-        } else {
-            displayFancyWarpMenu();
-        }
-    }
-
-    /**
-     * Called when {@link OpenConfigCommand} is run
-     */
-    public void onOpenConfigMenuCommand() {
-        openConfigMenuRequested = true;
-    }
-
-    public void displayFancyWarpMenu() {
-        checkLateWinter();
-        warpScreen = new GuiFancyWarp();
-        mc.displayGuiScreen(warpScreen);
-    }
-
-    /**
-     * Checks if the SkyBlock season is Late Winter, used for hiding Jerry's Workshop when it's closed
-     */
-    private void checkLateWinter() {
-        // Don't run outside of SB to prevent exceptions
-        if (!Settings.shouldSkipSkyBlockCheck()) {
-            try {
-                Scoreboard sb = mc.theWorld.getScoreboard();
-                // SkyBlock sidebar objective
-                ArrayList<Score> scores = (ArrayList<Score>) sb.getSortedScores(sb.getObjective("SBScoreboard"));
-
-                // The date is always near the top (highest score) so we iterate backwards.
-                for (int i = scores.size(); i > 0; i--) {
-                    Score score = scores.get(i - 1);
-                    String playerNameDisplayFormat = sb.getPlayersTeam(score.getPlayerName()).formatString("");
-
-                    if (playerNameDisplayFormat.trim().startsWith("Late Winter")) {
-                        GameState.setLateWinter(true);
-                        return;
-                    }
-                }
-
-                GameState.setLateWinter(false);
-            } catch (RuntimeException e) {
-                logger.warn("Failed to check scoreboard season for late winter", e);
-            }
-        }
-    }
-
-    /**
-     * Checks if a given command is the warp command or any of its variants and returns the corresponding
-     * {@code WarpCommandVariant} object if one is found.
-     *
-     * @param command the command the player sent
-     * @return a {@link WarpCommandVariant} if one with the same command is found, or {@code null} otherwise
-     */
-    public static WarpCommandVariant getWarpCommandVariant(String command) {
-        // Trim off the slash and all arguments
-        String baseCommand = command.toLowerCase(Locale.US).substring(1).split(" ")[0];
-
-        for (WarpCommandVariant commandVariant : FancyWarpMenu.getSkyBlockConstants().getWarpCommandVariants()) {
-            if (commandVariant.getCommand().equals(baseCommand)) {
-                return commandVariant;
-            }
-        }
-
-        return null;
-    }
-
-    public static void sendReminderToUseWarpScreen() {
-        mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu
-                .getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
-                .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+        FancyWarpMenu.getInstance().reloadLayouts();
     }
 }

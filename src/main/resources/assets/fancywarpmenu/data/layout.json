@@ -77,21 +77,21 @@
           "commandName": "wasteland",
           "gridX": 12,
           "gridY": 12,
-          "requiresSpecialGameMode": true
+          "tags": ["bingo"]
         },
         {
           "displayName": "Dragontail",
           "commandName": "dragontail",
           "gridX": 11,
           "gridY": 2,
-          "requiresSpecialGameMode": true
+          "tags": ["bingo"]
         },
         {
           "displayName": "Scarleton",
           "commandName": "scarleton",
           "gridX": 21,
           "gridY": 24,
-          "requiresSpecialGameMode": true
+          "tags": ["bingo"]
         }
       ]
     },
@@ -216,7 +216,7 @@
       "widthPercentage": 0.05,
       "warpList": [
         {
-          "displayName": "",
+          "displayName": "Spawn",
           "commandName": "home",
           "gridX": 3,
           "gridY": 3
@@ -232,7 +232,7 @@
       "widthPercentage": 0.10,
       "warpList": [
         {
-          "displayName": "",
+          "displayName": "Spawn",
           "commandName": "garden",
           "gridX": 10,
           "gridY": 8
@@ -315,9 +315,10 @@
       "warpList": [
         {
           "displayName": "Spawn",
-          "commandName": "/savethejerrys",
+          "commandName": "jerry",
           "gridX": 22,
-          "gridY": 16
+          "gridY": 16,
+          "tags": ["jerry"]
         }
       ]
     },

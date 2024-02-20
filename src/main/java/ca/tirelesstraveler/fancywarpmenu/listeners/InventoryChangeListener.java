@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. TirelessTraveler
+ * Copyright (c) 2024. TirelessTraveler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,24 +20,26 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu;
+package ca.tirelesstraveler.fancywarpmenu.listeners;
+
+import net.minecraft.inventory.IInvBasic;
+import net.minecraft.inventory.InventoryBasic;
+
+import java.util.function.Consumer;
 
 /**
- * Information about the local environment at runtime, for constants and compatibility with other mods
+ * A simple listener that calls a callback when an item changes in the inventory it is assigned to.
  */
-public class EnvironmentDetails {
-    public static String SUPPORT_LINK = "https://discord.gg/tXFf9umfA9";
-    static boolean deobfuscatedEnvironment;
-    static boolean patcherInstalled;
+public class InventoryChangeListener implements IInvBasic {
+    private final Consumer<InventoryBasic> CALLBACK;
 
-    private EnvironmentDetails() {
+    public InventoryChangeListener(Consumer<InventoryBasic> callback) {
+        CALLBACK = callback;
     }
 
-    public static boolean isDeobfuscatedEnvironment() {
-        return deobfuscatedEnvironment;
-    }
 
-    public static boolean isPatcherInstalled() {
-        return patcherInstalled;
+    @Override
+    public void onInventoryChanged(InventoryBasic inventoryBasic) {
+        CALLBACK.accept(inventoryBasic);
     }
 }

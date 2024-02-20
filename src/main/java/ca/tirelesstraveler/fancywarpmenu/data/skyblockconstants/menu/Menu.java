@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023. TirelessTraveler
+ * Copyright (c) 2023-2024. TirelessTraveler
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,25 +20,28 @@
  * OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package ca.tirelesstraveler.fancywarpmenu.mixin;
-
-import ca.tirelesstraveler.fancywarpmenu.hooks.EntityPlayerSPHook;
-import net.minecraft.client.entity.EntityPlayerSP;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu;
 
 /**
- * This mixin intercepts warp menu requests that use {@link EntityPlayerSP#sendChatMessage(String)} to send
- * commands. This includes requests from {@link net.minecraft.client.gui.GuiScreen#sendChatMessage(String, boolean)} and
- * other mods.
+ * In-game menus, not serialized
  */
-@SuppressWarnings("unused")
-@Mixin(EntityPlayerSP.class)
-public class MixinEntityPlayerSP {
-    @Inject(method = "sendChatMessage", at = @At("HEAD"), cancellable = true, require = 1)
-    public void onSendChatMessage(String message, CallbackInfo ci) {
-        EntityPlayerSPHook.onSendChatMessage(message, ci);
+public enum Menu {
+    /** Value used when player is not in a menu or in an unknown or irrelevant menu */
+    NONE(""),
+    SKYBLOCK_MENU("SkyBlock Menu"),
+    FAST_TRAVEL("Fast Travel"),
+    PORHTAL("Porhtal");
+
+    /**
+     * Menu name as displayed at the top of the {@code GuiChest}
+     */
+    final String MENU_DISPLAY_NAME;
+
+    Menu(String menuDisplayName) {
+        this.MENU_DISPLAY_NAME = menuDisplayName;
+    }
+
+    public String getMenuDisplayName() {
+        return MENU_DISPLAY_NAME;
     }
 }

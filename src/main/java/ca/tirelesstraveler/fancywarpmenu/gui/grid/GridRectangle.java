@@ -22,10 +22,12 @@
 
 package ca.tirelesstraveler.fancywarpmenu.gui.grid;
 
+import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
+
 /**
  * A rectangle placed on a {@code ScaledGrid}. These rectangles serve as bounding boxes for the GUI elements placed on
  * the grid, providing coordinates and dimensions to be used during rendering. This class does not cover using a
- * {@code ScaledGrid} placed within a {@code ScaledGrid}. For an example of that usage, see {@link ca.tirelesstraveler.fancywarpmenu.gui.GuiButtonIsland}
+ * {@code ScaledGrid} placed within a {@code ScaledGrid}. For an example of that usage, see {@link GuiButtonIsland}
  *
  * @see ScaledGrid
  */

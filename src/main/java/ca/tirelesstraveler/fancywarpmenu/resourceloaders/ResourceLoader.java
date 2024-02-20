@@ -24,6 +24,7 @@ package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.ResourcePackRepository;
@@ -38,7 +39,9 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 public abstract class ResourceLoader {
-    protected static final Gson gson = new Gson();
+    public static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .create();
     protected static final Logger logger = LogManager.getLogger();
 
     protected static void handleResourceLoadException(IResource resource, boolean fatal, RuntimeException e) {

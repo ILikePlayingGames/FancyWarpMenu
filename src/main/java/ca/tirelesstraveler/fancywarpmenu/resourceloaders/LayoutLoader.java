@@ -22,8 +22,8 @@
 
 package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
-import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.*;
+import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -40,17 +40,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class LayoutLoader extends ResourceLoader {
-    private static final ResourceLocation LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
+    public static final ResourceLocation OVERWORLD_LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu",
             "data/layout.json");
+    public static final ResourceLocation RIFT_LAYOUT_LOCATION = new ResourceLocation("fancywarpmenu", "data/riftLayout.json");
 
-    public static Layout loadLayout() {
+    public static Layout loadLayout(ResourceLocation resourceLocation) {
         try {
-            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(LAYOUT_LOCATION);
+            IResource layoutResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
 
             try (InputStream stream = layoutResource.getInputStream();
                  JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
                 Layout layout = gson.fromJson(reader, Layout.class);
                 Layout.validateLayout(layout);
+
+                // Layout background texture
+                layout.setBackgroundTextureLocation();
 
                 // Warp icon
                 WarpIcon warpIcon = layout.getWarpIcon();
@@ -58,7 +62,6 @@ public class LayoutLoader extends ResourceLoader {
                 warpIcon.init();
                 Pair<Integer, Integer> warpIconDimensions = getTextureDimensions(warpIcon.getTextureLocation());
                 warpIcon.setTextureDimensions(warpIconDimensions.getLeft(), warpIconDimensions.getRight());
-                Warp.setWarpIcon(warpIcon);
 
                 // Config and regular warp menu button icon dimensions
                 ConfigButton configButton = layout.getConfigButton();
@@ -84,15 +87,15 @@ public class LayoutLoader extends ResourceLoader {
 
                 return layout;
             } catch (RuntimeException e) {
-                boolean fatal = FancyWarpMenu.getLayout() == null;
+                boolean fatal = FancyWarpMenuState.getOverworldLayout() == null;
 
                 handleResourceLoadException(layoutResource, fatal, e);
                 return null;
             }
         } catch (IOException e) {
-            boolean fatal = FancyWarpMenu.getLayout() == null;
+            boolean fatal = FancyWarpMenuState.getOverworldLayout() == null;
 
-            handleGetResourceException(LAYOUT_LOCATION.toString(), fatal, e);
+            handleGetResourceException(resourceLocation.toString(), fatal, e);
             return null;
         }
     }

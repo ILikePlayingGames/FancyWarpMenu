@@ -24,6 +24,7 @@ package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants;
+import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.ItemMatchCondition;
 import com.google.gson.stream.JsonReader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
@@ -32,11 +33,19 @@ import net.minecraft.util.ResourceLocation;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Comparator;
+import java.util.List;
 
 public class SkyBlockConstantsLoader extends ResourceLoader {
     private static final ResourceLocation SKY_BLOCK_CONSTANTS_LOCATION = new ResourceLocation("fancywarpmenu",
             "data/skyBlockConstants.json");
 
+    /**
+     * Creates a {@link SkyBlockConstants} instance from {@code SKY_BLOCK_CONSTANTS_LOCATION}.
+     * Match conditions in {@code SkyBlockConstants#menuMatchingMap} are sorted by ascending item slot index.
+     *
+     * @return the created {@code SkyBlockConstants} instance
+     */
     public static SkyBlockConstants loadSkyBlockConstants() {
         try {
             IResource skyBlockConstantsResource = Minecraft.getMinecraft().getResourceManager().getResource(SKY_BLOCK_CONSTANTS_LOCATION);
@@ -44,6 +53,11 @@ public class SkyBlockConstantsLoader extends ResourceLoader {
             try (InputStream stream = skyBlockConstantsResource.getInputStream();
                  JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
                 SkyBlockConstants skyBlockConstants = gson.fromJson(reader, SkyBlockConstants.class);
+
+                for (List<ItemMatchCondition> matchConditionList : skyBlockConstants.getMenuMatchingMap().values()) {
+                    matchConditionList.sort(Comparator.comparing(ItemMatchCondition::getInventorySlotIndex));
+                }
+
                 SkyBlockConstants.validateSkyBlockConstants(skyBlockConstants);
 
                 return skyBlockConstants;
