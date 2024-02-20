@@ -30,13 +30,17 @@ import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
  */
 public class GameState {
     /**
-     * The current in-game season
-     */
-    private static String season;
-    /**
      * Whether the player is currently on SkyBlock
      */
     private static boolean onSkyBlock;
+    /**
+     * The current stage of the in-game season, can be "Early", mid (null), or "Late".
+     */
+    private static String seasonStage;
+    /**
+     * The current in-game season
+     */
+    private static String season;
     /**
      * Current in-game menu the player has open
      */
@@ -48,6 +52,14 @@ public class GameState {
 
     public static void setOnSkyBlock(boolean onSkyBlock) {
         GameState.onSkyBlock = onSkyBlock;
+    }
+
+    public static String getSeasonStage() {
+        return seasonStage;
+    }
+
+    public static void setSeasonStage(String seasonStage) {
+        GameState.seasonStage = seasonStage;
     }
 
     public static String getSeason() {

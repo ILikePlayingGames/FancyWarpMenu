@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 public class GameChecks {
     private static final Logger logger = LogManager.getLogger();
     private static final Matcher seasonMatcher =
-            Pattern.compile("(?:Late|Early)? ?(?<season>[a-zA-Z]+) \\d{1,2}.*").matcher("");
+            Pattern.compile("(?<seasonStage>Late|Early)? ?(?<season>[a-zA-Z]+) \\d{1,2}.*").matcher("");
 
     /**
      * Checks the current SkyBlock season and saves using {@link GameState#setSeason(String)}.
@@ -69,7 +69,10 @@ public class GameChecks {
                     seasonMatcher.reset(skyBlockScoreboardLine);
 
                     if (seasonMatcher.matches()) {
+                        String seasonStage = seasonMatcher.group("seasonStage");
                         String season = seasonMatcher.group("season");
+
+                        GameState.setSeasonStage(seasonStage);
 
                         if (season != null) {
                             GameState.setSeason(season);
@@ -78,6 +81,7 @@ public class GameChecks {
                     }
                 }
 
+                GameState.setSeasonStage(null);
                 GameState.setSeason(null);
             } catch (RuntimeException e) {
                 logger.warn("Failed to check scoreboard season", e);

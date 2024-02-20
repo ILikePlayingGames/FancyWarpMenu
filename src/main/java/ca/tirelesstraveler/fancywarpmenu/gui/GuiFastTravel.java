@@ -44,8 +44,6 @@ public class GuiFastTravel extends GuiFancyWarp {
         super(playerInventory, chestInventory, layout);
         menu = Menu.FAST_TRAVEL;
         lastSlotIndexToCheck = FancyWarpMenu.getSkyBlockConstants().getLastMatchConditionInventorySlotIndex(menu);
-        // Season is needed to show/hide the Jerry island button.
-        GameChecks.checkSeason();
     }
 
     @Override
@@ -91,5 +89,13 @@ public class GuiFastTravel extends GuiFancyWarp {
 
         // Sort by z level
         buttonList.sort(null);
+    }
+
+    @Override
+    protected void updateButtonStates() {
+        // Season is needed to show/hide the Jerry island button.
+        GameChecks.checkSeason();
+
+        super.updateButtonStates();
     }
 }

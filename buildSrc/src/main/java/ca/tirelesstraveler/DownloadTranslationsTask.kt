@@ -87,7 +87,7 @@ abstract class DownloadTranslationsTask: DefaultTask() {
 
     @TaskAction
     fun downloadTranslations() {
-        val argList = mutableListOf("download", "--skip-untranslated-files", "--no-progress", "--no-colors")
+        val argList = mutableListOf("download", "--no-progress", "--no-colors")
 
         if (exportOnlyApproved.get()) {
             argList.add(1, "--export-only-approved")

@@ -140,6 +140,7 @@ tasks.shadowJar {
 
 tasks.register<DownloadTranslationsTask>("downloadTranslations") {
     group = "translations"
+    exportOnlyApproved = true
 }
 tasks.register<UploadTranslationsTask>("uploadTranslations") {
     group = "translations"

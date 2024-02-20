@@ -89,8 +89,9 @@ public class WarpVisibilityChecks {
                 }
 
                 String season = GameState.getSeason();
+                String seasonStage = GameState.getSeasonStage();
 
-                return season != null && season.equals("Winter");
+                return season != null && seasonStage != null && season.equals("Winter") && seasonStage.equals("Late");
             default:
                 return true;
         }
