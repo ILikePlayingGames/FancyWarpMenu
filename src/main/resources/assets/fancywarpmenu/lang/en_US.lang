@@ -42,6 +42,8 @@ fancywarpmenu.config.alwaysShowJerryIsland=Always Show Jerry's Workshop
 fancywarpmenu.config.alwaysShowJerryIsland.tooltip=Always show Jerry's Workshop on the warp menu regardless of the value of the general > showJerryIsland setting and the in-game season
 
 fancywarpmenu.gui.buttons.config=Config
+fancywarpmenu.gui.buttons.copyToClipboard=Copy to Clipboard
+fancywarpmenu.gui.buttons.copyToClipboard.copied=Copied!
 fancywarpmenu.gui.buttons.regularWarpMenu=Regular Warp Menu
 
 fancywarpmenu.key.openMenu=Open the Fancy Warp Menu
@@ -59,3 +61,4 @@ fancywarpmenu.errors.notOpenYet=Not Open Yet
 fancywarpmenu.errors.slotNumberOutOfBounds=Invalid Slot Number (%d)
 fancywarpmenu.errors.slotHasNoItem=Slot %d Has No Item to Click On
 fancywarpmenu.errors.mouseIsHoldingItem=Mouse is Already Holding an Item
+fancywarpmenu.errors.fancyWarpGui.initFailed=%s Initialization Failed

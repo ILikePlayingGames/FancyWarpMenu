@@ -23,20 +23,15 @@
 package ca.tirelesstraveler.fancywarpmenu.gui;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
-import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonIsland;
 import ca.tirelesstraveler.fancywarpmenu.gui.buttons.GuiButtonWarp;
-import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
-import org.lwjgl.input.Keyboard;
-
-import java.io.IOException;
 
 public class GuiFastTravel extends GuiFancyWarp {
 
@@ -69,26 +64,6 @@ public class GuiFastTravel extends GuiFancyWarp {
                 }
             }
         }
-    }
-
-    @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-
-        if (Settings.isDebugModeEnabled() && keyCode == Keyboard.KEY_R) {
-            this.layout = FancyWarpMenuState.getOverworldLayout();
-            this.onResize(mc, res.getScaledWidth(), res.getScaledHeight());
-        }
-    }
-
-    @Override
-    protected void addIslandButtons() {
-        for (Island island : FancyWarpMenuState.getOverworldLayout().getIslandList()) {
-            addIslandButton(island);
-        }
-
-        // Sort by z level
-        buttonList.sort(null);
     }
 
     @Override

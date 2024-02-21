@@ -38,6 +38,7 @@ import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import ca.tirelesstraveler.fancywarpmenu.utils.WarpVisibilityChecks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
@@ -50,6 +51,7 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
@@ -75,6 +77,7 @@ public class GuiFancyWarp extends GuiChestMenu {
     private GuiButton configButton;
     private InventoryChangeListener inventoryListener;
     private String warpFailMessage;
+    private RuntimeException guiInitException;
     /**
      * Last slot index in the {@link ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.ItemMatchCondition}
      * list for {@link #menu}
@@ -100,23 +103,59 @@ public class GuiFancyWarp extends GuiChestMenu {
     @Override
     public void initGui() {
         super.initGui();
+
         if (!screenDrawn && EnvironmentDetails.isPatcherInstalled()) {
             return;
         }
 
+        buttonList.clear();
         res = new ScaledResolution(mc);
         scaledGrid = new ScaledGrid(0, 0, res.getScaledWidth(), res.getScaledHeight(), Island.GRID_UNIT_HEIGHT_FACTOR, Island.GRID_UNIT_WIDTH_FACTOR, false);
         Warp.initDefaults(res);
 
-        buttonList.clear();
         configButton = new GuiButtonConfig(layout, 0, res);
         buttonList.add(configButton);
         if (Settings.shouldShowRegularWarpMenuButton()) {
             buttonList.add(new GuiButtonRegularWarpMenu(layout, buttonList.size(), res, scaledGrid));
         }
 
-        addIslandButtons();
-        updateButtonStates();
+        /*
+        Sometimes button initialization and visibility checks go wrong.
+        This halts screen initialization and lets the user copy the exception in those cases.
+         */
+        try {
+            addIslandButtons();
+            updateButtonStates();
+        } catch (RuntimeException e) {
+            guiInitException = e;
+            buttonList.clear();
+
+            int lineCount = 2;
+            int labelX = 0;
+            int labelY = height / 5;
+            int ySpacing = mc.fontRendererObj.FONT_HEIGHT + 3;
+
+            for (int i = 0; i < lineCount; i++) {
+                GuiLabel currentLabel = new GuiLabel(mc.fontRendererObj, i, labelX, labelY, width,
+                        mc.fontRendererObj.FONT_HEIGHT, Color.white.getRGB());
+                currentLabel.setCentered();
+                labelList.add(currentLabel);
+                labelY = labelY + ySpacing;
+            }
+
+            labelList.get(0).func_175202_a(
+                    EnumChatFormatting.RED.toString() +
+                            EnumChatFormatting.BOLD +
+                            I18n.format("fancywarpmenu.errors.fancyWarpGui.initFailed",
+                    getClass().getSimpleName()));
+            labelList.get(1).func_175202_a(EnumChatFormatting.WHITE +
+                    String.format("%s : %s", guiInitException.getClass().getName(), guiInitException.getLocalizedMessage()));
+
+            buttonList.add(new GuiButtonTimedLabel(0, width / 2 - 100, labelY + ySpacing,
+                    I18n.format("fancywarpmenu.gui.buttons.copyToClipboard")));
+
+            setCustomUIState(true, true);
+        }
     }
 
     public ScaledGrid getScaledGrid() {
@@ -125,6 +164,10 @@ public class GuiFancyWarp extends GuiChestMenu {
 
     @Override
     public void drawCustomUI(int mouseX, int mouseY, float partialTicks) {
+        if (guiInitException != null) {
+            drawExceptionScreen(mouseX, mouseY);
+        }
+
         /*
         Patcher inventory scale doesn't reset inventory scale until the first draw of the screen after
         the inventory is closed. Setting res in initGui would use Patcher's scaled resolution instead of Minecraft's
@@ -144,11 +187,7 @@ public class GuiFancyWarp extends GuiChestMenu {
         // When multiple island buttons overlap, mark only the top one as hovered.
         for (GuiButton button : buttonList) {
             if (button instanceof GuiButtonIsland) {
-                GuiButtonIsland islandButton = (GuiButtonIsland) button;
-                islandButton.setHovered(mouseX >= islandButton.getScaledXPosition() &&
-                        mouseY >= islandButton.getScaledYPosition() &&
-                        mouseX <= islandButton.getScaledXPosition() + islandButton.getScaledWidth() &&
-                        mouseY <= ((GuiButtonIsland) button).getScaledYPosition() + islandButton.getScaledHeight());
+                ((GuiButtonIsland) button).calculateHoverState(mouseX, mouseY);
 
                 if (button.isMouseOver()) {
                     hoveredButtons.add((GuiButtonChestMenu) button);
@@ -215,6 +254,30 @@ public class GuiFancyWarp extends GuiChestMenu {
     }
 
     /**
+     * Draws a simple error screen to display {@link #guiInitException}
+     *
+     * @param mouseX mouse x coordinate
+     * @param mouseY mouse y coordinate
+     */
+    public void drawExceptionScreen(int mouseX, int mouseY) {
+        drawDefaultBackground();
+
+        // Labels are under the background for some reason
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, 0, 1);
+
+        for (GuiLabel label : labelList) {
+            label.drawLabel(mc, mouseX, mouseY);
+        }
+
+        GlStateManager.popMatrix();
+
+        for (GuiButton button : buttonList) {
+            button.drawButton(mc, mouseX, mouseY);
+        }
+    }
+
+    /**
      * Called when a warp attempt fails
      *
      * @param failMessageKey the translation key of the failure message to display on the Gui
@@ -229,6 +292,13 @@ public class GuiFancyWarp extends GuiChestMenu {
 
     @Override
     protected void actionPerformed(GuiButton button) {
+        // Copy exception to clipboard button
+        if (guiInitException != null && button.id == 0 && button instanceof GuiButtonTimedLabel) {
+            setClipboardString(ExceptionUtils.getStackTrace(guiInitException));
+            ((GuiButtonTimedLabel) button).setTimedLabel(EnumChatFormatting.GREEN +
+                    I18n.format("fancywarpmenu.gui.buttons.copyToClipboard.copied"), 1500);
+        }
+
         if (Settings.isWarpMenuEnabled()) {
             if (button instanceof GuiButtonConfig) {
                 FancyWarpMenuState.setOpenConfigMenuRequested(true);
@@ -266,6 +336,8 @@ public class GuiFancyWarp extends GuiChestMenu {
 
     @Override
     protected void handleCustomUIKeyboardInput(char typedChar, int keyCode) {
+        if (guiInitException != null) return;
+
         if (Settings.isDebugModeEnabled()) {
             if (keyCode == Keyboard.KEY_R) {
                 if (isShiftKeyDown()) {
@@ -297,8 +369,11 @@ public class GuiFancyWarp extends GuiChestMenu {
         if (customUIInteractionEnabled) {
             handleCustomUIMouseInput(mouseX, mouseY, mouseButton);
         } else {
-            // Don't send a C0EPacketClickWindow when clicking the config button while the custom UI is disabled
-            if (mouseButton == 0 && configButton.isMouseOver()) {
+            /*
+             Don't send a C0EPacketClickWindow when clicking the config button while the custom UI is disabled
+             A null check is required here as it's possible for clicks to occur before the button is initialized.
+             */
+            if (mouseButton == 0 && configButton != null && configButton.isMouseOver()) {
                 actionPerformed(configButton);
             } else {
                 super.mouseClicked(mouseX, mouseY, mouseButton);
