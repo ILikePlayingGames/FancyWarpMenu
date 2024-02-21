@@ -52,6 +52,14 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
     private static final Minecraft mc;
     private static final FancyWarpMenu modInstance;
     private static final Logger logger;
+    /** The minimum time in milliseconds after a hotkey press before the player can use the hotkey again*/
+    private static final int HOTKEY_PRESS_DELAY = 2000;
+
+    /**
+     * Time the user last pressed the fancy warp menu hotkey, used to prevent command spamming from
+     * spam pressing the hotkey
+     */
+    private long lastWarpMenuHotkeyPress;
 
     static {
         mc = Minecraft.getMinecraft();
@@ -87,7 +95,9 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
     @SubscribeEvent
     public void keyTyped(InputEvent.KeyInputEvent event) {
         if (Settings.isWarpMenuEnabled() && (GameState.isOnSkyBlock() || Settings.shouldSkipSkyBlockCheck()) &&
-                FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed()) {
+                FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed() &&
+                Minecraft.getSystemTime() - lastWarpMenuHotkeyPress > HOTKEY_PRESS_DELAY) {
+            lastWarpMenuHotkeyPress = Minecraft.getSystemTime();
             mc.thePlayer.sendChatMessage(SkyBlockConstants.WARP_COMMAND_BASE);
         }
     }

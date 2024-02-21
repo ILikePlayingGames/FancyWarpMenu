@@ -442,9 +442,16 @@ public class GuiFancyWarp extends GuiChestMenu {
     @Override
     protected void updateButtonStates() {
         for (GuiButton button : buttonList) {
-            // The config button is active on both the custom and default UI.
+            // Skip the config button as it's active on both the custom and default UI.
             if (button instanceof GuiButtonChestMenu && !(button instanceof GuiButtonConfig)) {
                 GuiButtonChestMenu buttonChestMenu = (GuiButtonChestMenu) button;
+
+                buttonChestMenu.setEnabled(customUIInteractionEnabled);
+                buttonChestMenu.setVisible(renderCustomUI);
+
+                if (!renderCustomUI) {
+                    continue;
+                }
 
                 if (button instanceof GuiButtonIsland) {
                     Island island = ((GuiButtonIsland) button).getIsland();
@@ -452,9 +459,7 @@ public class GuiFancyWarp extends GuiChestMenu {
                     if (island.getWarpCount() == 1) {
                         boolean showIsland = WarpVisibilityChecks.shouldShowSingleWarpIsland(island);
 
-                        buttonChestMenu.setEnabled(showIsland);
                         buttonChestMenu.setVisible(showIsland);
-                        continue;
                     }
                 } else if (button instanceof GuiButtonWarp) {
                     GuiButtonWarp warpButton = (GuiButtonWarp) button;
@@ -466,13 +471,8 @@ public class GuiFancyWarp extends GuiChestMenu {
                         warpButton.setDrawWarpLabel(!Settings.shouldHideWarpLabelForIslandsWithOneWarp());
                     }
 
-                    warpButton.setEnabled(shouldShowWarp);
                     warpButton.setVisible(shouldShowWarp);
-                    continue;
                 }
-
-                buttonChestMenu.setEnabled(customUIInteractionEnabled);
-                buttonChestMenu.setVisible(renderCustomUI);
             }
         }
     }
@@ -495,6 +495,7 @@ public class GuiFancyWarp extends GuiChestMenu {
                 setCustomUIState(true, true);
             }
 
+            updateButtonStates();
             chestInventory.removeInventoryChangeListener(inventoryListener);
         }
     }

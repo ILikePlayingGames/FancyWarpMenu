@@ -25,6 +25,10 @@ package ca.tirelesstraveler.fancywarpmenu.gui.buttons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 
+/**
+ * This class allows the setting of a temporary button label that reverts to the original button label
+ * after a given amount of time.
+ */
 public class GuiButtonTimedLabel extends GuiButton {
     private String originalButtonLabel;
     private long timedLabelExpiryTime;
