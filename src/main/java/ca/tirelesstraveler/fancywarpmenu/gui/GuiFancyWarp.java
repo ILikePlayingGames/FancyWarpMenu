@@ -74,7 +74,7 @@ public class GuiFancyWarp extends GuiChestMenu {
     protected Menu menu;
     protected Layout layout;
     private final InventoryBasic chestInventory;
-    private GuiButton configButton;
+    private GuiButtonConfig configButton;
     private InventoryChangeListener inventoryListener;
     private String warpFailMessage;
     private RuntimeException guiInitException;
@@ -153,8 +153,6 @@ public class GuiFancyWarp extends GuiChestMenu {
 
             buttonList.add(new GuiButtonTimedLabel(0, width / 2 - 100, labelY + ySpacing,
                     I18n.format("fancywarpmenu.gui.buttons.copyToClipboard")));
-
-            setCustomUIState(true, true);
         }
     }
 
@@ -489,13 +487,13 @@ public class GuiFancyWarp extends GuiChestMenu {
 
         The item change event is triggered twice for each item, and the item stack is set on the 2nd time it's
         triggered. For example, slot 53 is actually set on the 106th time the item change event triggers.
+        (lastSlotIndexToCheck + 1) since slots are 0-indexed but trigger count starts at 1
          */
-        if (triggerCount > lastSlotIndexToCheck * 2 && chestInventory.getStackInSlot(lastSlotIndexToCheck) != null) {
-            if (GameChecks.menuItemsMatch(menu, chestInventory)) {
-                setCustomUIState(true, true);
-            }
-
+        if (triggerCount > (lastSlotIndexToCheck + 1) * 2 && chestInventory.getStackInSlot(lastSlotIndexToCheck) != null) {
+            boolean menuItemsMatch = GameChecks.menuItemsMatch(menu, chestInventory);
+            setCustomUIState(menuItemsMatch, menuItemsMatch);
             updateButtonStates();
+            configButton.setVisible(menuItemsMatch);
             chestInventory.removeInventoryChangeListener(inventoryListener);
         }
     }

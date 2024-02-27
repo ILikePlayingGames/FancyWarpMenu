@@ -24,7 +24,6 @@ package ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants;
 
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.ItemMatchCondition;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.menu.Menu;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -103,10 +102,6 @@ public class SkyBlockConstants {
 
         for (WarpCommandVariant warpCommandVariant : skyBlockConstants.warpCommandVariants) {
             WarpCommandVariant.validateWarpCommandVariant(warpCommandVariant);
-        }
-
-        if (StringUtils.isEmpty(skyBlockConstants.skyBlockJoinMessage)) {
-            throw new IllegalArgumentException("SkyBlock join message cannot be null or empty.");
         }
     }
 

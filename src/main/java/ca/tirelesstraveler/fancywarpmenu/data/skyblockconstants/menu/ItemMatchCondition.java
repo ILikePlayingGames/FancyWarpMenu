@@ -103,16 +103,26 @@ public class ItemMatchCondition {
             boolean lorePatternMatches;
 
             if (itemName != null) {
-                itemNameMatches = itemStack.hasDisplayName() &&
-                        StringUtils.stripControlCodes(itemStack.getDisplayName()).equals(itemName);
-                logger.debug("Item name matches: {}", itemNameMatches);
+                String itemStackName = itemStack.hasDisplayName() ?
+                        StringUtils.stripControlCodes(itemStack.getDisplayName()) : null;
+                itemNameMatches = itemStackName != null && itemStackName.equals(itemName);
+
+                if (!itemNameMatches) {
+                    logger.warn("Item name mismatch\nExpected {} ; Found {}",
+                            itemName, itemStackName);
+                }
 
                 if (!itemNameMatches) return false;
             }
 
             if (minecraftItemID != null) {
-                minecraftItemIDMatches = itemStack.getItem().getRegistryName().equals(minecraftItemID);
-                logger.debug("Minecraft registry ID matches: {}", minecraftItemIDMatches);
+                String itemStackMinecraftItemID = itemStack.getItem().getRegistryName();
+                minecraftItemIDMatches = itemStackMinecraftItemID.equals(minecraftItemID);
+
+                if (!minecraftItemIDMatches) {
+                    logger.warn("Minecraft Item ID mismatch\nExpected {} ; Found {}",
+                            minecraftItemID, itemStackMinecraftItemID);
+                }
 
                 if (!minecraftItemIDMatches) return false;
             }
@@ -126,9 +136,14 @@ public class ItemMatchCondition {
                 }
 
                 NBTTagCompound extraAttributesTag = itemStack.getSubCompound("ExtraAttributes", false);
-                skyBlockItemIDMatches = extraAttributesTag.hasKey("id", Constants.NBT.TAG_STRING) &&
-                        extraAttributesTag.getString("id").equals(skyBlockItemID);
-                logger.debug("SkyBlock Item ID matches: {}", skyBlockItemIDMatches);
+                String itemStackSkyBlockID = extraAttributesTag.hasKey("id", Constants.NBT.TAG_STRING) ?
+                        extraAttributesTag.getString("id") : null;
+                skyBlockItemIDMatches = itemStackSkyBlockID != null && itemStackSkyBlockID.equals(skyBlockItemID);
+
+                if (!skyBlockItemIDMatches) {
+                    logger.warn("SkyBlock Item ID mismatch\nExpected {} ; Found {}",
+                            skyBlockItemID, itemStackSkyBlockID);
+                }
 
                 if (!skyBlockItemIDMatches) return false;
             }
@@ -154,7 +169,10 @@ public class ItemMatchCondition {
                         String loreString = loreStringBuilder.toString();
 
                         lorePatternMatches = loreMatchPattern.asPredicate().test(loreString);
-                        logger.debug("Lore pattern matches: {}", lorePatternMatches);
+
+                        if (!lorePatternMatches) {
+                            logger.warn("Lore did not match pattern\nItem lore: {}",  loreTag);
+                        }
 
                         return lorePatternMatches;
                     }
