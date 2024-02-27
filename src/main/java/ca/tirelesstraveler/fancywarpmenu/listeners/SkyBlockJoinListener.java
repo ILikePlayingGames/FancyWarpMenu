@@ -26,10 +26,9 @@ import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -41,7 +40,7 @@ import org.apache.logging.log4j.Logger;
 @ChannelHandler.Sharable
 public class SkyBlockJoinListener {
     private static final String SERVER_BRAND_START = "Hypixel BungeeCord";
-    private static final int SCOREBOARD_CHECK_TIME_OUT = 3000;
+    private static final int SCOREBOARD_CHECK_TIME_OUT = 5000;
 
     private static final Logger logger = LogManager.getLogger();
     private boolean serverBrandChecked;
@@ -60,13 +59,11 @@ public class SkyBlockJoinListener {
     }
 
     @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onWorldLoad(WorldEvent.Load event) {
         // Reset on world switch
-        if (event.gui instanceof GuiDownloadTerrain) {
-            lastWorldSwitchTime = Minecraft.getSystemTime();
-            scoreboardChecked = false;
-            GameState.setOnSkyBlock(false);
-        }
+        lastWorldSwitchTime = Minecraft.getSystemTime();
+        scoreboardChecked = false;
+        GameState.setOnSkyBlock(false);
     }
 
     @SubscribeEvent
@@ -97,6 +94,7 @@ public class SkyBlockJoinListener {
                         }
 
                         GameState.setOnSkyBlock(newSkyBlockState);
+                        scoreboardChecked = true;
                     }
 
                     if (Minecraft.getSystemTime() - lastWorldSwitchTime > SCOREBOARD_CHECK_TIME_OUT) {
