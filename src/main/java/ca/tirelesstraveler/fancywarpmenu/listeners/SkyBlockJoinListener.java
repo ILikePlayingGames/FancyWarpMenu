@@ -72,9 +72,10 @@ public class SkyBlockJoinListener {
             // type 0 is a standard chat message
             if (event.type == 0) {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                String brand = thePlayer.getClientBrand();
 
                 if (!serverBrandChecked) {
-                    onHypixel = thePlayer.getClientBrand().startsWith(SERVER_BRAND_START);
+                    onHypixel = brand != null && brand.startsWith(SERVER_BRAND_START);
                     serverBrandChecked = true;
 
                     if (onHypixel) {

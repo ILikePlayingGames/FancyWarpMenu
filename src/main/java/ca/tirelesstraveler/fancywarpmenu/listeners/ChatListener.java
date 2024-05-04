@@ -27,16 +27,20 @@ import ca.tirelesstraveler.fancywarpmenu.data.Settings;
 import ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.WarpCommandVariant;
 import ca.tirelesstraveler.fancywarpmenu.gui.GuiFancyWarp;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import ca.tirelesstraveler.fancywarpmenu.utils.ChatUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +75,38 @@ public class ChatListener {
 
             if (!sentMessages.isEmpty()) {
                 checkChatMessageForReminder(sentMessages.get(sentMessages.size() - 1));
+            }
+        }
+    }
+
+    /**
+     * Copies the throwable provided when the component from
+     * {@link ChatUtils#sendErrorMessageWithCopyableThrowable(String, Throwable)} is clicked.
+     *
+     * @param event the mouse event
+     */
+    @SubscribeEvent
+    public void mouseClicked(GuiScreenEvent.MouseInputEvent.Pre event) {
+        // Left mouse button down
+        if (event.gui instanceof GuiChat && Mouse.getEventButton() == 0 && Mouse.getEventButtonState()) {
+            IChatComponent chatComponent =  mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+
+            if (chatComponent != null && chatComponent.getChatStyle() != null) {
+                ChatStyle chatStyle = chatComponent.getChatStyle();
+
+                if (chatStyle.getInsertion().equals(ChatUtils.COPY_ERROR_TRANSLATION_KEY)
+                        && chatStyle.getChatClickEvent() != null) {
+                    String clickEventValue = chatStyle.getChatClickEvent().getValue();
+
+                    if (clickEventValue != null) {
+                        String copiedMessageTranslationKey = "fancywarpmenu.gui.buttons.copyToClipboard.copied";
+
+                        GuiScreen.setClipboardString(clickEventValue);
+                        ChatUtils.sendMessageWithModNamePrefix(new ChatComponentTranslation(copiedMessageTranslationKey)
+                                .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GREEN)));
+                        event.setCanceled(true);
+                    }
+                }
             }
         }
     }
@@ -118,7 +154,7 @@ public class ChatListener {
     }
 
     private void sendReminderToUseFancyMenu() {
-        mc.thePlayer.addChatMessage(new ChatComponentTranslation(FancyWarpMenu
+        ChatUtils.sendMessageWithModNamePrefix(new ChatComponentTranslation(FancyWarpMenu
                 .getFullLanguageKey("messages.useWarpMenuInsteadOfCommand"))
                 .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
     }

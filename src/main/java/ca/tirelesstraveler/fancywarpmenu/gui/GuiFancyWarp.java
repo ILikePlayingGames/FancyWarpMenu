@@ -34,6 +34,7 @@ import ca.tirelesstraveler.fancywarpmenu.gui.grid.ScaledGrid;
 import ca.tirelesstraveler.fancywarpmenu.listeners.InventoryChangeListener;
 import ca.tirelesstraveler.fancywarpmenu.state.EnvironmentDetails;
 import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
+import ca.tirelesstraveler.fancywarpmenu.utils.ChatUtils;
 import ca.tirelesstraveler.fancywarpmenu.utils.GameChecks;
 import ca.tirelesstraveler.fancywarpmenu.utils.WarpVisibilityChecks;
 import net.minecraft.client.Minecraft;
@@ -95,6 +96,12 @@ public class GuiFancyWarp extends GuiChestMenu {
         this.chestInventory = (InventoryBasic) chestInventory;
 
         if (Settings.isWarpMenuEnabled()) {
+            /*
+            Render a blank custom UI before buttons are enabled to prevent the vanilla chest UI from displaying
+            while the fancy warp menu loads
+             */
+            setCustomUIState(true, true);
+
             inventoryListener = new InventoryChangeListener(new ChestItemChangeCallback(this));
             this.chestInventory.addInventoryChangeListener(inventoryListener);
         }
@@ -143,6 +150,7 @@ public class GuiFancyWarp extends GuiChestMenu {
                 labelY = labelY + ySpacing;
             }
 
+            // func_175202_a -> addString
             labelList.get(0).func_175202_a(
                     EnumChatFormatting.RED.toString() +
                             EnumChatFormatting.BOLD +
@@ -307,7 +315,7 @@ public class GuiFancyWarp extends GuiChestMenu {
             }
         } else if (button instanceof GuiButtonConfig) {
             Settings.setWarpMenuEnabled(true);
-            mc.thePlayer.addChatMessage(new ChatComponentTranslation(
+            ChatUtils.sendMessageWithModNamePrefix(new ChatComponentTranslation(
                     "fancywarpmenu.messages.fancyWarpMenuEnabled").setChatStyle(
                     new ChatStyle().setColor(EnumChatFormatting.GREEN)));
 
@@ -354,14 +362,6 @@ public class GuiFancyWarp extends GuiChestMenu {
         }
     }
 
-    /**
-     * Called when a mouse button is clicked.
-     *
-     * @param mouseX mouse x coordinate
-     * @param mouseY mouse y coordinate
-     * @param mouseButton clicked button (0 == left click is the only one that matters here)
-     * @throws IOException not thrown here, may be thrown in super
-     */
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if (customUIInteractionEnabled) {
@@ -489,12 +489,18 @@ public class GuiFancyWarp extends GuiChestMenu {
         triggered. For example, slot 53 is actually set on the 106th time the item change event triggers.
         (lastSlotIndexToCheck + 1) since slots are 0-indexed but trigger count starts at 1
          */
-        if (triggerCount > (lastSlotIndexToCheck + 1) * 2 && chestInventory.getStackInSlot(lastSlotIndexToCheck) != null) {
-            boolean menuItemsMatch = GameChecks.menuItemsMatch(menu, chestInventory);
-            setCustomUIState(menuItemsMatch, menuItemsMatch);
-            updateButtonStates();
-            configButton.setVisible(menuItemsMatch);
-            chestInventory.removeInventoryChangeListener(inventoryListener);
+        if (triggerCount > (lastSlotIndexToCheck + 1) * 2) {
+            try {
+                boolean menuItemsMatch = GameChecks.menuItemsMatch(menu, chestInventory);
+                setCustomUIState(menuItemsMatch, menuItemsMatch);
+                updateButtonStates();
+                configButton.setVisible(menuItemsMatch);
+            } catch (RuntimeException e) {
+                ChatUtils.sendErrorMessageWithCopyableThrowable("fancywarpmenu.errors.itemMatchFailed", e);
+                setCustomUIState(false, false);
+            } finally {
+                chestInventory.removeInventoryChangeListener(inventoryListener);
+            }
         }
     }
 

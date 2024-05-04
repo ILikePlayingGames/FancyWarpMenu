@@ -36,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -100,10 +99,9 @@ public class GameChecks {
         if (chestInventory.hasCustomName()) {
             String chestTitle = chestInventory.getDisplayName().getUnformattedText();
 
-            for (Map.Entry<Menu, List<ItemMatchCondition>> menuMatchingEntry :
-                    FancyWarpMenu.getSkyBlockConstants().getMenuMatchingMap().entrySet()) {
-                if (chestTitle.equals(menuMatchingEntry.getKey().getMenuDisplayName())) {
-                    return menuMatchingEntry.getKey();
+            for (Menu menu : FancyWarpMenu.getSkyBlockConstants().getMenuMatchingMap().keySet()) {
+                if (chestTitle.equals(menu.getMenuDisplayName())) {
+                    return menu;
                 }
             }
         }
@@ -128,7 +126,7 @@ public class GameChecks {
             logger.debug("Starting item match on slot {} for menu {}.",
                     matchCondition.getInventorySlotIndex(), menu);
 
-            if (!matchCondition.inventoryContainsMatchingItem(chestInventory)) {
+            if (matchCondition.inventoryContainsMatchingItem(chestInventory)) {
                 logger.warn("Item match on slot {} failed.", matchCondition.getInventorySlotIndex());
                 GameState.setCurrentMenu(Menu.NONE);
                 return false;
