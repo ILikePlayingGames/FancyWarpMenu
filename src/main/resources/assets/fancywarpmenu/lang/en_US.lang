@@ -62,4 +62,5 @@ fancywarpmenu.errors.slotNumberOutOfBounds=Invalid Slot Number (%d)
 fancywarpmenu.errors.slotHasNoItem=Slot %d Has No Item to Click On
 fancywarpmenu.errors.mouseIsHoldingItem=Mouse is Already Holding an Item
 fancywarpmenu.errors.fancyWarpGui.initFailed=%s Initialization Failed
-fancywarpmenu.errors.itemMatchFailed=Chest item match check failed, falling back to vanilla chest UI
+fancywarpmenu.errors.fancyWarpGui.chestInventoryTooSmall=Chest inventory size (%d) is smaller than expected (%d), falling back to vanilla chest UI
+fancywarpmenu.errors.fancyWarpGui.itemMatchFailed=Chest item match check failed, falling back to vanilla chest UI

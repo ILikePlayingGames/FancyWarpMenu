@@ -94,7 +94,7 @@ public abstract class Button {
         return gson.toJson(this);
     }
 
-    public static void validateButtonIcon(Button button) throws IllegalArgumentException, NullPointerException {
+    public static void validateButton(Button button) {
         if (button.gridX < 0 || button.gridX > Island.GRID_UNIT_WIDTH_FACTOR) {
             throw new IllegalArgumentException("Button gridX must be between 0 and " + Island.GRID_UNIT_WIDTH_FACTOR + " inclusive");
         }

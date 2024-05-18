@@ -126,7 +126,7 @@ public class GameChecks {
             logger.debug("Starting item match on slot {} for menu {}.",
                     matchCondition.getInventorySlotIndex(), menu);
 
-            if (matchCondition.inventoryContainsMatchingItem(chestInventory)) {
+            if (!matchCondition.inventoryContainsMatchingItem(chestInventory)) {
                 logger.warn("Item match on slot {} failed.", matchCondition.getInventorySlotIndex());
                 GameState.setCurrentMenu(Menu.NONE);
                 return false;

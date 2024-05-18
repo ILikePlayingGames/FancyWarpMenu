@@ -26,10 +26,18 @@ import ca.tirelesstraveler.fancywarpmenu.state.FancyWarpMenuState;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 
+import java.util.Collections;
+import java.util.List;
+
 public class OpenConfigCommand extends CommandBase {
     @Override
     public int getRequiredPermissionLevel() {
         return 0;
+    }
+
+    @Override
+    public List<String> getCommandAliases() {
+        return Collections.singletonList("fwm");
     }
 
     @Override

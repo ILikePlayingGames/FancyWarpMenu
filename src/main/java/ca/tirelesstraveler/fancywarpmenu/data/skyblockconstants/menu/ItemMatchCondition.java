@@ -31,24 +31,56 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
  * A match condition that checks if a given SkyBlock {@code GuiChest} menu contains an item with the same
  * item name, inventory slot index, Minecraft item ID, and SkyBlock item ID as the item specified in this condition.
  */
-@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "unused"})
+@SuppressWarnings({"FieldMayBeFinal", "FieldCanBeLocal", "unused", "MismatchedQueryAndUpdateOfCollection"})
 public class ItemMatchCondition {
     public static final Logger logger = LogManager.getLogger();
 
-    /** Display name of the {@code ItemStack} (excluding formatting codes) */
+    /**
+     * Display name of the {@code ItemStack} (excluding formatting codes).
+     * Either {@code itemName} or {@code itemNames} can be set. {@code IllegalArgumentException} will be thrown if both are set.
+     */
     private String itemName;
+    /**
+     * List of possible display names of the {@code ItemStack} (excluding formatting codes), used when the item name varies.
+     * Either {@code itemName} or {@code itemNames} can be set. {@code IllegalArgumentException} will be thrown if both are set.
+     */
+    private List<String> itemNames;
     /** The slot index of the slot the item occupies in the {@code IInventory} provided to {@link #inventoryContainsMatchingItem(IInventory)} */
     private int inventorySlotIndex = -1;
-    /** Minecraft item ID string */
+    /**
+     * Minecraft item ID string of the {@code ItemStack}.
+     * Either {@code minecraftItemID} or {@code minecraftItemIDs} can be set.
+     * {@code IllegalArgumentException} will be thrown if both are set.
+     */
     private String minecraftItemID;
-    /** SkyBlock Item ID string */
+    /**
+     * List of possible Minecraft item ID strings of the {@code ItemStack}, used when Minecraft item ID varies
+     * Either {@code minecraftItemID} or {@code minecraftItemIDs} can be set.
+     * {@code IllegalArgumentException} will be thrown if both are set.
+     */
+    private List<String> minecraftItemIDs;
+
+    /**
+     * SkyBlock Item ID string
+     * Either {@code skyBlockItemID} or {@code skyBlockItemIDs} can be set.
+     * {@code IllegalArgumentException} will be thrown if both are set.
+     **/
+
     private String skyBlockItemID;
+    /**
+     * List of possible SkyBlock item ID strings of the {@code ItemStack}, used when SkyBlock item ID varies.
+     * Either {@code skyBlockItemID} or {@code skyBlockItemIDs} can be set.
+     * {@code IllegalArgumentException} will be thrown if both are set.
+     */
+    private List<String> skyBlockItemIDs;
+
     /**
      * Pattern to test against the item's lore.
      * Note the lore will be combined into one string with lines separated by {@code \n} and then that string will be matched against the pattern.
@@ -102,35 +134,35 @@ public class ItemMatchCondition {
             boolean skyBlockItemIDMatches;
             boolean lorePatternMatches;
 
-            if (itemName != null) {
+            if (itemName != null || itemNames != null) {
                 String itemStackName = itemStack.hasDisplayName() ?
                         StringUtils.stripControlCodes(itemStack.getDisplayName()) : null;
-                itemNameMatches = itemStackName != null && itemStackName.equals(itemName);
+                itemNameMatches = itemStackName != null
+                        && (itemStackName.equals(itemName) || itemNames.contains(itemStackName));
 
                 if (!itemNameMatches) {
                     logger.warn("Item name mismatch\nExpected {} ; Found {}",
                             itemName, itemStackName);
+                    return false;
                 }
-
-                if (!itemNameMatches) return false;
             }
 
-            if (minecraftItemID != null) {
+            if (minecraftItemID != null || minecraftItemIDs != null) {
                 String itemStackMinecraftItemID = itemStack.getItem().getRegistryName();
-                minecraftItemIDMatches = itemStackMinecraftItemID.equals(minecraftItemID);
+                minecraftItemIDMatches = itemStackMinecraftItemID.equals(minecraftItemID)
+                        || minecraftItemIDs.contains(itemStackMinecraftItemID);
 
                 if (!minecraftItemIDMatches) {
                     logger.warn("Minecraft Item ID mismatch\nExpected {} ; Found {}",
                             minecraftItemID, itemStackMinecraftItemID);
+                    return false;
                 }
-
-                if (!minecraftItemIDMatches) return false;
             }
 
             // Following checks require NBT data, fail if NBT data not present
             if (!itemStack.hasTagCompound()) return false;
 
-            if (skyBlockItemID != null) {
+            if (skyBlockItemID != null || skyBlockItemIDs != null) {
                 if (!itemStack.getTagCompound().hasKey("ExtraAttributes", Constants.NBT.TAG_COMPOUND)) {
                     return false;
                 }
@@ -138,14 +170,14 @@ public class ItemMatchCondition {
                 NBTTagCompound extraAttributesTag = itemStack.getSubCompound("ExtraAttributes", false);
                 String itemStackSkyBlockID = extraAttributesTag.hasKey("id", Constants.NBT.TAG_STRING) ?
                         extraAttributesTag.getString("id") : null;
-                skyBlockItemIDMatches = itemStackSkyBlockID != null && itemStackSkyBlockID.equals(skyBlockItemID);
+                skyBlockItemIDMatches = itemStackSkyBlockID != null &&
+                        (itemStackSkyBlockID.equals(skyBlockItemID) || skyBlockItemIDs.contains(itemStackSkyBlockID));
 
                 if (!skyBlockItemIDMatches) {
                     logger.warn("SkyBlock Item ID mismatch\nExpected {} ; Found {}",
                             skyBlockItemID, itemStackSkyBlockID);
+                    return false;
                 }
-
-                if (!skyBlockItemIDMatches) return false;
             }
 
             if (loreMatchPattern != null && loreMatchPattern.pattern() != null) {
@@ -172,17 +204,16 @@ public class ItemMatchCondition {
 
                         if (!lorePatternMatches) {
                             logger.warn("Lore did not match pattern\nItem lore: {}",  loreTag);
+                            return false;
                         }
-
-                        return lorePatternMatches;
                     }
                 }
             }
 
             return true;
+        } else {
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -190,13 +221,27 @@ public class ItemMatchCondition {
      * This is called for conditions that have just been deserialized.
      */
     public void validateCondition() {
-
         if (this.inventorySlotIndex <= -1) {
             throw new IllegalArgumentException("inventorySlotIndex must be greater than or equal to 0");
         }
 
-        if (this.itemName == null && this.minecraftItemID == null && this.skyBlockItemID == null && this.loreMatchPattern == null) {
+        if (this.itemName == null && (this.itemNames == null || this.itemNames.isEmpty())
+                && this.minecraftItemID == null && (this.minecraftItemIDs == null || this.minecraftItemIDs.isEmpty())
+                && this.skyBlockItemID == null && (skyBlockItemIDs == null || this.skyBlockItemIDs.isEmpty())
+                && this.loreMatchPattern == null) {
             throw new IllegalArgumentException("No item name, Minecraft item ID, SkyBlock item ID, or lore criteria specified.");
+        }
+
+        if (this.itemName != null && this.itemNames != null) {
+            throw new IllegalArgumentException("itemName and itemNames cannot both be set. Only one can be set.");
+        }
+
+        if (this.minecraftItemID != null && this.minecraftItemIDs != null) {
+            throw new IllegalArgumentException("minecraftItemID and minecraftItemIDs cannot both be set. Only one can be set.");
+        }
+
+        if (this.skyBlockItemID != null && this.skyBlockItemIDs != null) {
+            throw new IllegalArgumentException("skyBlockItemID and skyBlockItemIDs cannot both be set. Only one can be set.");
         }
 
         if (this.loreMatchPattern != null && loreMatchPattern.pattern() == null) {

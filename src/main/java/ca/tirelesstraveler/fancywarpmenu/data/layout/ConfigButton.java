@@ -50,7 +50,7 @@ public class ConfigButton extends Button {
             throw new NullPointerException("Config button settings cannot be null");
         }
 
-        Button.validateButtonIcon(configButton);
+        Button.validateButton(configButton);
 
         try {
             IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(ConfigButton.TEXTURE_LOCATION);

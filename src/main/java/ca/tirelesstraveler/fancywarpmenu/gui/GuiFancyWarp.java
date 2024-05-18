@@ -53,8 +53,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
@@ -66,7 +64,6 @@ import java.util.function.Consumer;
 
 public class GuiFancyWarp extends GuiChestMenu {
     protected static final FancyWarpMenu modInstance = FancyWarpMenu.getInstance();
-    private static final Logger logger = LogManager.getLogger();
     /** Delay in ms before the player can warp again if the last warp attempt failed */
     private static final long WARP_FAIL_COOL_DOWN = 500L;
     /** The amount of time in ms that the error message remains on-screen after a failed warp attempt */
@@ -122,6 +119,16 @@ public class GuiFancyWarp extends GuiChestMenu {
 
         configButton = new GuiButtonConfig(layout, 0, res);
         buttonList.add(configButton);
+
+        if (lastSlotIndexToCheck > chestInventory.getSizeInventory()) {
+            String inventoryTooSmallMessageTranslationKey = "fancywarpmenu.errors.fancyWarpGui.chestInventoryTooSmall";
+            ChatUtils.sendMessageWithModNamePrefix(new ChatComponentTranslation(
+                    inventoryTooSmallMessageTranslationKey, chestInventory.getSizeInventory(), lastSlotIndexToCheck)
+                    .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
+            setCustomUIState(false, false);
+            return;
+        }
+
         if (Settings.shouldShowRegularWarpMenuButton()) {
             buttonList.add(new GuiButtonRegularWarpMenu(layout, buttonList.size(), res, scaledGrid));
         }
@@ -495,8 +502,12 @@ public class GuiFancyWarp extends GuiChestMenu {
                 setCustomUIState(menuItemsMatch, menuItemsMatch);
                 updateButtonStates();
                 configButton.setVisible(menuItemsMatch);
+
+                if (!menuItemsMatch) {
+                    ChatUtils.sendMessageWithModNamePrefix("Warning: Chest has correct name but items mismatched");
+                }
             } catch (RuntimeException e) {
-                ChatUtils.sendErrorMessageWithCopyableThrowable("fancywarpmenu.errors.itemMatchFailed", e);
+                ChatUtils.sendErrorMessageWithCopyableThrowable("fancywarpmenu.errors.fancyWarpGui.itemMatchFailed", e);
                 setCustomUIState(false, false);
             } finally {
                 chestInventory.removeInventoryChangeListener(inventoryListener);

@@ -48,7 +48,7 @@ public class RegularWarpMenuButton extends Button {
             throw new NullPointerException("Regular warp menu button settings cannot be null");
         }
 
-        Button.validateButtonIcon(regularWarpMenuButton);
+        Button.validateButton(regularWarpMenuButton);
 
         try {
             IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(RegularWarpMenuButton.TEXTURE_LOCATION);

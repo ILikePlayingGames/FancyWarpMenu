@@ -29,7 +29,7 @@ import net.minecraft.util.*;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
 public class ChatUtils {
-    public static final String COPY_ERROR_TRANSLATION_KEY = "fancywarpmenu.gui.buttons.copyToClipboard";
+    public static final String COPY_TO_CLIPBOARD_TRANSLATION_KEY = "fancywarpmenu.gui.buttons.copyToClipboard";
 
     /**
      * Sends a client-side chat message with a warning message and a clickable component used to copy the stacktrace of
@@ -95,7 +95,7 @@ public class ChatUtils {
 
         return new ChatComponentText("[")
                 .appendSibling(new ChatComponentText("FWM").setChatStyle(acronymStyle))
-                .appendSibling(new ChatComponentText("]").setChatStyle(plainStyle));
+                .appendSibling(new ChatComponentText("] ").setChatStyle(plainStyle));
     }
 
     /**
@@ -123,7 +123,7 @@ public class ChatUtils {
         IChatComponent chatComponent = createModNamePrefixComponent()
                 .appendSibling(new ChatComponentTranslation(messageTranslationKey).setChatStyle(messageStyle))
                 .appendSibling(new ChatComponentText(" [").setChatStyle(plainStyle))
-                .appendSibling(new ChatComponentTranslation(COPY_ERROR_TRANSLATION_KEY).setChatStyle(copyThrowableStyle))
+                .appendSibling(new ChatComponentTranslation(COPY_TO_CLIPBOARD_TRANSLATION_KEY).setChatStyle(copyThrowableStyle))
                 .appendSibling(new ChatComponentText("]").setChatStyle(plainStyle));
         Minecraft.getMinecraft().thePlayer.addChatMessage(chatComponent);
     }

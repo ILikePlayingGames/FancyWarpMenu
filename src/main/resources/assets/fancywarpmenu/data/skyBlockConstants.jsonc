@@ -14,11 +14,11 @@
       {
         "inventorySlotIndex": 53,
         "itemName": "Paper Icons",
-        "minecraftItemID": "minecraft:map",
-        "loreMatchPattern": {
-          "pattern": ".*§eClick to toggle!$",
-          "flags": 0
-        }
+        /* The item ID changes depending on whether the player has paper icons enabled */
+        "minecraftItemIDs": [
+          "minecraft:map",
+          "minecraft:filled_map"
+        ]
       }
     ],
     "PORHTAL": [

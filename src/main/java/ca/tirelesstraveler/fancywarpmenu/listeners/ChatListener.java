@@ -93,8 +93,9 @@ public class ChatListener {
 
             if (chatComponent != null && chatComponent.getChatStyle() != null) {
                 ChatStyle chatStyle = chatComponent.getChatStyle();
+                String insertion = chatStyle.getInsertion();
 
-                if (chatStyle.getInsertion().equals(ChatUtils.COPY_ERROR_TRANSLATION_KEY)
+                if (insertion != null && insertion.equals(ChatUtils.COPY_TO_CLIPBOARD_TRANSLATION_KEY)
                         && chatStyle.getChatClickEvent() != null) {
                     String clickEventValue = chatStyle.getChatClickEvent().getValue();
 
