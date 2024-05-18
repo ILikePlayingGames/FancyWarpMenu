@@ -23,6 +23,7 @@
 package ca.tirelesstraveler.fancywarpmenu.resourceloaders;
 
 import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
+import ca.tirelesstraveler.fancywarpmenu.utils.ChatUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
@@ -30,14 +31,13 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ReportedException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
+// TODO: Localize long error messages?
 public abstract class ResourceLoader {
     public static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -73,7 +73,7 @@ public abstract class ResourceLoader {
             logger.error(stringBuilder, e);
 
             if (Minecraft.getMinecraft().ingameGUI != null) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + stringBuilder.toString()));
+                ChatUtils.sendErrorMessageWithCopyableThrowable(stringBuilder.toString(), e);
             }
         } else {
             CrashReport crashReport = new CrashReport("Your Fancy Warp Menu resource pack may be outdated", e);
@@ -102,7 +102,7 @@ public abstract class ResourceLoader {
             logger.error(stringBuilder, e);
 
             if (Minecraft.getMinecraft().ingameGUI != null) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + stringBuilder.toString()));
+                ChatUtils.sendErrorMessageWithCopyableThrowable(stringBuilder.toString(), e);
             }
         } else {
             CrashReport crashReport = new CrashReport("Your Fancy Warp Menu resource pack may be outdated", e);

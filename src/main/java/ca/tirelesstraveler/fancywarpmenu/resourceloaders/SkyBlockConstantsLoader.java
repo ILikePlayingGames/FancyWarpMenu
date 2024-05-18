@@ -38,7 +38,7 @@ import java.util.List;
 
 public class SkyBlockConstantsLoader extends ResourceLoader {
     private static final ResourceLocation SKY_BLOCK_CONSTANTS_LOCATION = new ResourceLocation("fancywarpmenu",
-            "data/skyBlockConstants.json");
+            "data/skyBlockConstants.jsonc");
 
     /**
      * Creates a {@link SkyBlockConstants} instance from {@code SKY_BLOCK_CONSTANTS_LOCATION}.

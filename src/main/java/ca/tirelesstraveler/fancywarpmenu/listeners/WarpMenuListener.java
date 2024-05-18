@@ -78,7 +78,7 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
                 event.gui = new FancyWarpMenuConfigScreen(null);
                 FancyWarpMenuState.setOpenConfigMenuRequested(false);
             }
-        } else if (event.gui instanceof GuiChest) {
+        } else if (GameState.isOnSkyBlock() && event.gui instanceof GuiChest) {
             IInventory playerInventory = mc.thePlayer.inventory;
             IInventory chestInventory = ((ContainerChest) ((GuiChest) event.gui).inventorySlots).getLowerChestInventory();
 
@@ -94,7 +94,7 @@ public class WarpMenuListener implements IResourceManagerReloadListener {
 
     @SubscribeEvent
     public void keyTyped(InputEvent.KeyInputEvent event) {
-        if (Settings.isWarpMenuEnabled() && (GameState.isOnSkyBlock() || Settings.shouldSkipSkyBlockCheck()) &&
+        if (Settings.isWarpMenuEnabled() && GameState.isOnSkyBlock() &&
                 FancyWarpMenu.getKeyBindingOpenWarpMenu().isPressed() &&
                 Minecraft.getSystemTime() - lastWarpMenuHotkeyPress > HOTKEY_PRESS_DELAY) {
             lastWarpMenuHotkeyPress = Minecraft.getSystemTime();

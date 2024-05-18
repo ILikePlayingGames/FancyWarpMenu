@@ -22,15 +22,13 @@
 
 package ca.tirelesstraveler.fancywarpmenu.listeners;
 
-import ca.tirelesstraveler.fancywarpmenu.FancyWarpMenu;
 import ca.tirelesstraveler.fancywarpmenu.state.GameState;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import org.apache.logging.log4j.LogManager;
@@ -42,10 +40,13 @@ import org.apache.logging.log4j.Logger;
 @ChannelHandler.Sharable
 public class SkyBlockJoinListener {
     private static final String SERVER_BRAND_START = "Hypixel BungeeCord";
+    private static final int SCOREBOARD_CHECK_TIME_OUT = 5000;
 
     private static final Logger logger = LogManager.getLogger();
     private boolean serverBrandChecked;
     private boolean onHypixel;
+    private boolean scoreboardChecked;
+    private long lastWorldSwitchTime;
 
     @SubscribeEvent
     public void onClientDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
@@ -58,23 +59,23 @@ public class SkyBlockJoinListener {
     }
 
     @SubscribeEvent
-    public void onGuiOpen(GuiOpenEvent event) {
+    public void onWorldLoad(WorldEvent.Load event) {
         // Reset on world switch
-        if (event.gui instanceof GuiDownloadTerrain) {
-            GameState.setOnSkyBlock(false);
-        }
+        lastWorldSwitchTime = Minecraft.getSystemTime();
+        scoreboardChecked = false;
+        GameState.setOnSkyBlock(false);
     }
 
     @SubscribeEvent
     public void onChatMessageReceived(ClientChatReceivedEvent event) {
-        if (!serverBrandChecked || onHypixel) {
+        if (!serverBrandChecked || onHypixel && !scoreboardChecked) {
             // type 0 is a standard chat message
-            if (event.type == 0 && event.message.getUnformattedText().startsWith(
-                    FancyWarpMenu.getSkyBlockConstants().getSkyBlockJoinMessage())) {
+            if (event.type == 0) {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                String brand = thePlayer.getClientBrand();
 
                 if (!serverBrandChecked) {
-                    onHypixel = thePlayer.getClientBrand().startsWith(SERVER_BRAND_START);
+                    onHypixel = brand != null && brand.startsWith(SERVER_BRAND_START);
                     serverBrandChecked = true;
 
                     if (onHypixel) {
@@ -82,17 +83,24 @@ public class SkyBlockJoinListener {
                     }
                 }
 
-                if (onHypixel) {
+                if (onHypixel && !scoreboardChecked) {
                     Scoreboard scoreboard = thePlayer.getWorldScoreboard();
                     boolean newSkyBlockState = scoreboard != null && scoreboard.getObjective("SBScoreboard") != null;
 
-                    if (newSkyBlockState && !GameState.isOnSkyBlock()) {
-                        logger.debug("Player joined SkyBlock.");
-                    } else if (!newSkyBlockState && GameState.isOnSkyBlock()) {
-                        logger.debug("Player left SkyBlock.");
+                    if (newSkyBlockState != GameState.isOnSkyBlock()) {
+                        if (newSkyBlockState) {
+                            logger.debug("Player joined SkyBlock.");
+                        } else {
+                            logger.debug("Player left SkyBlock.");
+                        }
+
+                        GameState.setOnSkyBlock(newSkyBlockState);
+                        scoreboardChecked = true;
                     }
 
-                    GameState.setOnSkyBlock(newSkyBlockState);
+                    if (Minecraft.getSystemTime() - lastWorldSwitchTime > SCOREBOARD_CHECK_TIME_OUT) {
+                        scoreboardChecked = true;
+                    }
                 }
             }
         }

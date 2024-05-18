@@ -36,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -92,7 +91,6 @@ public class GameChecks {
     /**
      * Determines which SkyBlock {@code GuiChest} menu the player is in using the {@link net.minecraft.client.gui.inventory.GuiChest}
      * display name. This is used for initial checks when the items haven't loaded in yet.
-     * The matched menu will be saved to {@code GameState#currentMenu}.
      *
      * @param chestInventory the inventory of the chest holding the menu
      * @return a {@code Menu} value representing the current menu the player has open
@@ -101,16 +99,13 @@ public class GameChecks {
         if (chestInventory.hasCustomName()) {
             String chestTitle = chestInventory.getDisplayName().getUnformattedText();
 
-            for (Map.Entry<Menu, List<ItemMatchCondition>> menuMatchingEntry :
-                    FancyWarpMenu.getSkyBlockConstants().getMenuMatchingMap().entrySet()) {
-                if (chestTitle.equals(menuMatchingEntry.getKey().getMenuDisplayName())) {
-                    GameState.setCurrentMenu(menuMatchingEntry.getKey());
-                    return menuMatchingEntry.getKey();
+            for (Menu menu : FancyWarpMenu.getSkyBlockConstants().getMenuMatchingMap().keySet()) {
+                if (chestTitle.equals(menu.getMenuDisplayName())) {
+                    return menu;
                 }
             }
         }
-
-        GameState.setCurrentMenu(Menu.NONE);
+        
         return Menu.NONE;
     }
 
@@ -118,6 +113,7 @@ public class GameChecks {
      * Determines if the player is in the given menu by checking whether all the {@link ItemMatchCondition}s for that menu
      * match the given inventory. This should be used after the inventory has loaded the slot index returned by
      * {@link ca.tirelesstraveler.fancywarpmenu.data.skyblockconstants.SkyBlockConstants#getLastMatchConditionInventorySlotIndex(Menu)}.
+     * If a match is found, the matched menu is saved using {@link GameState#setCurrentMenu(Menu)}
      *
      * @param menu the {@code Menu} whose match conditions will be checked
      * @param chestInventory the inventory to check against the match conditions
@@ -131,10 +127,12 @@ public class GameChecks {
                     matchCondition.getInventorySlotIndex(), menu);
 
             if (!matchCondition.inventoryContainsMatchingItem(chestInventory)) {
-                logger.debug("Item match on slot {} failed.", matchCondition.getInventorySlotIndex());
+                logger.warn("Item match on slot {} failed.", matchCondition.getInventorySlotIndex());
                 GameState.setCurrentMenu(Menu.NONE);
                 return false;
             }
+            logger.debug("Finished item match on slot {} for menu {}.",
+                    matchCondition.getInventorySlotIndex(), menu);
         }
 
         GameState.setCurrentMenu(menu);

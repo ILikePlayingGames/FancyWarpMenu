@@ -37,8 +37,7 @@ import java.io.IOException;
 /**
  * A GuiChest implementation that replaces the standard chest GUI with a custom menu.
  * This class also includes the ability to switch between the custom UI and the default UI using
- * {@link #setCustomUIState(boolean, boolean)}. Visibility and input processing can also be switched separately
- * between the user interfaces using {@link #setRenderCustomUI(boolean)} and {@link #setCustomUIInteractionEnabled(boolean)}.
+ * {@link #setCustomUIState(boolean, boolean)}.
  */
 public abstract class GuiChestMenu extends GuiChest {
     protected ScaledResolution res;
@@ -57,6 +56,13 @@ public abstract class GuiChestMenu extends GuiChest {
      */
     protected GuiButton selectedButton;
 
+    /**
+     * Creates a new {@code GuiChestMenu} instance with the default chest UI enabled.
+     *
+     * @param playerInventory the current player's inventory
+     * @param chestInventory the inventory of the chest to show
+     * @param backgroundTextureLocation location of the image to render as a full-screen background
+     */
     public GuiChestMenu(IInventory playerInventory, IInventory chestInventory, ResourceLocation backgroundTextureLocation) {
         this(playerInventory, chestInventory, backgroundTextureLocation, false, false);
     }
@@ -140,14 +146,6 @@ public abstract class GuiChestMenu extends GuiChest {
         } else {
             super.mouseReleased(mouseX, mouseY, state);
         }
-    }
-
-    protected void setRenderCustomUI(boolean renderCustomUI) {
-        setCustomUIState(renderCustomUI, customUIInteractionEnabled);
-    }
-
-    protected void setCustomUIInteractionEnabled(boolean customUIInteractionEnabled) {
-        setCustomUIState(renderCustomUI, customUIInteractionEnabled);
     }
 
     protected void setCustomUIState(boolean renderCustomUI, boolean customUIInteractionEnabled) {
