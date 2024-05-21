@@ -126,6 +126,7 @@ public class GuiFancyWarp extends GuiChestMenu {
                     inventoryTooSmallMessageTranslationKey, chestInventory.getSizeInventory(), lastSlotIndexToCheck)
                     .setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
             setCustomUIState(false, false);
+            chestInventory.removeInventoryChangeListener(inventoryListener);
             return;
         }
 
@@ -143,6 +144,7 @@ public class GuiFancyWarp extends GuiChestMenu {
         } catch (RuntimeException e) {
             guiInitException = e;
             buttonList.clear();
+            chestInventory.removeInventoryChangeListener(inventoryListener);
 
             int lineCount = 2;
             int labelX = 0;

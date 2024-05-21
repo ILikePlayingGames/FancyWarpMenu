@@ -22,7 +22,7 @@
 
 package ca.tirelesstraveler.fancywarpmenu;
 
-import ca.tirelesstraveler.fancywarpmenu.commands.OpenConfigCommand;
+import ca.tirelesstraveler.fancywarpmenu.commands.FancyWarpMenuCommand;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Island;
 import ca.tirelesstraveler.fancywarpmenu.data.layout.Layout;
 import ca.tirelesstraveler.fancywarpmenu.data.Settings;
@@ -103,7 +103,7 @@ public class FancyWarpMenu {
         updateCheckResult = ForgeVersion.getResult(modContainer);
         keyBindingOpenWarpMenu = new KeyBinding("fancywarpmenu.key.openMenu", Keyboard.KEY_C, "fancywarpmenu.key.categories.fancyWarpMenu");
         ClientRegistry.registerKeyBinding(keyBindingOpenWarpMenu);
-        ClientCommandHandler.instance.registerCommand(new OpenConfigCommand());
+        ClientCommandHandler.instance.registerCommand(new FancyWarpMenuCommand());
 
         Layout overworldLayout = FancyWarpMenuState.getOverworldLayout();
         ProgressManager.ProgressBar bar = ProgressManager.push("Loading Textures",
